@@ -9,7 +9,7 @@
     
     <meta name="author" content="Binger">
     
-    <meta name="description" content="许多语言处理任务都涉及模式匹配。例如；可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。
+    <meta name="description" content="许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。
 下表为正则表达式基本元字符，其中包括通配符、范围和闭包
 贪婪模式">
     
@@ -81,7 +81,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-11-10T07:09:20.000Z" itemprop="datePublished">2015-11-10</time>
-    更新日期:<time datetime="2015-11-11T08:18:15.000Z" itemprop="dateModified">2015-11-11</time>
+    更新日期:<time datetime="2015-11-11T08:59:42.000Z" itemprop="dateModified">2015-11-11</time>
     
   </p>
 </header>
@@ -93,11 +93,11 @@
 		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#贪婪模式与非贪婪模式"><span class="toc-number">1.</span> <span class="toc-text">贪婪模式与非贪婪模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#re模块"><span class="toc-number">2.</span> <span class="toc-text">re模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、re-search()"><span class="toc-number">2.1.</span> <span class="toc-text">一、re.search()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、re-split()"><span class="toc-number">2.2.</span> <span class="toc-text">二、re.split()</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#re-split(pattern,_string[,maxsplit])"><span class="toc-number">2.2.1.</span> <span class="toc-text">re.split(pattern, string[,maxsplit])</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#split(string[,_maxsplit])"><span class="toc-number">2.2.2.</span> <span class="toc-text">split(string[, maxsplit])</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#切分字符串"><span class="toc-number">2.2.3.</span> <span class="toc-text">切分字符串</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、findall()"><span class="toc-number">2.3.</span> <span class="toc-text">三、findall()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、re-search()"><span class="toc-number">2.4.</span> <span class="toc-text">四、re.search()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五、re-match()"><span class="toc-number">2.5.</span> <span class="toc-text">五、re.match()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#六、re-sub()"><span class="toc-number">2.6.</span> <span class="toc-text">六、re.sub()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#七、re-compile()"><span class="toc-number">2.7.</span> <span class="toc-text">七、re.compile()</span></a></li></ol></li></ol>
 		</div>
 		
-		<p>许多语言处理任务都涉及模式匹配。例如；可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
+		<p>许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
 <p><strong>下表为正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>
 <h2 id="贪婪模式与非贪婪模式">贪婪模式与非贪婪模式</h2><p>Python里数量词默认是贪婪的（在少数语言里也可能是默认非贪婪），总是尝试匹配尽可能多的字符；非贪婪的则相反，总是尝试匹配尽可能少的字符。<br>例如：正则表达式 “ab<em>”，如果用于查找“abbbc”，将找到“abbb”。而如果使用非贪婪的数量词“ab\</em>?“，将找到”a“</p>
 <ol>
-<li><p>*? 是一个固定的搭配，.和*代表可以匹配任意无限多个字符，加上？表示使用非贪婪模式进行匹配，也就是我们会尽可能短地做匹配，以后我们还会大量用到 .*? 的搭配。</p>
+<li><p>*? 是一个固定的搭配，.和*代表可以匹配任意无限多个字符，加上？表示使用非贪婪模式进行匹配，也就是我们会尽可能短地做匹配。</p>
 </li>
 <li><p>(.*?)代表一个分组，在这个正则表达式中我们匹配了五个分组，在后面的遍历item中，item[0]就代表第一个(.*?)所指代的内容，item[1]就代表第二个(.*?)所指代的内容，以此类推。</p>
 </li>
@@ -105,26 +105,92 @@
 </li>
 </ol>
 <h2 id="re模块">re模块</h2><h3 id="一、re-search()">一、re.search()</h3><p>使用正则表达式&lt;<ed$>&gt;查找以ed结尾的词汇。使用函数re.search(p, s) 检查字符串s中是否有模式p。</ed$></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> nltk</span><br><span class="line">In[<span class="number">12</span>]: wsj = sorted(set(nltk.corpus.treebank.word()))</span><br><span class="line">In[<span class="number">13</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'ed$'</span>, w)]</span><br><span class="line"></span><br><span class="line">In[<span class="number">15</span>]: ws[:<span class="number">10</span>]</span><br><span class="line">Out[<span class="number">15</span>]: </span><br><span class="line">[<span class="string">u'62%-owned'</span>,<span class="string">u'Absorbed'</span>,<span class="string">u'Advanced'</span>,<span class="string">u'Alfred'</span>, <span class="string">u'Allied'</span>, <span class="string">u'Annualized'</span>, <span class="string">u'Arbitrage-related'</span>,</span><br><span class="line"> <span class="string">u'Asked'</span>,<span class="string">u'Atlanta-based'</span>, <span class="string">u'Bermuda-based'</span>]</span><br></pre></td></tr></table></figure>
-<p>通配符“.”可以用来匹配任何单个字符。假设有一个8个字母组成的字谜，j是第三个字母，t是第六个字母。每个空白单元格用句点隔开。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">In[<span class="number">16</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^..j..t..$'</span>, w)]</span><br><span class="line">In[<span class="number">18</span>]: ws</span><br><span class="line">Out[<span class="number">18</span>]: [<span class="string">u'adjusted'</span>, <span class="string">u'rejected'</span>]</span><br></pre></td></tr></table></figure>
-<p>匹配除元音字母之外的所有字母</p>
-<figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="collection">[<span class="comment">^aeiouAEIOU</span>]</span></span><br></pre></td></tr></table></figure>
-<p><strong>?:</strong><br>如果要使用括号来指定连接的范围，又不想选择要输出字符串，必须添加“?:”。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">In[<span class="number">20</span>]: re.findall(<span class="string">r'^.*(?:ing|ly|ed|ies)$'</span>, <span class="string">'processing'</span>)</span><br><span class="line">Out[<span class="number">20</span>]: [<span class="string">'processing'</span>]</span><br></pre></td></tr></table></figure>
-<p>演示如何使用符号：\，{}，() 和 |</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">In[<span class="number">20</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[0-9]+\.[0-9]+$'</span>, w)]</span><br><span class="line">In[<span class="number">21</span>]: ws[:<span class="number">5</span>]</span><br><span class="line">Out[<span class="number">21</span>]: [<span class="string">u'0.0085'</span>, <span class="string">u'0.05'</span>, <span class="string">u'0.1'</span>, <span class="string">u'0.16'</span>, <span class="string">u'0.2'</span>]</span><br><span class="line"></span><br><span class="line">In[<span class="number">22</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[A-Z]+\$$'</span>, w)]</span><br><span class="line">In[<span class="number">23</span>]: ws</span><br><span class="line">Out[<span class="number">23</span>]: [<span class="string">u'C$'</span>, <span class="string">u'US$'</span>]</span><br><span class="line"></span><br><span class="line">In[<span class="number">24</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[0-9]&#123;4&#125;$'</span>, w)]</span><br><span class="line">In[<span class="number">26</span>]: ws[:<span class="number">5</span>]</span><br><span class="line">Out[<span class="number">26</span>]: [<span class="string">u'1614'</span>, <span class="string">u'1637'</span>, <span class="string">u'1787'</span>, <span class="string">u'1901'</span>, <span class="string">u'1903'</span>]</span><br><span class="line"></span><br><span class="line">In[<span class="number">27</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'(ed|ing)$'</span>, w)]</span><br><span class="line">In[<span class="number">28</span>]: ws[:<span class="number">5</span>]</span><br><span class="line">Out[<span class="number">28</span>]: [<span class="string">u'62%-owned'</span>, <span class="string">u'Absorbed'</span>, <span class="string">u'According'</span>, <span class="string">u'Adopting'</span>, <span class="string">u'Advanced'</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="二、re-split()">二、re.split()</h3><p>按照能够匹配的子串将string分割后返回列表。</p>
-<h4 id="re-split(pattern,_string[,maxsplit])">re.split(pattern, string[,maxsplit])</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">In[<span class="number">13</span>]: raw = <span class="string">"""'When I'M a Duchess,' she said to herself, (not in a very hopeful tone</span><br><span class="line"><span class="prompt">... </span>though), 'I won't have any pepper in my kitchen AT ALL. Soup does very</span><br><span class="line"><span class="prompt">... </span>well without--Maybe it's always pepper that makes people</span><br><span class="line"><span class="prompt">... </span>hot-tempered,'..."""</span></span><br><span class="line">In[<span class="number">16</span>]: re.split(<span class="string">r' '</span>, raw)</span><br><span class="line">Out[<span class="number">16</span>]: </span><br><span class="line">[<span class="string">"'When"</span>,</span><br><span class="line"> <span class="string">"I'M"</span>,</span><br><span class="line"> <span class="string">'a'</span>,</span><br><span class="line"> <span class="string">"Duchess,'"</span>,...]</span><br><span class="line">In[<span class="number">17</span>]: re.split(<span class="string">'[ \t\n]'</span>, raw)</span><br><span class="line">Out[<span class="number">17</span>]: </span><br><span class="line">[<span class="string">"'When"</span>,</span><br><span class="line"> <span class="string">"I'M"</span>,</span><br><span class="line"> <span class="string">'a'</span>,</span><br><span class="line"> <span class="string">"Duchess,'"</span>,...]</span><br></pre></td></tr></table></figure>
-<h4 id="split(string[,_maxsplit])">split(string[, maxsplit])</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: p = re.compile(<span class="string">r'\d+'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: p.split(<span class="string">'one1two2three3four4'</span>)</span><br><span class="line">Out[<span class="number">3</span>]: [<span class="string">'one'</span>, <span class="string">'two'</span>, <span class="string">'three'</span>, <span class="string">'four'</span>, <span class="string">''</span>]</span><br></pre></td></tr></table></figure>
-<h4 id="切分字符串">切分字符串</h4><p>Python自带的字符分割函数</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'a b   c'</span>.<span class="function"><span class="title">split</span><span class="params">(<span class="string">' '</span>)</span></span></span><br><span class="line">[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">''</span>, <span class="string">''</span>, <span class="string">'c'</span>]</span><br></pre></td></tr></table></figure>
-<p>嗯，无法识别连续的空格</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>re.split(<span class="string">r'\s+'</span>, <span class="string">'a b    c'</span>)</span><br><span class="line">[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]</span><br></pre></td></tr></table></figure>
-<p>使用re，无论多少个空格都可正常分割</p>
+<pre><code><span class="keyword">import</span> re
+<span class="keyword">import</span> nltk
+In[<span class="number">12</span>]: wsj = sorted(set(nltk.corpus.treebank.word()))
+In[<span class="number">13</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'ed$'</span>, w)]
+
+In[<span class="number">15</span>]: ws[:<span class="number">10</span>]
+Out[<span class="number">15</span>]: 
+[<span class="string">u'62%-owned'</span>,<span class="string">u'Absorbed'</span>,<span class="string">u'Advanced'</span>,<span class="string">u'Alfred'</span>, <span class="string">u'Allied'</span>, <span class="string">u'Annualized'</span>, <span class="string">u'Arbitrage-related'</span>,
+ <span class="string">u'Asked'</span>,<span class="string">u'Atlanta-based'</span>, <span class="string">u'Bermuda-based'</span>]
+</code></pre><p>通配符“.”可以用来匹配任何单个字符。假设有一个8个字母组成的字谜，j是第三个字母，t是第六个字母。每个空白单元格用句点隔开。</p>
+<pre><code>In[<span class="number">16</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^..j..t..$'</span>, w)]
+In[<span class="number">18</span>]: ws
+Out[<span class="number">18</span>]: [<span class="string">u'adjusted'</span>, <span class="string">u'rejected'</span>]
+</code></pre><p>匹配除元音字母之外的所有字母</p>
+<pre><code><span class="collection">[<span class="comment">^aeiouAEIOU</span>]</span>
+</code></pre><p><strong>?:</strong><br>如果要使用括号来指定连接的范围，又不想选择要输出字符串，必须添加“?:”。</p>
+<pre><code>In[<span class="number">20</span>]: re.findall(<span class="string">r'^.*(?:ing|ly|ed|ies)$'</span>, <span class="string">'processing'</span>)
+Out[<span class="number">20</span>]: [<span class="string">'processing'</span>]
+</code></pre><p>演示如何使用符号：\，{}，() 和 |</p>
+<pre><code>In[<span class="number">20</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[0-9]+\.[0-9]+$'</span>, w)]
+In[<span class="number">21</span>]: ws[:<span class="number">5</span>]
+Out[<span class="number">21</span>]: [<span class="string">u'0.0085'</span>, <span class="string">u'0.05'</span>, <span class="string">u'0.1'</span>, <span class="string">u'0.16'</span>, <span class="string">u'0.2'</span>]
+
+In[<span class="number">22</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[A-Z]+\$$'</span>, w)]
+In[<span class="number">23</span>]: ws
+Out[<span class="number">23</span>]: [<span class="string">u'C$'</span>, <span class="string">u'US$'</span>]
+
+In[<span class="number">24</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[0-9]{4}$'</span>, w)]
+In[<span class="number">26</span>]: ws[:<span class="number">5</span>]
+Out[<span class="number">26</span>]: [<span class="string">u'1614'</span>, <span class="string">u'1637'</span>, <span class="string">u'1787'</span>, <span class="string">u'1901'</span>, <span class="string">u'1903'</span>]
+
+In[<span class="number">27</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'(ed|ing)$'</span>, w)]
+In[<span class="number">28</span>]: ws[:<span class="number">5</span>]
+Out[<span class="number">28</span>]: [<span class="string">u'62%-owned'</span>, <span class="string">u'Absorbed'</span>, <span class="string">u'According'</span>, <span class="string">u'Adopting'</span>, <span class="string">u'Advanced'</span>]
+</code></pre><h3 id="二、re-split()">二、re.split()</h3><p>按照能够匹配的子串将string分割后返回列表。</p>
+<h4 id="re-split(pattern,_string[,maxsplit])">re.split(pattern, string[,maxsplit])</h4><pre><code>In[<span class="number">13</span>]: raw = <span class="string">"""'When I'M a Duchess,' she said to herself, (not in a very hopeful tone
+<span class="prompt">... </span>though), 'I won't have any pepper in my kitchen AT ALL. Soup does very
+<span class="prompt">... </span>well without--Maybe it's always pepper that makes people
+<span class="prompt">... </span>hot-tempered,'..."""</span>
+In[<span class="number">16</span>]: re.split(<span class="string">r' '</span>, raw)
+Out[<span class="number">16</span>]: 
+[<span class="string">"'When"</span>,
+ <span class="string">"I'M"</span>,
+ <span class="string">'a'</span>,
+ <span class="string">"Duchess,'"</span>,...]
+In[<span class="number">17</span>]: re.split(<span class="string">'[ \t\n]'</span>, raw)
+Out[<span class="number">17</span>]: 
+[<span class="string">"'When"</span>,
+ <span class="string">"I'M"</span>,
+ <span class="string">'a'</span>,
+ <span class="string">"Duchess,'"</span>,...]
+</code></pre><h4 id="split(string[,_maxsplit])">split(string[, maxsplit])</h4><pre><code>In [<span class="number">1</span>]: <span class="keyword">import</span> re
+
+In [<span class="number">2</span>]: p = re.compile(<span class="string">r'\d+'</span>)
+
+In [<span class="number">3</span>]: p.split(<span class="string">'one1two2three3four4'</span>)
+Out[<span class="number">3</span>]: [<span class="string">'one'</span>, <span class="string">'two'</span>, <span class="string">'three'</span>, <span class="string">'four'</span>, <span class="string">''</span>]
+</code></pre><h4 id="切分字符串">切分字符串</h4><p>Python自带的字符分割函数</p>
+<pre><code><span class="string">'a b   c'</span>.<span class="function"><span class="title">split</span><span class="params">(<span class="string">' '</span>)</span></span>
+[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">''</span>, <span class="string">''</span>, <span class="string">'c'</span>]
+</code></pre><p>嗯，无法识别连续的空格</p>
+<pre><code><span class="keyword">import</span> re
+<span class="prompt">&gt;&gt;&gt; </span>re.split(<span class="string">r'\s+'</span>, <span class="string">'a b    c'</span>)
+[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]
+</code></pre><p>使用re，无论多少个空格都可正常分割</p>
 <h3 id="三、findall()">三、findall()</h3><p>findall函数返回的总是正则表达式在字符串中所有匹配结果的列表。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">2</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(r<span class="string">'\d+'</span>)</span></span></span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(<span class="string">'one1two2three3four4'</span>)</span></span></span><br><span class="line">Out[<span class="number">4</span>]: [<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'4'</span>]</span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: ss = <span class="string">"adfad asdfasdf asdfas asdfawef asd adsfas "</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(<span class="string">'((\w+)\s+\w+)'</span>)</span></span></span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(ss)</span></span></span><br><span class="line">Out[<span class="number">7</span>]:</span><br><span class="line">[(<span class="string">'adfad asdfasdf'</span>, <span class="string">'adfad'</span>),</span><br><span class="line"> (<span class="string">'asdfas asdfawef'</span>, <span class="string">'asdfas'</span>),</span><br><span class="line"> (<span class="string">'asd adsfas'</span>, <span class="string">'asd'</span>)]</span><br><span class="line"> </span><br><span class="line">In [<span class="number">8</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(<span class="string">'(\w+)\s+\w+'</span>)</span></span></span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(ss)</span></span></span><br><span class="line">Out[<span class="number">9</span>]: [<span class="string">'adfad'</span>, <span class="string">'asdfas'</span>, <span class="string">'asd'</span>]</span><br></pre></td></tr></table></figure>
-<ol>
+<pre><code>In [<span class="number">2</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(r<span class="string">'\d+'</span>)</span></span>
+
+In [<span class="number">4</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(<span class="string">'one1two2three3four4'</span>)</span></span>
+Out[<span class="number">4</span>]: [<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'4'</span>]
+
+In [<span class="number">5</span>]: ss = <span class="string">"adfad asdfasdf asdfas asdfawef asd adsfas "</span>
+
+In [<span class="number">6</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(<span class="string">'((\w+)\s+\w+)'</span>)</span></span>
+
+In [<span class="number">7</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(ss)</span></span>
+Out[<span class="number">7</span>]:
+[(<span class="string">'adfad asdfasdf'</span>, <span class="string">'adfad'</span>),
+ (<span class="string">'asdfas asdfawef'</span>, <span class="string">'asdfas'</span>),
+ (<span class="string">'asd adsfas'</span>, <span class="string">'asd'</span>)]
+
+In [<span class="number">8</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(<span class="string">'(\w+)\s+\w+'</span>)</span></span>
+
+In [<span class="number">9</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(ss)</span></span>
+Out[<span class="number">9</span>]: [<span class="string">'adfad'</span>, <span class="string">'asdfas'</span>, <span class="string">'asd'</span>]
+</code></pre><ol>
 <li><p>当给出的正则表达式中不带括号时，列表的元素为字符串，此字符串为整个正则表达式匹配的内容。 </p>
 </li>
 <li><p>当正则表达式中带有多个括号时，列表的元素为多个字符串组成的tuple，tuple中字符串个数与括号对数相同，字符串内容与每个括号内的正则表达式相对应，并且排放顺序是按括号出现的顺序。</p>
@@ -133,21 +199,50 @@
 </li>
 </ol>
 <h3 id="四、re-search()">四、re.search()</h3><p>re.search函数会在字符串内查找模式匹配，只要找到第一个匹配就返回，如果字符串没有匹配，则返回None。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">15</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: m = re.search(<span class="string">r'(\w+)ome'</span>, text)</span><br><span class="line"></span><br><span class="line">In [<span class="number">20</span>]: <span class="keyword">if</span> m:</span><br><span class="line">   ....: <span class="keyword">print</span> m.group(<span class="number">0</span>), m.group(<span class="number">1</span>)</span><br><span class="line">   ....: <span class="keyword">else</span>:</span><br><span class="line">   ....: <span class="keyword">print</span> <span class="string">'not search'</span></span><br></pre></td></tr></table></figure>
-<p>其中 group(0）或group()匹配的是整个字符串，group(1)匹配的是第一个括号中内容。   </p>
+<pre><code>In [<span class="number">15</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span>
+
+In [<span class="number">16</span>]: m = re.search(<span class="string">r'(\w+)ome'</span>, text)
+
+In [<span class="number">20</span>]: <span class="keyword">if</span> m:
+   ....: <span class="keyword">print</span> m.group(<span class="number">0</span>), m.group(<span class="number">1</span>)
+   ....: <span class="keyword">else</span>:
+   ....: <span class="keyword">print</span> <span class="string">'not search'</span>
+</code></pre><p>其中 group(0）或group()匹配的是整个字符串，group(1)匹配的是第一个括号中内容。   </p>
 <h3 id="五、re-match()">五、re.match()</h3><p>re.match()和re.search()的区别：re.match只匹配字符串的开始，如果字符串开始不符合正则表达式，则匹配失败，函数返回None；而re.search匹配整个字符串，直到找到一个匹配。</p>
-<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">In</span> [30]: s1 = <span class="string">"helloworld, i am 30!"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">In</span> [31]: w1 = 'world'</span><br><span class="line"></span><br><span class="line"><span class="keyword">In</span> [32]: m1 = re.<span class="literal">match</span>(w1, s1)</span><br><span class="line"></span><br><span class="line"><span class="keyword">In</span> [33]: <span class="keyword">if</span> m1:</span><br><span class="line">   ....: 	<span class="keyword">print</span> m1.<span class="literal">group</span>()</span><br><span class="line">   ....: <span class="keyword">else</span>:</span><br><span class="line">   ....: 	<span class="keyword">print</span> <span class="string">"not find"</span></span><br><span class="line">   ....:</span><br><span class="line">not find</span><br></pre></td></tr></table></figure>
-<h3 id="六、re-sub()">六、re.sub()</h3><p>re.sub用于替换字符串中的匹配项。<br>下面的例子将字符串中的空格’ ‘替换成’-‘</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">2</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: re.sub(<span class="string">r'\s+'</span>, <span class="string">'-'</span>, text)</span><br><span class="line">Out[<span class="number">3</span>]: <span class="string">'JGood-is-a-handsome-boy,-he-is-cool,-clever,-and-so-on...'</span></span><br></pre></td></tr></table></figure>
-<p><strong>re.sub的函数原型为：re.sub(pattern, repl, string, count)</strong></p>
+<pre><code><span class="keyword">In</span> [30]: s1 = <span class="string">"helloworld, i am 30!"</span>
+
+<span class="keyword">In</span> [31]: w1 = 'world'
+
+<span class="keyword">In</span> [32]: m1 = re.<span class="literal">match</span>(w1, s1)
+
+<span class="keyword">In</span> [33]: <span class="keyword">if</span> m1:
+   ....:     <span class="keyword">print</span> m1.<span class="literal">group</span>()
+   ....: <span class="keyword">else</span>:
+   ....:     <span class="keyword">print</span> <span class="string">"not find"</span>
+   ....:
+not find
+</code></pre><h3 id="六、re-sub()">六、re.sub()</h3><p>re.sub用于替换字符串中的匹配项。<br>下面的例子将字符串中的空格’ ‘替换成’-‘</p>
+<pre><code>In [<span class="number">2</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span>
+
+In [<span class="number">3</span>]: re.sub(<span class="string">r'\s+'</span>, <span class="string">'-'</span>, text)
+Out[<span class="number">3</span>]: <span class="string">'JGood-is-a-handsome-boy,-he-is-cool,-clever,-and-so-on...'</span>
+</code></pre><p><strong>re.sub的函数原型为：re.sub(pattern, repl, string, count)</strong></p>
 <pre><code>其中第二个参数时替换后的字符串；
 第四个参数为替换个数。默认为<span class="number">0</span>，表示每个匹配项都替换。
 </code></pre><p>re.sub还允许使用函数对匹配项的替换进行复杂的处理。如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">re.sub(<span class="string">r'\s'</span>, <span class="keyword">lambda</span> m : <span class="string">'['</span> + m.group(<span class="number">0</span>) + <span class="string">']'</span>, text, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>将字符串中的空格’‘替换为’[]’。</p>
+<pre><code>re.sub(<span class="string">r'\s'</span>, <span class="keyword">lambda</span> m : <span class="string">'['</span> + m.group(<span class="number">0</span>) + <span class="string">']'</span>, text, <span class="number">0</span>)
+</code></pre><p>将字符串中的空格’‘替换为’[]’。</p>
 <h3 id="七、re-compile()">七、re.compile()</h3><p>可以把正则表达式编译成一个正则表达式对象。对于经常要用的正则表达式，可以提高一定的效率。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">4</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: regex = re.compile(<span class="string">r'\w*oo\w*'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: regex.findall(text) <span class="comment">#查找所有包含’oo‘的单词</span></span><br><span class="line">Out[<span class="number">7</span>]: [<span class="string">'JGood'</span>, <span class="string">'cool'</span>]</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: regex.sub(<span class="keyword">lambda</span> m : <span class="string">'['</span> + m.group(<span class="number">0</span>) + <span class="string">']'</span>, text) <span class="comment"># 将字符串中含有’oo‘的单词用[]括起来</span></span><br><span class="line">Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome boy, he is [cool], clever, and so on...'</span></span><br></pre></td></tr></table></figure>
-  
+<pre><code>In [<span class="number">4</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span>
+
+In [<span class="number">6</span>]: regex = re.compile(<span class="string">r'\w*oo\w*'</span>)
+
+In [<span class="number">7</span>]: regex.findall(text) <span class="comment">#查找所有包含’oo‘的单词</span>
+Out[<span class="number">7</span>]: [<span class="string">'JGood'</span>, <span class="string">'cool'</span>]
+
+In [<span class="number">8</span>]: regex.sub(<span class="keyword">lambda</span> m : <span class="string">'['</span> + m.group(<span class="number">0</span>) + <span class="string">']'</span>, text) <span class="comment"># 将字符串中含有’oo‘的单词用[]括起来</span>
+Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome boy, he is [cool], clever, and so on...'</span>
+</code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
 
