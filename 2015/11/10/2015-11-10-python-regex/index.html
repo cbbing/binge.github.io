@@ -10,8 +10,8 @@
     <meta name="author" content="Binger">
     
     <meta name="description" content="许多语言处理任务都涉及模式匹配。例如；可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。
-正则表达式基本元字符，其中包括通配符、范围和闭包
-贪婪模式与非贪">
+下表为正则表达式基本元字符，其中包括通配符、范围和闭包
+贪婪模式">
     
     
     
@@ -81,7 +81,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-11-10T07:09:20.000Z" itemprop="datePublished">2015-11-10</time>
-    更新日期:<time datetime="2015-11-11T08:17:12.000Z" itemprop="dateModified">2015-11-11</time>
+    更新日期:<time datetime="2015-11-11T08:18:15.000Z" itemprop="dateModified">2015-11-11</time>
     
   </p>
 </header>
@@ -94,7 +94,7 @@
 		</div>
 		
 		<p>许多语言处理任务都涉及模式匹配。例如；可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
-<p><strong>正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>
+<p><strong>下表为正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>
 <h2 id="贪婪模式与非贪婪模式">贪婪模式与非贪婪模式</h2><p>Python里数量词默认是贪婪的（在少数语言里也可能是默认非贪婪），总是尝试匹配尽可能多的字符；非贪婪的则相反，总是尝试匹配尽可能少的字符。<br>例如：正则表达式 “ab<em>”，如果用于查找“abbbc”，将找到“abbb”。而如果使用非贪婪的数量词“ab\</em>?“，将找到”a“</p>
 <ol>
 <li><p>*? 是一个固定的搭配，.和*代表可以匹配任意无限多个字符，加上？表示使用非贪婪模式进行匹配，也就是我们会尽可能短地做匹配，以后我们还会大量用到 .*? 的搭配。</p>
