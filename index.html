@@ -1,418 +1,203 @@
-<!DOCTYPE html>
-<html>
+
+ <!DOCTYPE HTML>
+<html lang="zh-cn">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   
-  <title>Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
-<meta name="twitter:description">
-  
-    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
-  
-
+    <title>Binger‘s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Binger">
+    
+    <meta name="description" content="learn python and invest">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
 </head>
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Binger‘s Blog" title="Binger‘s Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Binger‘s Blog">Binger‘s Blog</a></h1>
+				<h2 class="blog-motto">Python and Quant</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main">
+
+  <section class="post" itemscope itemprop="blogPost">
+  
+    <a href="/2015/11/10/2015-11-10-python-regex/" title="Python正则表达式" itemprop="url">
+  
+    <h1 itemprop="name">Python正则表达式</h1>
+    
+     
+           <p itemprop="description" >许多语言处理任务都涉及模式匹配。例如；可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。
+##正则表达式基本元字符，其中包括通配符、范</p>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
-      <div class="outer">
-        <section id="main">
-  
-    <article id="post-2015-11-10-python-regex" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/11/10/2015-11-10-python-regex/" class="article-date">
-  <time datetime="2015-11-10T07:09:20.000Z" itemprop="datePublished">2015-11-10</time>
-</a>
     
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Python/">Python</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/11/10/2015-11-10-python-regex/">Python正则表达式</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>许多语言处理任务都涉及模式匹配。例如；可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
-<p>##正则表达式基本元字符，其中包括通配符、范围和闭包<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>
-<p>##贪婪模式与非贪婪模式<br>Python里数量词默认是贪婪的（在少数语言里也可能是默认非贪婪），总是尝试匹配尽可能多的字符；非贪婪的则相反，总是尝试匹配尽可能少的字符。<br>例如：正则表达式 “ab<em>”，如果用于查找“abbbc”，将找到“abbb”。而如果使用非贪婪的数量词“ab\</em>?“，将找到”a“</p>
-<ol>
-<li><p>*? 是一个固定的搭配，.和*代表可以匹配任意无限多个字符，加上？表示使用非贪婪模式进行匹配，也就是我们会尽可能短地做匹配，以后我们还会大量用到 .*? 的搭配。</p>
-</li>
-<li><p>(.*?)代表一个分组，在这个正则表达式中我们匹配了五个分组，在后面的遍历item中，item[0]就代表第一个(.*?)所指代的内容，item[1]就代表第二个(.*?)所指代的内容，以此类推。</p>
-</li>
-<li><p>re.S 标志代表在匹配时为点任意匹配模式，点 . 也可以代表换行符。</p>
-</li>
-</ol>
-<p>##re模块</p>
-<p>###一、re.search()</p>
-<p>使用正则表达式&lt;<ed$>&gt;查找以ed结尾的词汇。使用函数re.search(p, s) 检查字符串s中是否有模式p。</ed$></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> nltk</span><br><span class="line">In[<span class="number">12</span>]: wsj = sorted(set(nltk.corpus.treebank.word()))</span><br><span class="line">In[<span class="number">13</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'ed$'</span>, w)]</span><br><span class="line"></span><br><span class="line">In[<span class="number">15</span>]: ws[:<span class="number">10</span>]</span><br><span class="line">Out[<span class="number">15</span>]: </span><br><span class="line">[<span class="string">u'62%-owned'</span>,<span class="string">u'Absorbed'</span>,<span class="string">u'Advanced'</span>,<span class="string">u'Alfred'</span>, <span class="string">u'Allied'</span>, <span class="string">u'Annualized'</span>, <span class="string">u'Arbitrage-related'</span>,</span><br><span class="line"> <span class="string">u'Asked'</span>,<span class="string">u'Atlanta-based'</span>, <span class="string">u'Bermuda-based'</span>]</span><br></pre></td></tr></table></figure>
-<p>通配符“.”可以用来匹配任何单个字符。假设有一个8个字母组成的字谜，j是第三个字母，t是第六个字母。每个空白单元格用句点隔开。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">In[<span class="number">16</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^..j..t..$'</span>, w)]</span><br><span class="line">In[<span class="number">18</span>]: ws</span><br><span class="line">Out[<span class="number">18</span>]: [<span class="string">u'adjusted'</span>, <span class="string">u'rejected'</span>]</span><br></pre></td></tr></table></figure>
-<p>匹配除元音字母之外的所有字母</p>
-<figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="collection">[<span class="comment">^aeiouAEIOU</span>]</span></span><br></pre></td></tr></table></figure>
-<p><strong>?:</strong><br>如果要使用括号来指定连接的范围，又不想选择要输出字符串，必须添加“?:”。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">In[<span class="number">20</span>]: re.findall(<span class="string">r'^.*(?:ing|ly|ed|ies)$'</span>, <span class="string">'processing'</span>)</span><br><span class="line">Out[<span class="number">20</span>]: [<span class="string">'processing'</span>]</span><br></pre></td></tr></table></figure>
-<p>演示如何使用符号：\，{}，() 和 |</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">In[<span class="number">20</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[0-9]+\.[0-9]+$'</span>, w)]</span><br><span class="line">In[<span class="number">21</span>]: ws[:<span class="number">5</span>]</span><br><span class="line">Out[<span class="number">21</span>]: [<span class="string">u'0.0085'</span>, <span class="string">u'0.05'</span>, <span class="string">u'0.1'</span>, <span class="string">u'0.16'</span>, <span class="string">u'0.2'</span>]</span><br><span class="line"></span><br><span class="line">In[<span class="number">22</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[A-Z]+\$$'</span>, w)]</span><br><span class="line">In[<span class="number">23</span>]: ws</span><br><span class="line">Out[<span class="number">23</span>]: [<span class="string">u'C$'</span>, <span class="string">u'US$'</span>]</span><br><span class="line"></span><br><span class="line">In[<span class="number">24</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[0-9]&#123;4&#125;$'</span>, w)]</span><br><span class="line">In[<span class="number">26</span>]: ws[:<span class="number">5</span>]</span><br><span class="line">Out[<span class="number">26</span>]: [<span class="string">u'1614'</span>, <span class="string">u'1637'</span>, <span class="string">u'1787'</span>, <span class="string">u'1901'</span>, <span class="string">u'1903'</span>]</span><br><span class="line"></span><br><span class="line">In[<span class="number">27</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'(ed|ing)$'</span>, w)]</span><br><span class="line">In[<span class="number">28</span>]: ws[:<span class="number">5</span>]</span><br><span class="line">Out[<span class="number">28</span>]: [<span class="string">u'62%-owned'</span>, <span class="string">u'Absorbed'</span>, <span class="string">u'According'</span>, <span class="string">u'Adopting'</span>, <span class="string">u'Advanced'</span>]</span><br></pre></td></tr></table></figure>
-<h3 id="二、re-split()">二、re.split()</h3><p>按照能够匹配的子串将string分割后返回列表。</p>
-<p>####re.split(pattern, string[,maxsplit])<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">In[<span class="number">13</span>]: raw = <span class="string">"""'When I'M a Duchess,' she said to herself, (not in a very hopeful tone</span><br><span class="line"><span class="prompt">... </span>though), 'I won't have any pepper in my kitchen AT ALL. Soup does very</span><br><span class="line"><span class="prompt">... </span>well without--Maybe it's always pepper that makes people</span><br><span class="line"><span class="prompt">... </span>hot-tempered,'..."""</span></span><br><span class="line">In[<span class="number">16</span>]: re.split(<span class="string">r' '</span>, raw)</span><br><span class="line">Out[<span class="number">16</span>]: </span><br><span class="line">[<span class="string">"'When"</span>,</span><br><span class="line"> <span class="string">"I'M"</span>,</span><br><span class="line"> <span class="string">'a'</span>,</span><br><span class="line"> <span class="string">"Duchess,'"</span>,...]</span><br><span class="line">In[<span class="number">17</span>]: re.split(<span class="string">'[ \t\n]'</span>, raw)</span><br><span class="line">Out[<span class="number">17</span>]: </span><br><span class="line">[<span class="string">"'When"</span>,</span><br><span class="line"> <span class="string">"I'M"</span>,</span><br><span class="line"> <span class="string">'a'</span>,</span><br><span class="line"> <span class="string">"Duchess,'"</span>,...]</span><br></pre></td></tr></table></figure></p>
-<p>####split(string[, maxsplit])<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: p = re.compile(<span class="string">r'\d+'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: p.split(<span class="string">'one1two2three3four4'</span>)</span><br><span class="line">Out[<span class="number">3</span>]: [<span class="string">'one'</span>, <span class="string">'two'</span>, <span class="string">'three'</span>, <span class="string">'four'</span>, <span class="string">''</span>]</span><br></pre></td></tr></table></figure></p>
-<p>####切分字符串</p>
-<p>Python自带的字符分割函数</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'a b   c'</span>.<span class="function"><span class="title">split</span><span class="params">(<span class="string">' '</span>)</span></span></span><br><span class="line">[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">''</span>, <span class="string">''</span>, <span class="string">'c'</span>]</span><br></pre></td></tr></table></figure>
-<p>嗯，无法识别连续的空格</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="prompt">&gt;&gt;&gt; </span>re.split(<span class="string">r'\s+'</span>, <span class="string">'a b    c'</span>)</span><br><span class="line">[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]</span><br></pre></td></tr></table></figure>
-<p>使用re，无论多少个空格都可正常分割</p>
-<p>###三、findall()<br>findall函数返回的总是正则表达式在字符串中所有匹配结果的列表。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">2</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(r<span class="string">'\d+'</span>)</span></span></span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(<span class="string">'one1two2three3four4'</span>)</span></span></span><br><span class="line">Out[<span class="number">4</span>]: [<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'4'</span>]</span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: ss = <span class="string">"adfad asdfasdf asdfas asdfawef asd adsfas "</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(<span class="string">'((\w+)\s+\w+)'</span>)</span></span></span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(ss)</span></span></span><br><span class="line">Out[<span class="number">7</span>]:</span><br><span class="line">[(<span class="string">'adfad asdfasdf'</span>, <span class="string">'adfad'</span>),</span><br><span class="line"> (<span class="string">'asdfas asdfawef'</span>, <span class="string">'asdfas'</span>),</span><br><span class="line"> (<span class="string">'asd adsfas'</span>, <span class="string">'asd'</span>)]</span><br><span class="line"> </span><br><span class="line">In [<span class="number">8</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(<span class="string">'(\w+)\s+\w+'</span>)</span></span></span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(ss)</span></span></span><br><span class="line">Out[<span class="number">9</span>]: [<span class="string">'adfad'</span>, <span class="string">'asdfas'</span>, <span class="string">'asd'</span>]</span><br></pre></td></tr></table></figure>
-<ol>
-<li><p>当给出的正则表达式中不带括号时，列表的元素为字符串，此字符串为整个正则表达式匹配的内容。 </p>
-</li>
-<li><p>当正则表达式中带有多个括号时，列表的元素为多个字符串组成的tuple，tuple中字符串个数与括号对数相同，字符串内容与每个括号内的正则表达式相对应，并且排放顺序是按括号出现的顺序。</p>
-</li>
-<li><p>当给出的正则表达式中带有一个括号时，列表的元素为字符串，此字符串的内容与括号中的正则表达式相对应。</p>
-</li>
-</ol>
-<p>###四、re.search()<br>re.search函数会在字符串内查找模式匹配，只要找到第一个匹配就返回，如果字符串没有匹配，则返回None。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">15</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: m = re.search(<span class="string">r'(\w+)ome'</span>, text)</span><br><span class="line"></span><br><span class="line">In [<span class="number">20</span>]: <span class="keyword">if</span> m:</span><br><span class="line">   ....: <span class="keyword">print</span> m.group(<span class="number">0</span>), m.group(<span class="number">1</span>)</span><br><span class="line">   ....: <span class="keyword">else</span>:</span><br><span class="line">   ....: <span class="keyword">print</span> <span class="string">'not search'</span></span><br></pre></td></tr></table></figure>
-<p>其中 group(0）或group()匹配的是整个字符串，group(1)匹配的是第一个括号中内容。   </p>
-<p>###五、re.match()<br>re.match()和re.search()的区别：re.match只匹配字符串的开始，如果字符串开始不符合正则表达式，则匹配失败，函数返回None；而re.search匹配整个字符串，直到找到一个匹配。</p>
-<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">In</span> [30]: s1 = <span class="string">"helloworld, i am 30!"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">In</span> [31]: w1 = 'world'</span><br><span class="line"></span><br><span class="line"><span class="keyword">In</span> [32]: m1 = re.<span class="literal">match</span>(w1, s1)</span><br><span class="line"></span><br><span class="line"><span class="keyword">In</span> [33]: <span class="keyword">if</span> m1:</span><br><span class="line">   ....: 	<span class="keyword">print</span> m1.<span class="literal">group</span>()</span><br><span class="line">   ....: <span class="keyword">else</span>:</span><br><span class="line">   ....: 	<span class="keyword">print</span> <span class="string">"not find"</span></span><br><span class="line">   ....:</span><br><span class="line">not find</span><br></pre></td></tr></table></figure>
-<p>###六、re.sub()<br>re.sub用于替换字符串中的匹配项。<br>下面的例子将字符串中的空格’ ‘替换成’-‘</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">2</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: re.sub(<span class="string">r'\s+'</span>, <span class="string">'-'</span>, text)</span><br><span class="line">Out[<span class="number">3</span>]: <span class="string">'JGood-is-a-handsome-boy,-he-is-cool,-clever,-and-so-on...'</span></span><br></pre></td></tr></table></figure>
-<p><strong>re.sub的函数原型为：re.sub(pattern, repl, string, count)</strong></p>
-<pre><code>其中第二个参数时替换后的字符串；
-第四个参数为替换个数。默认为<span class="number">0</span>，表示每个匹配项都替换。
-</code></pre><p>re.sub还允许使用函数对匹配项的替换进行复杂的处理。如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">re.sub(<span class="string">r'\s'</span>, <span class="keyword">lambda</span> m : <span class="string">'['</span> + m.group(<span class="number">0</span>) + <span class="string">']'</span>, text, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p>将字符串中的空格’‘替换为’[]’。</p>
-<p>###七、re.compile()<br>可以把正则表达式编译成一个正则表达式对象。对于经常要用的正则表达式，可以提高一定的效率。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">4</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: regex = re.compile(<span class="string">r'\w*oo\w*'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: regex.findall(text) <span class="comment">#查找所有包含’oo‘的单词</span></span><br><span class="line">Out[<span class="number">7</span>]: [<span class="string">'JGood'</span>, <span class="string">'cool'</span>]</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: regex.sub(<span class="keyword">lambda</span> m : <span class="string">'['</span> + m.group(<span class="number">0</span>) + <span class="string">']'</span>, text) <span class="comment"># 将字符串中含有’oo‘的单词用[]括起来</span></span><br><span class="line">Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome boy, he is [cool], clever, and so on...'</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/11/10/2015-11-10-python-regex/" data-id="cigtomzja00014jpxgippld7j" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-test-md" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/11/08/test-md/" class="article-date">
-  <time datetime="2015-11-08T15:38:49.000Z" itemprop="datePublished">2015-11-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/11/08/test-md/">test md</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/11/08/test-md/" data-id="cigtolubu00014gpx9iii4t3h" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/11/08/hello-world/" class="article-date">
-  <time datetime="2015-11-08T15:35:54.000Z" itemprop="datePublished">2015-11-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/11/08/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/11/08/hello-world/" data-id="cigtolub100004gpx4o31gcxq" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-2015-11-09-fengyunlu-md" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/11/06/2015-11-09-fengyunlu-md/" class="article-date">
-  <time datetime="2015-11-06T07:09:20.000Z" itemprop="datePublished">2015-11-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/11/06/2015-11-09-fengyunlu-md/">期货大作手风云录 读书笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>#期货大作手风云录 </p>
-<p>###读书笔记</p>
-<p>##一、趋势</p>
-<ol>
-<li><strong>投机法则之一：放鱼头，弃鱼尾，吃鱼肚。一个品种的趋势行情分为鱼头、鱼肚和鱼尾行情。鱼头行情往往是趋势行情初始起步阶段，你很难分期是反转还是反弹，所以很难吃到。鱼尾行情往往是一波趋势行情的末端，最大的特点是连续的逼空或者逼多，一方认输出局，所谓多头不死空头不止，这种鱼尾行情随时有可能反转或者巨幅震荡，不吃也罢。而在我看来，我们期货作手真正需要去大吃、狠吃的阶段是鱼肚行情，此时趋势已成，行情进三退一，这是才是我们需要重仓且不断浮盈加仓大口吃肉的好时机。</strong></li>
-<li><strong>判断大势的方法有很多，有通过技术面判断的，也有通过基本面判断的，但今天要强调只有两点：第一，政治大于经济。当你做多或者做空某商品时，首先考虑的不应该是供需关系，而是该商品的政治因素。简单点说，现在的世界超级大国仍然是美国，如果你发现近期由于政治原因需要石油价格上涨时，即使供需和技术面都支持你做空，你也应该果断放弃。特别是石油、铜、黄金这类关系到美国切身利益的期货品种，尤其不能和美国政府对着干。</strong></li>
-<li><strong>关于如何判断大势的第二点，我要强调的是：整体趋势大于个体趋势。具体来说，当大多数商品都处于上涨周期时，不要轻易去做空任何一个商品，特别是对于股票市场来说，如果现在大势处于熊市，即使基本面和技术面再好的股票，也不要去做多。切记这一点。</strong></li>
-<li><strong>如果市场处于牛市中，而某个商品或者股票没有上涨，这反而是去做多它的好时机呢？ 错。做多只做龙头，做空只做熊头。记住，股价永远不会因为太高二停止上涨，同样的，股价也永远不会因为太低而停止下跌。重势不重价。只有龙头和熊头才会带给你超额的利润，其他的品种根本没必要去关注他们。</strong></li>
-<li><strong>期货市场的行情分为趋势行情和震荡行情。市场的80%的时间都处于震荡行情之中，只有20%的趋势行情才能让我们赚大钱。但遗憾的是，绝大多数投机者总想抓住市场的每一个机会，总想像上班一样每天都能赚到钱，结果是在80%的震荡行情中赔掉了大部分的钱。周而复始，恶性循环。</strong></li>
-</ol>
-<p>##二、法则</p>
-<ol>
-<li><strong>“止语”的修行方法来自佛法的戒定慧：先戒，戒能生定，而定后能生慧。此乃佛法的博大精深也！</strong></li>
-<li><p><strong>行情在绝望中产生，行情在犹豫中发展，行情在热闹中高潮，行情在兴奋中灭亡。</strong></p>
-</li>
-<li><p><strong>有人的地方就有江湖，有资金的地方就有大行情。这句话在期货里一点不假。</strong></p>
-</li>
-<li><strong>草原生物链中最厉害的角色是鳄鱼。因为鳄鱼有足够的耐心、信心和狠心。所谓耐心，就是指鳄鱼从来不随便游来游去去寻找猎物，这样多半是白白耗费体力。鳄鱼总是耐心的潜伏在水塘里，趴在猎物必须要喝水的地方，静静地耐心等待猎物自己找上门来；所谓信心，就是指鳄鱼不管几天没有遇到猎物，即使他已经饥肠辘辘，但他还会继续有信心的待在原地等待猎物，直到猎物出现；所谓狠心，就是指一旦猎物出现在鳄鱼的射程之内，它会毫不犹豫的发起攻击，一击致命，绝不嘴软，直到把猎物彻底咬死。鳄鱼的这三个特点，决定了他能在物竞天择的生物链里顽强的活到现在。而这三个特点，也是我们期货作手最需要具备的。</strong></li>
-<li><strong>简单的事实是，行情总是先发生变化，然后才有经济新闻，市场不会对经济新闻作出反应。市场是活的，它反映的是将来。因此，企图genuine当前的经济新闻和当前的事件预测股市的走势是非常愚蠢的。贪婪和恐惧一样，都会扭曲理性。股市只讲事实，只讲现实，只讲理性，股市永远不会错，错的是交易者。</strong></li>
-<li><strong>投资法则：只相信自己的眼睛，不要相信自己的耳朵！只相信自己的大脑，不要相信别人的建议！</strong></li>
-<li><strong>期货最怕的就是快！很多时候，快就是慢！快的同义词就是风险。当你的账户盈利曲线越陡峭，你越应该引起高度的警惕，因为快速的都是短暂的，只有缓慢的才是稳定的。切记，做期货比的不是谁赢得多，而是看谁活得长。切记！</strong></li>
-<li><strong>人如果犯错误，那用不了一个月就能拥有整个世界。但是反过来，如果一个人不能从自己的错误中汲取经验教训，他迟早一文不名。</strong></li>
-<li><strong>投机于赌博的最大区别在于是否拥有大局观。</strong></li>
-</ol>
-<p>##操作</p>
-<ol>
-<li><p><strong>期货的魅力在于浮盈加仓，只有不断的浮盈加仓，我们才能赚取超额的巨大利润。但浮盈加仓的勇气来源于哪里？只有不断的盈利才是我们加仓的勇气！这就像你去带一支军队打仗，什么才是你们官兵不断勇敢冲锋的动力？唯有胜利！只有你的账户不断盈利了，你才有勇气去加仓，去继续以小搏大。</strong></p>
-</li>
-<li><p><strong>期货行业内有一句话，叫做：赚或赔靠本事，赚多赚少靠运气。也就是说，如果你赔了，那是你分析不到位，说明你没本事，如果你赚了，那么赚多赚少就要靠运气和天意了。</strong></p>
-</li>
-<li><p><strong>从某种意义上来说，投资并不是一个天道酬勤的行业。这个行业的秘诀在于节奏。会买的是徒弟，会卖的是师父，会空仓休息的是大事。对于期货作手来说，等待和寂寞也许是陪伴他一生的修炼法门。</strong></p>
-</li>
-<li><p><strong>既然是重仓，为什么利弗莫尔还要逐步建仓？为什么不能一次性重仓呢？那是因为谁也不敢保证自己一定是对的。只有账单上的盈利数字会告诉你对还是错，盈利了就加仓，亏损了就止损，让盈利奔跑，让亏损尽快了结。这是投机的不二法则。</strong></p>
-</li>
-<li><p><strong>一旦我们试仓之后市场朝着有利于我们的方向行进，我们有了浮盈，那么就开始倒金字塔加仓，就像利弗莫尔那样，1，2，4，8似的加仓，这样你的仓位自然就上来了，记住，股票永远不会因为价格太高而不可买进，或者因为价格太低而不可卖出。在你第一笔交易之后，除非第一笔交易有利润，否则就不可做第二笔。切记！</strong></p>
-</li>
-<li><p><strong>股市不是法庭，他不会跟你讲道理。股市更像是战场，他只会用实力去说话。打仗靠枪，炒股靠钱。所以，钱就是股票上涨的最终动力。当你发现一只股票价格开始不断上涨时，我们不用去刻意分析股票上涨的背后原因是什么，不要去打探他的消息，也不用去分析他的基本面有何变化，你只需去判断一个问题，是不是有大资金入场买股票了？只要有钱进来，什么技术面，什么基本面，什么重组消息，都会陆陆续续浮出水面的。原因很简单，大资金绝不会随随便便买入一只股票，他一定会把后面的故事给你讲得圆圆满满的！</strong></p>
-</li>
-<li><p><strong>原来人面来到投机市场的目的是不同的：有人是来过瘾的，因为频繁交易本身会带来快感；有的是来逛街的，只看不买，娱乐而已；还有极少数人是来赚钱的，他们需要时刻克制自己交易的冲动。。。</strong></p>
-</li>
-<li><p><strong>有句话说得好：在市场里，多头可以赚钱，空头也可以赚钱，但滑头早晚会死掉。</strong></p>
-</li>
-<li><p><strong>市场趋势显示下跌，但政府希望绿豆止跌，当市场和政府观点相反时，我选择空仓观望。期货比的不是谁赚的最多，而是比谁活得最长。方向不明时，空仓就是最好的策略。</strong></p>
-</li>
-<li><p><strong>期货往往就是这样，一开始就出现浮亏的持仓往往最终都很难赚钱。好的开始是成功的一半，这话在期货市场一点不假。</strong></p>
-</li>
-<li><p><strong>期货是个概率游戏。我们这些期货作手终生追求的目标只有一个：大赚小赔。也就是说，100次交易中，你失败90次也没关系，关键是如何在你作对的10次交易中，把盈利放大到远远超过你做错的90次亏损。</strong></p>
-</li>
-<li><p><strong>绝不能让自己盈利的单子变为亏损！这是期货投机的重要原则。以做多为例，随着你的分步建仓，你的持仓成本是在不断提高的，由于你是浮盈加仓，所以你应该是一直处于盈利中的，而盈利中的单子需要设立止盈点，这个止盈点就应该设立在你的持仓成本之上。一旦市场发生反向波动，如果触及到你的止盈点，你就应该毫不犹豫的平仓止盈。绝对不能让你原来盈利的单子面临亏损的可能，这是原则问题。止盈点因人而异，我的个人习惯是把止盈点设在最近的一次加仓点上。我的逻辑很简单：如果市场价格跌破了我的最近一次加仓点，那至少说明我这最后一次加仓的时机是错误的。既然错误了，我就要付出代价，所谓的代价就是全部平仓出局观望。我绝对不允许自己的盈利单变成亏损单。</strong></p>
-</li>
-<li><p><strong>在我看来，股票基本面分析的精髓不在于分析公司未来的盈利能力，而在于分析公司股票的供求关系。简单来说，就是在股市里，到底是买股票的人多？还是卖股票的人多？如果在一段时间内，主动卖股票的人大大多于卖股票的人，那就是供不应求，股价就会持续上涨，反之，如果主动卖股票的人多于买股票的人，那就是供大于求，股价就会持续下跌。供求决定价格，这才是我理解的基本面分析。</strong></p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/11/06/2015-11-09-fengyunlu-md/" data-id="cigtomzj100004jpxjr3w42b7" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-  
+    <time datetime="2015-11-10T07:09:20.000Z" itemprop="datePublished">2015-11-10</time>
+  </a>
 </section>
-        
-          <aside id="sidebar">
+
+  <section class="post" itemscope itemprop="blogPost">
   
+    <a href="/2015/11/06/2015-11-09-fengyunlu-md/" title="期货大作手风云录 读书笔记" itemprop="url">
+  
+    <h1 itemprop="name">期货大作手风云录 读书笔记</h1>
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
-    <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">1</span></li></ul>
-    </div>
-  </div>
+     
+           <p itemprop="description" >#期货大作手风云录 
+###读书笔记
+##一、趋势
+
+投机法则之一：放鱼头，弃鱼尾，吃鱼肚。一个品种的趋势行情分为鱼头、鱼肚和鱼尾行情。鱼头行情往往是趋势行情初始起步阶段，你很难分期是反转还是反弹，所以很难吃到。鱼尾行情往往是一波趋势行情的末端，最大的特点是连续的逼空或者逼多，一</p>
+        
+    
+    <time datetime="2015-11-06T07:09:20.000Z" itemprop="datePublished">2015-11-06</time>
+  </a>
+</section>
+
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
 
   
-    
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">November 2015</a><span class="archive-list-count">4</span></li></ul>
-    </div>
-  </div>
+<div class="categorieslist">
+	<p class="asidetitle">分類</p>
+		<ul>
+		
+			<li><a href="/categories/Python/" title="Python">Python<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Stock/" title="Stock">Stock<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
 
   
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recents</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2015/11/10/2015-11-10-python-regex/">Python正则表达式</a>
-          </li>
-        
-          <li>
-            <a href="/2015/11/08/test-md/">test md</a>
-          </li>
-        
-          <li>
-            <a href="/2015/11/08/hello-world/">Hello World</a>
-          </li>
-        
-          <li>
-            <a href="/2015/11/06/2015-11-09-fengyunlu-md/">期货大作手风云录 读书笔记</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
 
-  
+  <div class="rsspart">
+	<a href="null" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
 </aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2015 John Doe<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+</div>
     </div>
-  </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2015 
+		
+		<a href="http://yoursite.com" target="_blank" title="Binger">Binger</a>
+		
+		</p>
+</div>
 </footer>
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
 
 
-<script src="/js/script.js" type="text/javascript"></script>
 
-  </div>
-</body>
-</html>
+
+  </body>
+ </html>
