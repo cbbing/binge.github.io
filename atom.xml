@@ -1,278 +1,26 @@
-<!doctype html>
-<html class="theme-next   use-motion ">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-
-
-
-
-
-
-
-
-
-  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
-
-
-
-
-  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-
-
-
-<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
-
-
-  <meta name="keywords" content="Hexo, NexT" />
-
-
-
-
-
-  <link rel="alternate" href="/atom.xml" title="Binger‘s Blog" type="application/atom+xml" />
-
-
-
-
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
-
-
-
-
-
-
-<meta name="description" content="learn python and invest">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Binger‘s Blog">
-<meta property="og:url" content="http://www.kekefund.com/index.html">
-<meta property="og:site_name" content="Binger‘s Blog">
-<meta property="og:description" content="learn python and invest">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Binger‘s Blog">
-<meta name="twitter:description" content="learn python and invest">
-
-
-
-<script type="text/javascript" id="hexo.configuration">
-  var CONFIG = {
-    scheme: '',
-    sidebar: 'always',
-    motion: true
-  };
-</script>
-
-  <title> Binger‘s Blog </title>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
-
-  <!--[if lte IE 8]>
-  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
-    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
-      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
-           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
-           style='margin-left:auto;margin-right:auto;display: block;'/>
-    </a>
-  </div>
-<![endif]-->
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[Binger‘s Blog]]></title>
+  <subtitle><![CDATA[Python and Quant]]></subtitle>
+  <link href="/atom.xml" rel="self"/>
+  <link href="http://www.kekefund.com/"/>
+  <updated>2015-11-19T04:33:05.000Z</updated>
+  <id>http://www.kekefund.com/</id>
   
-
-
-
-  <script type="text/javascript">
-    var _hmt = _hmt || [];
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "//hm.baidu.com/hm.js?m.js?e87c925c2a21a995f534449c43";
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(hm, s);
-    })();
-  </script>
-
-
-
-
-  <div class="container one-column 
-   page-home 
-">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
+  <author>
+    <name><![CDATA[Binger]]></name>
+    <email><![CDATA[cbbing@163.com]]></email>
+  </author>
   
-
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">Binger‘s Blog</span>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-  <p class="site-subtitle">Python and Quant</p>
-</div>
-
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
-</div>
-
-<nav class="site-nav">
+  <generator uri="http://hexo.io/">Hexo</generator>
   
-
-  
-    <ul id="menu" class="menu ">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
-            
-              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
-            
-            归档
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags" rel="section">
-            
-              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
-            
-            标签
-          </a>
-        </li>
-      
-
-      
-      
-    </ul>
-  
-
-  
-</nav>
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div id="content" class="content">
-          
-  <section id="posts" class="posts-expand">
-
-    
-
-    
-    
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/11/17/2015-11-17-pytho-ip-proxy/" itemprop="url">
-                  IP代理池的Python实现
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-11-17T17:41:46+08:00" content="2015-11-17">
-              2015-11-17
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2015/11/17/2015-11-17-pytho-ip-proxy/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/17/2015-11-17-pytho-ip-proxy/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-              <p>爬虫采集数据时，如果频繁的访问某个网站，会被封IP，有些是禁止访问3小时，有些是直接拉黑名单。为了避免被禁，一般采取的措施有三种：</p>
+  <entry>
+    <title><![CDATA[IP代理池的Python实现]]></title>
+    <link href="http://www.kekefund.com/2015/11/17/2015-11-17-pytho-ip-proxy/"/>
+    <id>http://www.kekefund.com/2015/11/17/2015-11-17-pytho-ip-proxy/</id>
+    <published>2015-11-17T09:41:46.000Z</published>
+    <updated>2015-11-19T04:33:05.000Z</updated>
+    <content type="html"><![CDATA[<p>爬虫采集数据时，如果频繁的访问某个网站，会被封IP，有些是禁止访问3小时，有些是直接拉黑名单。为了避免被禁，一般采取的措施有三种：</p>
 <blockquote>
 <ol>
 <li>放慢抓取的速度，设置一个时间间隔；</li>
@@ -364,109 +112,28 @@ def <span class="function"><span class="title">test_ip_speed</span><span class="
 
         df.to_excel(file_name)
 </code></pre><p>生成的excel文件如下：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/ip_results.png" alt="results"></p>
-
-            
-          </span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>爬虫采集数据时，如果频繁的访问某个网站，会被封IP，有些是禁止访问3小时，有些是直接拉黑名单。为了避免被禁，一般采取的措施有三种：</p>
+<blockquote>
+<ol>
+<li>放慢抓取的速度，设置一个时间间隔；</li>
+<li>模拟浏览器行为，如采用Seleniu]]>
+    </summary>
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
+      <category term="Python, 爬虫, IP代理" scheme="http://www.kekefund.com/tags/Python-%E7%88%AC%E8%99%AB-IP%E4%BB%A3%E7%90%86/"/>
     
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/11/10/2015-11-10-python-regex/" itemprop="url">
-                  Python正则表达式
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-11-10T15:09:20+08:00" content="2015-11-10">
-              2015-11-10
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2015/11/10/2015-11-10-python-regex/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/10/2015-11-10-python-regex/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
+      <category term="Python" scheme="http://www.kekefund.com/categories/Python/"/>
     
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-              <p>许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Python正则表达式]]></title>
+    <link href="http://www.kekefund.com/2015/11/10/2015-11-10-python-regex/"/>
+    <id>http://www.kekefund.com/2015/11/10/2015-11-10-python-regex/</id>
+    <published>2015-11-10T07:09:20.000Z</published>
+    <updated>2015-11-19T04:32:27.000Z</updated>
+    <content type="html"><![CDATA[<p>许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
 <p><strong>下表为正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>
 <h2 id="贪婪模式与非贪婪模式">贪婪模式与非贪婪模式</h2><p>Python里数量词默认是贪婪的（在少数语言里也可能是默认非贪婪），总是尝试匹配尽可能多的字符；非贪婪的则相反，总是尝试匹配尽可能少的字符。<br>例如：正则表达式 “ab<em>”，如果用于查找“abbbc”，将找到“abbb”。而如果使用非贪婪的数量词“ab\</em>?“，将找到”a“</p>
 <ol>
@@ -615,109 +282,25 @@ Out[<span class="number">7</span>]: [<span class="string">'JGood'</span>, <span 
 
 In [<span class="number">8</span>]: regex.sub(<span class="keyword">lambda</span> m : <span class="string">'['</span> + m.group(<span class="number">0</span>) + <span class="string">']'</span>, text) <span class="comment"># 将字符串中含有’oo‘的单词用[]括起来</span>
 Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome boy, he is [cool], clever, and so on...'</span>
-</code></pre>
-            
-          </span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
+</code></pre>]]></content>
+    <summary type="html">
+    <![CDATA[<p>许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
+<p><strong>下表为正]]>
+    </summary>
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
+      <category term="Python, re, 正则表达式, 模式匹配" scheme="http://www.kekefund.com/tags/Python-re-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/"/>
     
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/11/06/2015-11-09-fengyunlu-md/" itemprop="url">
-                  期货大作手风云录 读书笔记
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-11-06T15:09:20+08:00" content="2015-11-06">
-              2015-11-06
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Stock/" itemprop="url" rel="index">
-                    <span itemprop="name">Stock</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2015/11/06/2015-11-09-fengyunlu-md/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/06/2015-11-09-fengyunlu-md/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
+      <category term="Python" scheme="http://www.kekefund.com/categories/Python/"/>
     
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-              <h1 id="期货大作手风云录">期货大作手风云录</h1><h3 id="读书笔记">读书笔记</h3><h2 id="一、趋势">一、趋势</h2><ol>
+  </entry>
+  
+  <entry>
+    <title><![CDATA[期货大作手风云录 读书笔记]]></title>
+    <link href="http://www.kekefund.com/2015/11/06/2015-11-09-fengyunlu-md/"/>
+    <id>http://www.kekefund.com/2015/11/06/2015-11-09-fengyunlu-md/</id>
+    <published>2015-11-06T07:09:20.000Z</published>
+    <updated>2015-11-19T04:31:47.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="期货大作手风云录">期货大作手风云录</h1><h3 id="读书笔记">读书笔记</h3><h2 id="一、趋势">一、趋势</h2><ol>
 <li><strong>投机法则之一：放鱼头，弃鱼尾，吃鱼肚。一个品种的趋势行情分为鱼头、鱼肚和鱼尾行情。鱼头行情往往是趋势行情初始起步阶段，你很难分期是反转还是反弹，所以很难吃到。鱼尾行情往往是一波趋势行情的末端，最大的特点是连续的逼空或者逼多，一方认输出局，所谓多头不死空头不止，这种鱼尾行情随时有可能反转或者巨幅震荡，不吃也罢。而在我看来，我们期货作手真正需要去大吃、狠吃的阶段是鱼肚行情，此时趋势已成，行情进三退一，这是才是我们需要重仓且不断浮盈加仓大口吃肉的好时机。</strong></li>
 <li><strong>判断大势的方法有很多，有通过技术面判断的，也有通过基本面判断的，但今天要强调只有两点：第一，政治大于经济。当你做多或者做空某商品时，首先考虑的不应该是供需关系，而是该商品的政治因素。简单点说，现在的世界超级大国仍然是美国，如果你发现近期由于政治原因需要石油价格上涨时，即使供需和技术面都支持你做空，你也应该果断放弃。特别是石油、铜、黄金这类关系到美国切身利益的期货品种，尤其不能和美国政府对着干。</strong></li>
 <li><strong>关于如何判断大势的第二点，我要强调的是：整体趋势大于个体趋势。具体来说，当大多数商品都处于上涨周期时，不要轻易去做空任何一个商品，特别是对于股票市场来说，如果现在大势处于熊市，即使基本面和技术面再好的股票，也不要去做多。切记这一点。</strong></li>
@@ -765,207 +348,16 @@ Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome 
 <li><p><strong>在我看来，股票基本面分析的精髓不在于分析公司未来的盈利能力，而在于分析公司股票的供求关系。简单来说，就是在股市里，到底是买股票的人多？还是卖股票的人多？如果在一段时间内，主动卖股票的人大大多于卖股票的人，那就是供不应求，股价就会持续上涨，反之，如果主动卖股票的人多于买股票的人，那就是供大于求，股价就会持续下跌。供求决定价格，这才是我理解的基本面分析。</strong></p>
 </li>
 </ol>
-
-            
-          </span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="期货大作手风云录">期货大作手风云录</h1><h3 id="读书笔记">读书笔记</h3><h2 id="一、趋势">一、趋势</h2><ol>
+<li><strong>投机法则之一：放鱼头，弃鱼尾，吃鱼肚。一个品种的趋势行情分为鱼头、鱼肚和鱼尾行情。鱼头行情往]]>
+    </summary>
     
-
-  </section>
-
-  
-
-
-        </div>
-
-        
-
-
-        
-
-      </div>
-
-      
-        
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
-
-      
-
-      
-
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
-          <p class="site-author-name" itemprop="name">Binger</p>
-        </div>
-        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
-        <nav class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">3</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
-
-          <div class="site-state-item site-state-categories">
-            
-              <span class="site-state-item-count">2</span>
-              <span class="site-state-item-name">分类</span>
-              
-          </div>
-
-          <div class="site-state-item site-state-tags">
-            <a href="/tags">
-              <span class="site-state-item-count">3</span>
-              <span class="site-state-item-name">标签</span>
-              </a>
-          </div>
-
-        </nav>
-
-        
-          <div class="feed-link motion-element">
-            <a href="/atom.xml" rel="alternate">
-              <i class="fa fa-rss"></i>
-              RSS
-            </a>
-          </div>
-        
-
-        <div class="links-of-author motion-element">
-          
-        </div>
-
-        
-        
-
-        <div class="links-of-author motion-element">
-          
-        </div>
-
-      </section>
-
-      
-
-    </div>
-  </aside>
-
-
-      
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright" >
-  
-  &copy; 
-  <span itemprop="copyrightYear">2015</span>
-  <span class="with-love">
-    <i class="icon-next-heart fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Binger</span>
-</div>
-
-<div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT
-  </a>
-</div>
-
-
-
-      </div>
-    </footer>
-
-    <div class="back-to-top"></div>
-  </div>
-
-  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
-
-  
-  
-
-  
+      <category term="期货, 股票, 投资" scheme="http://www.kekefund.com/tags/%E6%9C%9F%E8%B4%A7-%E8%82%A1%E7%A5%A8-%E6%8A%95%E8%B5%84/"/>
     
-
-  
+      <category term="Stock" scheme="http://www.kekefund.com/categories/Stock/"/>
     
+  </entry>
   
-
-  <script type="text/javascript">
-    var duoshuoQuery = {short_name:"cbbing"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-  </script>
-    
-     
-
-
-    
-  
-
-  
-  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
-  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
-
-
-  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
-  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
-<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
-
-<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
-
-
-  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-
-  
-
-  <script type="text/javascript" src="/js/bootstrap.js"></script>
-
-  
-  
-
-  
-  
-
-</body>
-</html>
+</feed>
