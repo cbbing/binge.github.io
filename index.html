@@ -90,12 +90,21 @@
   
 
 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
 
   <script type="text/javascript">
     var _hmt = _hmt || [];
     (function() {
       var hm = document.createElement("script");
-      hm.src = "//hm.baidu.com/hm.js?m.js?e87c925c2a21a995f534449c43";
+      hm.src = "//hm.baidu.com/hm.js?e87c925c2a21a995f534449c438f1c5a";
       var s = document.getElementsByTagName("script")[0];
       s.parentNode.insertBefore(hm, s);
     })();
@@ -270,9 +279,7 @@
 
       
         
-          <span itemprop="articleBody">
-            
-              <p>爬虫采集数据时，如果频繁的访问某个网站，会被封IP，有些是禁止访问3小时，有些是直接拉黑名单。为了避免被禁，一般采取的措施有三种：</p>
+          <p>爬虫采集数据时，如果频繁的访问某个网站，会被封IP，有些是禁止访问3小时，有些是直接拉黑名单。为了避免被禁，一般采取的措施有三种：</p>
 <blockquote>
 <ol>
 <li>放慢抓取的速度，设置一个时间间隔；</li>
@@ -280,7 +287,7 @@
 <li>设置IP代理，定期更换代理IP，让网站不认为来自一个IP。</li>
 </ol>
 </blockquote>
-<p>本文实现其中的第三种方法。<br>国内提供IP代理的网站有很多，我们以其中的一个为例：<a href="http://www.haodailiip.com" target="_blank" rel="external">http://www.haodailiip.com</a><br>分为三步来实现这个IP抓取类：</p>
+<p>本文实现其中的第三种方法。<br>国内提供IP代理的网站有很多，我们以其中的一个为例：<a href="http://www.haodailiip.com">http://www.haodailiip.com</a><br>分为三步来实现这个IP抓取类：</p>
 <blockquote>
 <ol>
 <li>解析网页中的IP和端口</li>
@@ -288,85 +295,11 @@
 <li>按速度从快到慢排序，保存到文件</li>
 </ol>
 </blockquote>
-<h2 id="一、解析网页中的IP和端口">一、解析网页中的IP和端口</h2><p>抓取网页采用的是<font color="red"> urlib + BeautifulSoup</font>。<br>解析网站：<a href="http://www.haodailiip.com/guonei/page" target="_blank" rel="external">http://www.haodailiip.com/guonei/page</a>，page=1,2…,10</p>
-<pre><code>def <span class="function"><span class="title">parse</span><span class="params">(url)</span></span>:
-        try:
-            page = urllib.<span class="function"><span class="title">urlopen</span><span class="params">(url)</span></span>
-            data =  page.<span class="function"><span class="title">read</span><span class="params">()</span></span>
-            soup = <span class="function"><span class="title">BeautifulSoup</span><span class="params">(data, <span class="string">"html5lib"</span>)</span></span>
-            print soup.<span class="function"><span class="title">get_text</span><span class="params">()</span></span>
-            body_data = soup.<span class="function"><span class="title">find</span><span class="params">(<span class="string">'table'</span>, attrs={<span class="string">'class'</span>:<span class="string">'content_table'</span>})</span></span>
-            res_list = body_data.<span class="function"><span class="title">find_all</span><span class="params">(<span class="string">'tr'</span>)</span></span>
-            <span class="keyword">for</span> res <span class="keyword">in</span> res_list:
-                each_data = res.<span class="function"><span class="title">find_all</span><span class="params">(<span class="string">'td'</span>)</span></span>
-                <span class="keyword">if</span> <span class="function"><span class="title">len</span><span class="params">(each_data)</span></span> &gt; <span class="number">3</span> and not <span class="string">'IP'</span> <span class="keyword">in</span> each_data[<span class="number">0</span>].<span class="function"><span class="title">get_text</span><span class="params">()</span></span> and <span class="string">'.'</span> <span class="keyword">in</span> each_data[<span class="number">0</span>].<span class="function"><span class="title">get_text</span><span class="params">()</span></span>:
-                    print each_data[<span class="number">0</span>].<span class="function"><span class="title">get_text</span><span class="params">()</span></span>.<span class="function"><span class="title">strip</span><span class="params">()</span></span>, each_data[<span class="number">1</span>].<span class="function"><span class="title">get_text</span><span class="params">()</span></span>.<span class="function"><span class="title">strip</span><span class="params">()</span></span>
-                    item = <span class="function"><span class="title">IPItem</span><span class="params">()</span></span>
-                    item<span class="class">.ip</span> = each_data[<span class="number">0</span>].<span class="function"><span class="title">get_text</span><span class="params">()</span></span>.<span class="function"><span class="title">strip</span><span class="params">()</span></span>
-                    item<span class="class">.port</span> = each_data[<span class="number">1</span>].<span class="function"><span class="title">get_text</span><span class="params">()</span></span>.<span class="function"><span class="title">strip</span><span class="params">()</span></span>
-                    item<span class="class">.addr</span> = each_data[<span class="number">2</span>].<span class="function"><span class="title">get_text</span><span class="params">()</span></span>.<span class="function"><span class="title">strip</span><span class="params">()</span></span>
-                    item<span class="class">.tpye</span> = each_data[<span class="number">3</span>].<span class="function"><span class="title">get_text</span><span class="params">()</span></span>.<span class="function"><span class="title">strip</span><span class="params">()</span></span>
-                    self<span class="class">.ip_items</span><span class="class">.append</span>(item)
-        except Exception,e:
-            print e
-</code></pre><p>BeautifulSoup默认的解析器是lxml，但对于这个网址，发现网页内容解析的不完整，于是用了解析性最好的 html5lib，速度上会稍慢。<br>关于BeautifulSoup解析器的介绍见<a href="http://www.crummy.com/software/BeautifulSoup/bs4/doc.zh/#id9" target="_blank" rel="external">http://www.crummy.com/software/BeautifulSoup/bs4/doc.zh/#id9</a>。<br>BS解析的过程是：</p>
-<ul>
-<li>先找到table class=”content_table”的标签；</li>
-<li>在从上面的内容中找所有tr</li>
-<li>我们需要的信息在tr的td中</li>
-<li>结果存入IPItem类。</li>
-</ul>
-<p><strong>IPItem的定义</strong></p>
-<pre><code><span class="class"><span class="keyword">class</span> <span class="title">IPItem</span>:</span>
-    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span>
-        self.ip = <span class="string">''</span>    <span class="comment"># IP</span>
-        self.port = <span class="string">''</span>  <span class="comment"># Port</span>
-        self.addr = <span class="string">''</span>  <span class="comment"># 位置</span>
-        self.tpye = <span class="string">''</span>  <span class="comment">#类型:http; https</span>
-        self.speed = -<span class="number">1</span> <span class="comment">#速度</span>
-</code></pre><h2 id="二、Ping所有IP地址的连接速度">二、Ping所有IP地址的连接速度</h2><pre><code>import pexpect
-def <span class="function"><span class="title">test_ip_speed</span><span class="params">(ip_items)</span></span>:
-    tmp_items = []
-    <span class="keyword">for</span> item <span class="keyword">in</span> ip_items:
-
-        (command_output, exitstatus) = pexpect.<span class="function"><span class="title">run</span><span class="params">(<span class="string">"ping -c1 %s"</span> % item.ip, timeout=<span class="number">5</span>, withexitstatus=<span class="number">1</span>)</span></span>
-        <span class="keyword">if</span> exitstatus == <span class="number">0</span>:
-            print command_output
-            m = re.<span class="function"><span class="title">search</span><span class="params">(<span class="string">"time=([\d\.]+)"</span>, command_output)</span></span>
-            <span class="keyword">if</span> m:
-                print <span class="string">'time='</span>, m.<span class="function"><span class="title">group</span><span class="params">(<span class="number">1</span>)</span></span>
-                item<span class="class">.speed</span> = <span class="function"><span class="title">float</span><span class="params">(m.group(<span class="number">1</span>)</span></span>)
-                tmp_items.<span class="function"><span class="title">append</span><span class="params">(item)</span></span>
-
-   ip_items = tmp_items
-</code></pre><p>主要是利用pexpect模块调用系统的ping命令，上面代码在mac 10.11.1下测试通过。</p>
-<h2 id="三、按速度从快到慢排序，保存至文件">三、按速度从快到慢排序，保存至文件</h2><p>保存至文件利用pandas模块，只需一句代码即可搞定。</p>
-<ol>
-<li>先把ip_items转换成pandas的DataFrame；</li>
-<li>排序，df.sort_index()，按’Speed’列排序；</li>
-<li>结果写入Excel文件，to_excel()</li>
-</ol>
-<pre><code><span class="function"><span class="keyword">def</span> <span class="title">save_data</span><span class="params">(self)</span>:</span>
-        df = DataFrame({<span class="string">'IP'</span>:[item.ip <span class="keyword">for</span> item <span class="keyword">in</span> ip_items],
-                        <span class="string">'Port'</span>:[item.port <span class="keyword">for</span> item <span class="keyword">in</span> self.ip_items],
-                        <span class="string">'Addr'</span>:[item.addr <span class="keyword">for</span> item <span class="keyword">in</span> self.ip_items],
-                        <span class="string">'Type'</span>:[item.tpye <span class="keyword">for</span> item <span class="keyword">in</span> self.ip_items],
-                        <span class="string">'Speed'</span>:[item.speed <span class="keyword">for</span> item <span class="keyword">in</span> self.ip_items]
-                        }, columns=[<span class="string">'IP'</span>, <span class="string">'Port'</span>, <span class="string">'Addr'</span>, <span class="string">'Type'</span>, <span class="string">'Speed'</span>])
-        <span class="keyword">print</span> df[:<span class="number">10</span>]
-        df[<span class="string">'Time'</span>] = GetNowTime()
-        df = df.sort_index(by=<span class="string">'Speed'</span>)
-
-        now_data = GetNowDate()
-
-
-        file_name = self.dir_path +<span class="string">'ip_proxy_'</span> + now_data + <span class="string">'.xlsx'</span>
-
-        df.to_excel(file_name)
-</code></pre><p>生成的excel文件如下：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/ip_results.png" alt="results"></p>
-
-            
-          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/11/17/2015-11-17-pytho-ip-proxy/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -464,160 +397,13 @@ def <span class="function"><span class="title">test_ip_speed</span><span class="
 
       
         
-          <span itemprop="articleBody">
-            
-              <p>许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
+          <p>许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
 <p><strong>下表为正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>
-<h2 id="贪婪模式与非贪婪模式">贪婪模式与非贪婪模式</h2><p>Python里数量词默认是贪婪的（在少数语言里也可能是默认非贪婪），总是尝试匹配尽可能多的字符；非贪婪的则相反，总是尝试匹配尽可能少的字符。<br>例如：正则表达式 “ab<em>”，如果用于查找“abbbc”，将找到“abbb”。而如果使用非贪婪的数量词“ab\</em>?“，将找到”a“</p>
-<ol>
-<li><p>*? 是一个固定的搭配，.和*代表可以匹配任意无限多个字符，加上？表示使用非贪婪模式进行匹配，也就是我们会尽可能短地做匹配。</p>
-</li>
-<li><p>(.*?)代表一个分组，在这个正则表达式中我们匹配了五个分组，在后面的遍历item中，item[0]就代表第一个(.*?)所指代的内容，item[1]就代表第二个(.*?)所指代的内容，以此类推。</p>
-</li>
-<li><p>re.S 标志代表在匹配时为点任意匹配模式，点 . 也可以代表换行符。</p>
-</li>
-</ol>
-<h2 id="re模块">re模块</h2><h3 id="一、re-search()">一、re.search()</h3><p>使用正则表达式&lt;<ed$>&gt;查找以ed结尾的词汇。使用函数re.search(p, s) 检查字符串s中是否有模式p。</ed$></p>
-<pre><code><span class="keyword">import</span> re
-<span class="keyword">import</span> nltk
-In[<span class="number">12</span>]: wsj = sorted(set(nltk.corpus.treebank.word()))
-In[<span class="number">13</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'ed$'</span>, w)]
-
-In[<span class="number">15</span>]: ws[:<span class="number">10</span>]
-Out[<span class="number">15</span>]: 
-[<span class="string">u'62%-owned'</span>,<span class="string">u'Absorbed'</span>,<span class="string">u'Advanced'</span>,<span class="string">u'Alfred'</span>, <span class="string">u'Allied'</span>, <span class="string">u'Annualized'</span>, <span class="string">u'Arbitrage-related'</span>,
- <span class="string">u'Asked'</span>,<span class="string">u'Atlanta-based'</span>, <span class="string">u'Bermuda-based'</span>]
-</code></pre><p>通配符“.”可以用来匹配任何单个字符。假设有一个8个字母组成的字谜，j是第三个字母，t是第六个字母。每个空白单元格用句点隔开。</p>
-<pre><code>In[<span class="number">16</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^..j..t..$'</span>, w)]
-In[<span class="number">18</span>]: ws
-Out[<span class="number">18</span>]: [<span class="string">u'adjusted'</span>, <span class="string">u'rejected'</span>]
-</code></pre><p>匹配除元音字母之外的所有字母</p>
-<pre><code><span class="collection">[<span class="comment">^aeiouAEIOU</span>]</span>
-</code></pre><p><strong>?:</strong><br>如果要使用括号来指定连接的范围，又不想选择要输出字符串，必须添加“?:”。</p>
-<pre><code>In[<span class="number">20</span>]: re.findall(<span class="string">r'^.*(?:ing|ly|ed|ies)$'</span>, <span class="string">'processing'</span>)
-Out[<span class="number">20</span>]: [<span class="string">'processing'</span>]
-</code></pre><p>演示如何使用符号：\，{}，() 和 |</p>
-<pre><code>In[<span class="number">20</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[0-9]+\.[0-9]+$'</span>, w)]
-In[<span class="number">21</span>]: ws[:<span class="number">5</span>]
-Out[<span class="number">21</span>]: [<span class="string">u'0.0085'</span>, <span class="string">u'0.05'</span>, <span class="string">u'0.1'</span>, <span class="string">u'0.16'</span>, <span class="string">u'0.2'</span>]
-
-In[<span class="number">22</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[A-Z]+\$$'</span>, w)]
-In[<span class="number">23</span>]: ws
-Out[<span class="number">23</span>]: [<span class="string">u'C$'</span>, <span class="string">u'US$'</span>]
-
-In[<span class="number">24</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'^[0-9]{4}$'</span>, w)]
-In[<span class="number">26</span>]: ws[:<span class="number">5</span>]
-Out[<span class="number">26</span>]: [<span class="string">u'1614'</span>, <span class="string">u'1637'</span>, <span class="string">u'1787'</span>, <span class="string">u'1901'</span>, <span class="string">u'1903'</span>]
-
-In[<span class="number">27</span>]: ws = [w <span class="keyword">for</span> w <span class="keyword">in</span> wsj <span class="keyword">if</span> re.search(<span class="string">'(ed|ing)$'</span>, w)]
-In[<span class="number">28</span>]: ws[:<span class="number">5</span>]
-Out[<span class="number">28</span>]: [<span class="string">u'62%-owned'</span>, <span class="string">u'Absorbed'</span>, <span class="string">u'According'</span>, <span class="string">u'Adopting'</span>, <span class="string">u'Advanced'</span>]
-</code></pre><h3 id="二、re-split()">二、re.split()</h3><p>按照能够匹配的子串将string分割后返回列表。</p>
-<h4 id="re-split(pattern,_string[,maxsplit])">re.split(pattern, string[,maxsplit])</h4><pre><code>In[<span class="number">13</span>]: raw = <span class="string">"""'When I'M a Duchess,' she said to herself, (not in a very hopeful tone
-<span class="prompt">... </span>though), 'I won't have any pepper in my kitchen AT ALL. Soup does very
-<span class="prompt">... </span>well without--Maybe it's always pepper that makes people
-<span class="prompt">... </span>hot-tempered,'..."""</span>
-In[<span class="number">16</span>]: re.split(<span class="string">r' '</span>, raw)
-Out[<span class="number">16</span>]: 
-[<span class="string">"'When"</span>,
- <span class="string">"I'M"</span>,
- <span class="string">'a'</span>,
- <span class="string">"Duchess,'"</span>,...]
-In[<span class="number">17</span>]: re.split(<span class="string">'[ \t\n]'</span>, raw)
-Out[<span class="number">17</span>]: 
-[<span class="string">"'When"</span>,
- <span class="string">"I'M"</span>,
- <span class="string">'a'</span>,
- <span class="string">"Duchess,'"</span>,...]
-</code></pre><h4 id="split(string[,_maxsplit])">split(string[, maxsplit])</h4><pre><code>In [<span class="number">1</span>]: <span class="keyword">import</span> re
-
-In [<span class="number">2</span>]: p = re.compile(<span class="string">r'\d+'</span>)
-
-In [<span class="number">3</span>]: p.split(<span class="string">'one1two2three3four4'</span>)
-Out[<span class="number">3</span>]: [<span class="string">'one'</span>, <span class="string">'two'</span>, <span class="string">'three'</span>, <span class="string">'four'</span>, <span class="string">''</span>]
-</code></pre><h4 id="切分字符串">切分字符串</h4><p>Python自带的字符分割函数</p>
-<pre><code><span class="string">'a b   c'</span>.<span class="function"><span class="title">split</span><span class="params">(<span class="string">' '</span>)</span></span>
-[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">''</span>, <span class="string">''</span>, <span class="string">'c'</span>]
-</code></pre><p>嗯，无法识别连续的空格</p>
-<pre><code><span class="keyword">import</span> re
-<span class="prompt">&gt;&gt;&gt; </span>re.split(<span class="string">r'\s+'</span>, <span class="string">'a b    c'</span>)
-[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]
-</code></pre><p>使用re，无论多少个空格都可正常分割</p>
-<h3 id="三、findall()">三、findall()</h3><p>findall函数返回的总是正则表达式在字符串中所有匹配结果的列表。</p>
-<pre><code>In [<span class="number">2</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(r<span class="string">'\d+'</span>)</span></span>
-
-In [<span class="number">4</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(<span class="string">'one1two2three3four4'</span>)</span></span>
-Out[<span class="number">4</span>]: [<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'4'</span>]
-
-In [<span class="number">5</span>]: ss = <span class="string">"adfad asdfasdf asdfas asdfawef asd adsfas "</span>
-
-In [<span class="number">6</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(<span class="string">'((\w+)\s+\w+)'</span>)</span></span>
-
-In [<span class="number">7</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(ss)</span></span>
-Out[<span class="number">7</span>]:
-[(<span class="string">'adfad asdfasdf'</span>, <span class="string">'adfad'</span>),
- (<span class="string">'asdfas asdfawef'</span>, <span class="string">'asdfas'</span>),
- (<span class="string">'asd adsfas'</span>, <span class="string">'asd'</span>)]
-
-In [<span class="number">8</span>]: <span class="tag">p</span> = re.<span class="function"><span class="title">compile</span><span class="params">(<span class="string">'(\w+)\s+\w+'</span>)</span></span>
-
-In [<span class="number">9</span>]: <span class="tag">p</span>.<span class="function"><span class="title">findall</span><span class="params">(ss)</span></span>
-Out[<span class="number">9</span>]: [<span class="string">'adfad'</span>, <span class="string">'asdfas'</span>, <span class="string">'asd'</span>]
-</code></pre><ol>
-<li><p>当给出的正则表达式中不带括号时，列表的元素为字符串，此字符串为整个正则表达式匹配的内容。 </p>
-</li>
-<li><p>当正则表达式中带有多个括号时，列表的元素为多个字符串组成的tuple，tuple中字符串个数与括号对数相同，字符串内容与每个括号内的正则表达式相对应，并且排放顺序是按括号出现的顺序。</p>
-</li>
-<li><p>当给出的正则表达式中带有一个括号时，列表的元素为字符串，此字符串的内容与括号中的正则表达式相对应。</p>
-</li>
-</ol>
-<h3 id="四、re-search()">四、re.search()</h3><p>re.search函数会在字符串内查找模式匹配，只要找到第一个匹配就返回，如果字符串没有匹配，则返回None。</p>
-<pre><code>In [<span class="number">15</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span>
-
-In [<span class="number">16</span>]: m = re.search(<span class="string">r'(\w+)ome'</span>, text)
-
-In [<span class="number">20</span>]: <span class="keyword">if</span> m:
-   ....: <span class="keyword">print</span> m.group(<span class="number">0</span>), m.group(<span class="number">1</span>)
-   ....: <span class="keyword">else</span>:
-   ....: <span class="keyword">print</span> <span class="string">'not search'</span>
-</code></pre><p>其中 group(0）或group()匹配的是整个字符串，group(1)匹配的是第一个括号中内容。   </p>
-<h3 id="五、re-match()">五、re.match()</h3><p>re.match()和re.search()的区别：re.match只匹配字符串的开始，如果字符串开始不符合正则表达式，则匹配失败，函数返回None；而re.search匹配整个字符串，直到找到一个匹配。</p>
-<pre><code><span class="keyword">In</span> [30]: s1 = <span class="string">"helloworld, i am 30!"</span>
-
-<span class="keyword">In</span> [31]: w1 = 'world'
-
-<span class="keyword">In</span> [32]: m1 = re.<span class="literal">match</span>(w1, s1)
-
-<span class="keyword">In</span> [33]: <span class="keyword">if</span> m1:
-   ....:     <span class="keyword">print</span> m1.<span class="literal">group</span>()
-   ....: <span class="keyword">else</span>:
-   ....:     <span class="keyword">print</span> <span class="string">"not find"</span>
-   ....:
-not find
-</code></pre><h3 id="六、re-sub()">六、re.sub()</h3><p>re.sub用于替换字符串中的匹配项。<br>下面的例子将字符串中的空格’ ‘替换成’-‘</p>
-<pre><code>In [<span class="number">2</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span>
-
-In [<span class="number">3</span>]: re.sub(<span class="string">r'\s+'</span>, <span class="string">'-'</span>, text)
-Out[<span class="number">3</span>]: <span class="string">'JGood-is-a-handsome-boy,-he-is-cool,-clever,-and-so-on...'</span>
-</code></pre><p><strong>re.sub的函数原型为：re.sub(pattern, repl, string, count)</strong></p>
-<pre><code>其中第二个参数时替换后的字符串；
-第四个参数为替换个数。默认为<span class="number">0</span>，表示每个匹配项都替换。
-</code></pre><p>re.sub还允许使用函数对匹配项的替换进行复杂的处理。如：</p>
-<pre><code>re.sub(<span class="string">r'\s'</span>, <span class="keyword">lambda</span> m : <span class="string">'['</span> + m.group(<span class="number">0</span>) + <span class="string">']'</span>, text, <span class="number">0</span>)
-</code></pre><p>将字符串中的空格’‘替换为’[]’。</p>
-<h3 id="七、re-compile()">七、re.compile()</h3><p>可以把正则表达式编译成一个正则表达式对象。对于经常要用的正则表达式，可以提高一定的效率。</p>
-<pre><code>In [<span class="number">4</span>]: text = <span class="string">"JGood is a handsome boy, he is cool, clever, and so on..."</span>
-
-In [<span class="number">6</span>]: regex = re.compile(<span class="string">r'\w*oo\w*'</span>)
-
-In [<span class="number">7</span>]: regex.findall(text) <span class="comment">#查找所有包含’oo‘的单词</span>
-Out[<span class="number">7</span>]: [<span class="string">'JGood'</span>, <span class="string">'cool'</span>]
-
-In [<span class="number">8</span>]: regex.sub(<span class="keyword">lambda</span> m : <span class="string">'['</span> + m.group(<span class="number">0</span>) + <span class="string">']'</span>, text) <span class="comment"># 将字符串中含有’oo‘的单词用[]括起来</span>
-Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome boy, he is [cool], clever, and so on...'</span>
-</code></pre>
-            
-          </span>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/11/10/2015-11-10-python-regex/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -715,59 +501,13 @@ Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome 
 
       
         
-          <span itemprop="articleBody">
-            
-              <h1 id="期货大作手风云录">期货大作手风云录</h1><h3 id="读书笔记">读书笔记</h3><h2 id="一、趋势">一、趋势</h2><ol>
-<li><strong>投机法则之一：放鱼头，弃鱼尾，吃鱼肚。一个品种的趋势行情分为鱼头、鱼肚和鱼尾行情。鱼头行情往往是趋势行情初始起步阶段，你很难分期是反转还是反弹，所以很难吃到。鱼尾行情往往是一波趋势行情的末端，最大的特点是连续的逼空或者逼多，一方认输出局，所谓多头不死空头不止，这种鱼尾行情随时有可能反转或者巨幅震荡，不吃也罢。而在我看来，我们期货作手真正需要去大吃、狠吃的阶段是鱼肚行情，此时趋势已成，行情进三退一，这是才是我们需要重仓且不断浮盈加仓大口吃肉的好时机。</strong></li>
-<li><strong>判断大势的方法有很多，有通过技术面判断的，也有通过基本面判断的，但今天要强调只有两点：第一，政治大于经济。当你做多或者做空某商品时，首先考虑的不应该是供需关系，而是该商品的政治因素。简单点说，现在的世界超级大国仍然是美国，如果你发现近期由于政治原因需要石油价格上涨时，即使供需和技术面都支持你做空，你也应该果断放弃。特别是石油、铜、黄金这类关系到美国切身利益的期货品种，尤其不能和美国政府对着干。</strong></li>
-<li><strong>关于如何判断大势的第二点，我要强调的是：整体趋势大于个体趋势。具体来说，当大多数商品都处于上涨周期时，不要轻易去做空任何一个商品，特别是对于股票市场来说，如果现在大势处于熊市，即使基本面和技术面再好的股票，也不要去做多。切记这一点。</strong></li>
-<li><strong>如果市场处于牛市中，而某个商品或者股票没有上涨，这反而是去做多它的好时机呢？ 错。做多只做龙头，做空只做熊头。记住，股价永远不会因为太高二停止上涨，同样的，股价也永远不会因为太低而停止下跌。重势不重价。只有龙头和熊头才会带给你超额的利润，其他的品种根本没必要去关注他们。</strong></li>
-<li><strong>期货市场的行情分为趋势行情和震荡行情。市场的80%的时间都处于震荡行情之中，只有20%的趋势行情才能让我们赚大钱。但遗憾的是，绝大多数投机者总想抓住市场的每一个机会，总想像上班一样每天都能赚到钱，结果是在80%的震荡行情中赔掉了大部分的钱。周而复始，恶性循环。</strong></li>
-</ol>
-<h2 id="二、法则">二、法则</h2><ol>
-<li><strong>“止语”的修行方法来自佛法的戒定慧：先戒，戒能生定，而定后能生慧。此乃佛法的博大精深也！</strong></li>
-<li><p><strong>行情在绝望中产生，行情在犹豫中发展，行情在热闹中高潮，行情在兴奋中灭亡。</strong></p>
-</li>
-<li><p><strong>有人的地方就有江湖，有资金的地方就有大行情。这句话在期货里一点不假。</strong></p>
-</li>
-<li><strong>草原生物链中最厉害的角色是鳄鱼。因为鳄鱼有足够的耐心、信心和狠心。所谓耐心，就是指鳄鱼从来不随便游来游去去寻找猎物，这样多半是白白耗费体力。鳄鱼总是耐心的潜伏在水塘里，趴在猎物必须要喝水的地方，静静地耐心等待猎物自己找上门来；所谓信心，就是指鳄鱼不管几天没有遇到猎物，即使他已经饥肠辘辘，但他还会继续有信心的待在原地等待猎物，直到猎物出现；所谓狠心，就是指一旦猎物出现在鳄鱼的射程之内，它会毫不犹豫的发起攻击，一击致命，绝不嘴软，直到把猎物彻底咬死。鳄鱼的这三个特点，决定了他能在物竞天择的生物链里顽强的活到现在。而这三个特点，也是我们期货作手最需要具备的。</strong></li>
-<li><strong>简单的事实是，行情总是先发生变化，然后才有经济新闻，市场不会对经济新闻作出反应。市场是活的，它反映的是将来。因此，企图genuine当前的经济新闻和当前的事件预测股市的走势是非常愚蠢的。贪婪和恐惧一样，都会扭曲理性。股市只讲事实，只讲现实，只讲理性，股市永远不会错，错的是交易者。</strong></li>
-<li><strong>投资法则：只相信自己的眼睛，不要相信自己的耳朵！只相信自己的大脑，不要相信别人的建议！</strong></li>
-<li><strong>期货最怕的就是快！很多时候，快就是慢！快的同义词就是风险。当你的账户盈利曲线越陡峭，你越应该引起高度的警惕，因为快速的都是短暂的，只有缓慢的才是稳定的。切记，做期货比的不是谁赢得多，而是看谁活得长。切记！</strong></li>
-<li><strong>人如果犯错误，那用不了一个月就能拥有整个世界。但是反过来，如果一个人不能从自己的错误中汲取经验教训，他迟早一文不名。</strong></li>
-<li><strong>投机于赌博的最大区别在于是否拥有大局观。</strong></li>
-</ol>
-<h2 id="三、操作">三、操作</h2><ol>
-<li><p><strong>期货的魅力在于浮盈加仓，只有不断的浮盈加仓，我们才能赚取超额的巨大利润。但浮盈加仓的勇气来源于哪里？只有不断的盈利才是我们加仓的勇气！这就像你去带一支军队打仗，什么才是你们官兵不断勇敢冲锋的动力？唯有胜利！只有你的账户不断盈利了，你才有勇气去加仓，去继续以小搏大。</strong></p>
-</li>
-<li><p><strong>期货行业内有一句话，叫做：赚或赔靠本事，赚多赚少靠运气。也就是说，如果你赔了，那是你分析不到位，说明你没本事，如果你赚了，那么赚多赚少就要靠运气和天意了。</strong></p>
-</li>
-<li><p><strong>从某种意义上来说，投资并不是一个天道酬勤的行业。这个行业的秘诀在于节奏。会买的是徒弟，会卖的是师父，会空仓休息的是大事。对于期货作手来说，等待和寂寞也许是陪伴他一生的修炼法门。</strong></p>
-</li>
-<li><p><strong>既然是重仓，为什么利弗莫尔还要逐步建仓？为什么不能一次性重仓呢？那是因为谁也不敢保证自己一定是对的。只有账单上的盈利数字会告诉你对还是错，盈利了就加仓，亏损了就止损，让盈利奔跑，让亏损尽快了结。这是投机的不二法则。</strong></p>
-</li>
-<li><p><strong>一旦我们试仓之后市场朝着有利于我们的方向行进，我们有了浮盈，那么就开始倒金字塔加仓，就像利弗莫尔那样，1，2，4，8似的加仓，这样你的仓位自然就上来了，记住，股票永远不会因为价格太高而不可买进，或者因为价格太低而不可卖出。在你第一笔交易之后，除非第一笔交易有利润，否则就不可做第二笔。切记！</strong></p>
-</li>
-<li><p><strong>股市不是法庭，他不会跟你讲道理。股市更像是战场，他只会用实力去说话。打仗靠枪，炒股靠钱。所以，钱就是股票上涨的最终动力。当你发现一只股票价格开始不断上涨时，我们不用去刻意分析股票上涨的背后原因是什么，不要去打探他的消息，也不用去分析他的基本面有何变化，你只需去判断一个问题，是不是有大资金入场买股票了？只要有钱进来，什么技术面，什么基本面，什么重组消息，都会陆陆续续浮出水面的。原因很简单，大资金绝不会随随便便买入一只股票，他一定会把后面的故事给你讲得圆圆满满的！</strong></p>
-</li>
-<li><p><strong>原来人面来到投机市场的目的是不同的：有人是来过瘾的，因为频繁交易本身会带来快感；有的是来逛街的，只看不买，娱乐而已；还有极少数人是来赚钱的，他们需要时刻克制自己交易的冲动。。。</strong></p>
-</li>
-<li><p><strong>有句话说得好：在市场里，多头可以赚钱，空头也可以赚钱，但滑头早晚会死掉。</strong></p>
-</li>
-<li><p><strong>市场趋势显示下跌，但政府希望绿豆止跌，当市场和政府观点相反时，我选择空仓观望。期货比的不是谁赚的最多，而是比谁活得最长。方向不明时，空仓就是最好的策略。</strong></p>
-</li>
-<li><p><strong>期货往往就是这样，一开始就出现浮亏的持仓往往最终都很难赚钱。好的开始是成功的一半，这话在期货市场一点不假。</strong></p>
-</li>
-<li><p><strong>期货是个概率游戏。我们这些期货作手终生追求的目标只有一个：大赚小赔。也就是说，100次交易中，你失败90次也没关系，关键是如何在你作对的10次交易中，把盈利放大到远远超过你做错的90次亏损。</strong></p>
-</li>
-<li><p><strong>绝不能让自己盈利的单子变为亏损！这是期货投机的重要原则。以做多为例，随着你的分步建仓，你的持仓成本是在不断提高的，由于你是浮盈加仓，所以你应该是一直处于盈利中的，而盈利中的单子需要设立止盈点，这个止盈点就应该设立在你的持仓成本之上。一旦市场发生反向波动，如果触及到你的止盈点，你就应该毫不犹豫的平仓止盈。绝对不能让你原来盈利的单子面临亏损的可能，这是原则问题。止盈点因人而异，我的个人习惯是把止盈点设在最近的一次加仓点上。我的逻辑很简单：如果市场价格跌破了我的最近一次加仓点，那至少说明我这最后一次加仓的时机是错误的。既然错误了，我就要付出代价，所谓的代价就是全部平仓出局观望。我绝对不允许自己的盈利单变成亏损单。</strong></p>
-</li>
-<li><p><strong>在我看来，股票基本面分析的精髓不在于分析公司未来的盈利能力，而在于分析公司股票的供求关系。简单来说，就是在股市里，到底是买股票的人多？还是卖股票的人多？如果在一段时间内，主动卖股票的人大大多于卖股票的人，那就是供不应求，股价就会持续上涨，反之，如果主动卖股票的人多于买股票的人，那就是供大于求，股价就会持续下跌。供求决定价格，这才是我理解的基本面分析。</strong></p>
-</li>
-</ol>
-
-            
-          </span>
+          <h1 id="期货大作手风云录">期货大作手风云录</h1><h3 id="读书笔记">读书笔记</h3><h2 id="一、趋势">一、趋势</h2><ol>
+<li><strong>投机法则之一：放鱼头，弃鱼尾，吃鱼肚。一个品种的趋势行情分为鱼头、鱼肚和鱼尾行情。鱼头行情往往是趋势行情初始起步阶段，你很难分期是反转还是反弹，所以很难吃到。鱼尾行情往往是一波趋势行情的末端，最大的特点是连续的逼空或者逼多，一方认输出局，所谓多头不死空头不止，这种鱼尾行情随时有可能反转或者巨幅震荡，不吃也罢。而在我看来，我们期货作手真正需要去大吃、狠吃的阶段是鱼肚行情，此时趋势已成，行情进三退一，这是才是我们需要重仓且不断浮盈加仓大口吃肉的好时机。</strong>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/11/06/2015-11-09-fengyunlu-md/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -842,7 +582,7 @@ Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome 
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">11</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -859,6 +599,16 @@ Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome 
         
 
         <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
           
         </div>
 

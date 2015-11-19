@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Python and Quant]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://www.kekefund.com/"/>
-  <updated>2015-11-19T04:33:05.000Z</updated>
+  <updated>2015-11-19T04:53:31.000Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://www.kekefund.com/2015/11/17/2015-11-17-pytho-ip-proxy/"/>
     <id>http://www.kekefund.com/2015/11/17/2015-11-17-pytho-ip-proxy/</id>
     <published>2015-11-17T09:41:46.000Z</published>
-    <updated>2015-11-19T04:33:05.000Z</updated>
+    <updated>2015-11-19T04:53:31.000Z</updated>
     <content type="html"><![CDATA[<p>爬虫采集数据时，如果频繁的访问某个网站，会被封IP，有些是禁止访问3小时，有些是直接拉黑名单。为了避免被禁，一般采取的措施有三种：</p>
 <blockquote>
 <ol>
@@ -36,6 +36,7 @@
 <li>按速度从快到慢排序，保存到文件</li>
 </ol>
 </blockquote>
+<a id="more"></a>
 <h2 id="一、解析网页中的IP和端口">一、解析网页中的IP和端口</h2><p>抓取网页采用的是<font color="red"> urlib + BeautifulSoup</font>。<br>解析网站：<a href="http://www.haodailiip.com/guonei/page" target="_blank" rel="external">http://www.haodailiip.com/guonei/page</a>，page=1,2…,10</p>
 <pre><code>def <span class="function"><span class="title">parse</span><span class="params">(url)</span></span>:
         try:
@@ -118,10 +119,26 @@ def <span class="function"><span class="title">test_ip_speed</span><span class="
 <blockquote>
 <ol>
 <li>放慢抓取的速度，设置一个时间间隔；</li>
-<li>模拟浏览器行为，如采用Seleniu]]>
+<li>模拟浏览器行为，如采用Selenium + PhantomJS；</li>
+<li>设置IP代理，定期更换代理IP，让网站不认为来自一个IP。</li>
+</ol>
+</blockquote>
+<p>本文实现其中的第三种方法。<br>国内提供IP代理的网站有很多，我们以其中的一个为例：<a href="http://www.haodailiip.com">http://www.haodailiip.com</a><br>分为三步来实现这个IP抓取类：</p>
+<blockquote>
+<ol>
+<li>解析网页中的IP和端口</li>
+<li>Ping所有IP地址的连接速度 </li>
+<li>按速度从快到慢排序，保存到文件</li>
+</ol>
+</blockquote>]]>
+    
     </summary>
     
-      <category term="Python, 爬虫, IP代理" scheme="http://www.kekefund.com/tags/Python-%E7%88%AC%E8%99%AB-IP%E4%BB%A3%E7%90%86/"/>
+      <category term="IP代理" scheme="http://www.kekefund.com/tags/IP%E4%BB%A3%E7%90%86/"/>
+    
+      <category term="Python" scheme="http://www.kekefund.com/tags/Python/"/>
+    
+      <category term="爬虫" scheme="http://www.kekefund.com/tags/%E7%88%AC%E8%99%AB/"/>
     
       <category term="Python" scheme="http://www.kekefund.com/categories/Python/"/>
     
@@ -132,9 +149,10 @@ def <span class="function"><span class="title">test_ip_speed</span><span class="
     <link href="http://www.kekefund.com/2015/11/10/2015-11-10-python-regex/"/>
     <id>http://www.kekefund.com/2015/11/10/2015-11-10-python-regex/</id>
     <published>2015-11-10T07:09:20.000Z</published>
-    <updated>2015-11-19T04:32:27.000Z</updated>
+    <updated>2015-11-19T04:53:13.000Z</updated>
     <content type="html"><![CDATA[<p>许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
 <p><strong>下表为正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>
+<a id="more"></a>
 <h2 id="贪婪模式与非贪婪模式">贪婪模式与非贪婪模式</h2><p>Python里数量词默认是贪婪的（在少数语言里也可能是默认非贪婪），总是尝试匹配尽可能多的字符；非贪婪的则相反，总是尝试匹配尽可能少的字符。<br>例如：正则表达式 “ab<em>”，如果用于查找“abbbc”，将找到“abbb”。而如果使用非贪婪的数量词“ab\</em>?“，将找到”a“</p>
 <ol>
 <li><p>*? 是一个固定的搭配，.和*代表可以匹配任意无限多个字符，加上？表示使用非贪婪模式进行匹配，也就是我们会尽可能短地做匹配。</p>
@@ -285,10 +303,17 @@ Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome 
 </code></pre>]]></content>
     <summary type="html">
     <![CDATA[<p>许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
-<p><strong>下表为正]]>
+<p><strong>下表为正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>]]>
+    
     </summary>
     
-      <category term="Python, re, 正则表达式, 模式匹配" scheme="http://www.kekefund.com/tags/Python-re-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/"/>
+      <category term="Python" scheme="http://www.kekefund.com/tags/Python/"/>
+    
+      <category term="re" scheme="http://www.kekefund.com/tags/re/"/>
+    
+      <category term="模式匹配" scheme="http://www.kekefund.com/tags/%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/"/>
+    
+      <category term="正则表达式" scheme="http://www.kekefund.com/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
     
       <category term="Python" scheme="http://www.kekefund.com/categories/Python/"/>
     
@@ -299,9 +324,9 @@ Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome 
     <link href="http://www.kekefund.com/2015/11/06/2015-11-09-fengyunlu-md/"/>
     <id>http://www.kekefund.com/2015/11/06/2015-11-09-fengyunlu-md/</id>
     <published>2015-11-06T07:09:20.000Z</published>
-    <updated>2015-11-19T04:31:47.000Z</updated>
+    <updated>2015-11-19T04:52:29.000Z</updated>
     <content type="html"><![CDATA[<h1 id="期货大作手风云录">期货大作手风云录</h1><h3 id="读书笔记">读书笔记</h3><h2 id="一、趋势">一、趋势</h2><ol>
-<li><strong>投机法则之一：放鱼头，弃鱼尾，吃鱼肚。一个品种的趋势行情分为鱼头、鱼肚和鱼尾行情。鱼头行情往往是趋势行情初始起步阶段，你很难分期是反转还是反弹，所以很难吃到。鱼尾行情往往是一波趋势行情的末端，最大的特点是连续的逼空或者逼多，一方认输出局，所谓多头不死空头不止，这种鱼尾行情随时有可能反转或者巨幅震荡，不吃也罢。而在我看来，我们期货作手真正需要去大吃、狠吃的阶段是鱼肚行情，此时趋势已成，行情进三退一，这是才是我们需要重仓且不断浮盈加仓大口吃肉的好时机。</strong></li>
+<li><strong>投机法则之一：放鱼头，弃鱼尾，吃鱼肚。一个品种的趋势行情分为鱼头、鱼肚和鱼尾行情。鱼头行情往往是趋势行情初始起步阶段，你很难分期是反转还是反弹，所以很难吃到。鱼尾行情往往是一波趋势行情的末端，最大的特点是连续的逼空或者逼多，一方认输出局，所谓多头不死空头不止，这种鱼尾行情随时有可能反转或者巨幅震荡，不吃也罢。而在我看来，我们期货作手真正需要去大吃、狠吃的阶段是鱼肚行情，此时趋势已成，行情进三退一，这是才是我们需要重仓且不断浮盈加仓大口吃肉的好时机。</strong><a id="more"></a></li>
 <li><strong>判断大势的方法有很多，有通过技术面判断的，也有通过基本面判断的，但今天要强调只有两点：第一，政治大于经济。当你做多或者做空某商品时，首先考虑的不应该是供需关系，而是该商品的政治因素。简单点说，现在的世界超级大国仍然是美国，如果你发现近期由于政治原因需要石油价格上涨时，即使供需和技术面都支持你做空，你也应该果断放弃。特别是石油、铜、黄金这类关系到美国切身利益的期货品种，尤其不能和美国政府对着干。</strong></li>
 <li><strong>关于如何判断大势的第二点，我要强调的是：整体趋势大于个体趋势。具体来说，当大多数商品都处于上涨周期时，不要轻易去做空任何一个商品，特别是对于股票市场来说，如果现在大势处于熊市，即使基本面和技术面再好的股票，也不要去做多。切记这一点。</strong></li>
 <li><strong>如果市场处于牛市中，而某个商品或者股票没有上涨，这反而是去做多它的好时机呢？ 错。做多只做龙头，做空只做熊头。记住，股价永远不会因为太高二停止上涨，同样的，股价也永远不会因为太低而停止下跌。重势不重价。只有龙头和熊头才会带给你超额的利润，其他的品种根本没必要去关注他们。</strong></li>
@@ -351,10 +376,13 @@ Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome 
 ]]></content>
     <summary type="html">
     <![CDATA[<h1 id="期货大作手风云录">期货大作手风云录</h1><h3 id="读书笔记">读书笔记</h3><h2 id="一、趋势">一、趋势</h2><ol>
-<li><strong>投机法则之一：放鱼头，弃鱼尾，吃鱼肚。一个品种的趋势行情分为鱼头、鱼肚和鱼尾行情。鱼头行情往]]>
+<li><strong>投机法则之一：放鱼头，弃鱼尾，吃鱼肚。一个品种的趋势行情分为鱼头、鱼肚和鱼尾行情。鱼头行情往往是趋势行情初始起步阶段，你很难分期是反转还是反弹，所以很难吃到。鱼尾行情往往是一波趋势行情的末端，最大的特点是连续的逼空或者逼多，一方认输出局，所谓多头不死空头不止，这种鱼尾行情随时有可能反转或者巨幅震荡，不吃也罢。而在我看来，我们期货作手真正需要去大吃、狠吃的阶段是鱼肚行情，此时趋势已成，行情进三退一，这是才是我们需要重仓且不断浮盈加仓大口吃肉的好时机。</strong>]]>
+    
     </summary>
     
-      <category term="期货, 股票, 投资" scheme="http://www.kekefund.com/tags/%E6%9C%9F%E8%B4%A7-%E8%82%A1%E7%A5%A8-%E6%8A%95%E8%B5%84/"/>
+      <category term="期货" scheme="http://www.kekefund.com/tags/%E6%9C%9F%E8%B4%A7/"/>
+    
+      <category term="股票" scheme="http://www.kekefund.com/tags/%E8%82%A1%E7%A5%A8/"/>
     
       <category term="Stock" scheme="http://www.kekefund.com/categories/Stock/"/>
     
