@@ -41,7 +41,7 @@
 
 
 
-  <link rel="alternate" href="/atom.xml" title="Binger‘s Blog" type="application/atom+xml" />
+  <link rel="alternate" href="/atom.xml" title="Keke‘s Blog" type="application/atom+xml" />
 
 
 
@@ -55,12 +55,12 @@
 
 <meta name="description" content="learn python and invest">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Binger‘s Blog">
+<meta property="og:title" content="Keke‘s Blog">
 <meta property="og:url" content="http://www.kekefund.com/index.html">
-<meta property="og:site_name" content="Binger‘s Blog">
+<meta property="og:site_name" content="Keke‘s Blog">
 <meta property="og:description" content="learn python and invest">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Binger‘s Blog">
+<meta name="twitter:title" content="Keke‘s Blog">
 <meta name="twitter:description" content="learn python and invest">
 
 
@@ -73,7 +73,7 @@
   };
 </script>
 
-  <title> Binger‘s Blog </title>
+  <title> Keke‘s Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -125,7 +125,7 @@
   <div class="custom-logo-site-title">
     <a href="/"  class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <span class="site-title">Binger‘s Blog</span>
+      <span class="site-title">Keke‘s Blog</span>
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
@@ -198,15 +198,121 @@
 
     
     
+
+    
       
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/01/07/use-reqeusts/" itemprop="url">
+                  requests初步使用
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-01-07T16:52:33+08:00" content="2016-01-07">
+              2016-01-07
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/01/07/use-reqeusts/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/07/use-reqeusts/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
       
-        
-        
-        
       
 
       
-    
+        
+          <h1 id="基本用法">基本用法</h1><h2 id="一、发送无参数的get请求">一、发送无参数的get请求</h2><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">In [<span class="number">67</span>]: r =requests.<span class="built_in">get</span>(<span class="string">'http://httpbin.org/get'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">68</span>]: <span class="built_in">print</span> r.<span class="built_in">text</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"args"</span>: &#123;&#125;, </span><br><span class="line">  <span class="string">"headers"</span>: &#123;</span><br><span class="line">    <span class="string">"Accept"</span>: <span class="string">"*/*"</span>, </span><br><span class="line">    <span class="string">"Accept-Encoding"</span>: <span class="string">"gzip, deflate"</span>, </span><br><span class="line">    <span class="string">"Host"</span>: <span class="string">"httpbin.org"</span>, </span><br><span class="line">    <span class="string">"User-Agent"</span>: <span class="string">"python-requests/2.7.0 CPython/2.7.10 Darwin/14.5.0"</span></span><br><span class="line">  &#125;, </span><br><span class="line">  <span class="string">"origin"</span>: <span class="string">"220.231.47.169"</span>, </span><br><span class="line">  <span class="string">"url"</span>: <span class="string">"http://httpbin.org/get"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回一个名为 r 的Response对象。可以从这个对象中获取所有我们想要的信息。</p>
+<h2 id="二、发送带参数的get请求">二、发送带参数的get请求</h2><p>将key与value放入一个字典中，通过params来传递，其作用相当于urllib.urlencode</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="label">In [69]: pyqload = &#123;'q':</span>'cbb'&#125;</span><br><span class="line"><span class="label">In [70]: r = requests.get('http:</span>//www.so.com/s', params=pqyload, , timeout=<span class="number">10</span>) # <span class="number">10</span>s</span><br><span class="line"><span class="label">In [71]:</span> r.url</span><br><span class="line"><span class="label">Out[71]: u'http:</span>//www.haosou.com/s?q=<span class="var_expand">%E7%</span>AB<span class="var_expand">%A0%</span>E6<span class="var_expand">%A5%</span>A0<span class="var_expand">%E6%</span>A5<span class="var_expand">%A0'</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意字典里值为 None 的键都不会被添加到 URL 的查询字符串里。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/01/07/use-reqeusts/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
 
     
       
@@ -1078,7 +1184,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1092,7 +1198,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-count">13</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
