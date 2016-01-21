@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Python and Quant]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://www.kekefund.com/"/>
-  <updated>2016-01-07T09:02:48.000Z</updated>
+  <updated>2016-01-21T01:12:41.000Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -15,17 +15,64 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[网页爬虫之cookie自动获取]]></title>
+    <link href="http://www.kekefund.com/2016/01/21/spider-cookie/"/>
+    <id>http://www.kekefund.com/2016/01/21/spider-cookie/</id>
+    <published>2016-01-21T01:05:36.000Z</published>
+    <updated>2016-01-21T01:12:41.000Z</updated>
+    <content type="html"><![CDATA[<p>本文实现cookie的自动获取，及cookie过期自动更新。</p>
+<p>社交网站中的很多信息需要登录才能获取到，以微博为例，不登录账号，只能看到大V的前十条微博。保持登录状态，必须要用到Cookie。以登录www.weibo.cn 为例：</p>
+<p>在chrome中输入：<a href="http://login.weibo.cn/login/" target="_blank" rel="external">http://login.weibo.cn/login/</a>  </p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-01-21-cookie.png" alt=""></p>
+<p>分析控制台的Headers的请求返回，会看到weibo.cn有几组返回的cookie。</p>
+<h1 id="实现步骤：">实现步骤：</h1><p>1，采用selenium自动登录获取cookie，保存到文件;</p>
+<p>2，读取cookie，比较cookie的有效期，若过期则再次执行步骤1；</p>
+<p>3，在请求其他网页时，填入cookie，实现登录状态的保持。<br><a id="more"></a></p>
+<h1 id="1，在线获取cookie">1，在线获取cookie</h1><p>采用selenium + PhantomJS 模拟浏览器登录，获取cookie；</p>
+<p>cookies一般会有多个，逐个将cookie存入以.weibo后缀的文件。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_cookie_from_network</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">    url_login = <span class="string">'http://login.weibo.cn/login/'</span> </span><br><span class="line">    driver = webdriver.PhantomJS()</span><br><span class="line">    driver.get(url_login)</span><br><span class="line">    driver.find_element_by_xpath(<span class="string">'//input[@type="text"]'</span>).send_keys(<span class="string">'your_weibo_accout'</span>) <span class="comment"># 改成你的微博账号</span></span><br><span class="line">    driver.find_element_by_xpath(<span class="string">'//input[@type="password"]'</span>).send_keys(<span class="string">'your_weibo_password'</span>) <span class="comment"># 改成你的微博密码</span></span><br><span class="line"></span><br><span class="line">    driver.find_element_by_xpath(<span class="string">'//input[@type="submit"]'</span>).click() <span class="comment"># 点击登录</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获得 cookie信息</span></span><br><span class="line">    cookie_list = driver.get_cookies()</span><br><span class="line">    <span class="keyword">print</span> cookie_list</span><br><span class="line"></span><br><span class="line">    cookie_dict = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> cookie <span class="keyword">in</span> cookie_list:</span><br><span class="line">        <span class="comment">#写入文件</span></span><br><span class="line">        f = open(cookie[<span class="string">'name'</span>]+<span class="string">'.weibo'</span>,<span class="string">'w'</span>)</span><br><span class="line">        pickle.dump(cookie, f)</span><br><span class="line">        f.close()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> cookie.has_key(<span class="string">'name'</span>) <span class="keyword">and</span> cookie.has_key(<span class="string">'value'</span>):</span><br><span class="line">            cookie_dict[cookie[<span class="string">'name'</span>]] = cookie[<span class="string">'value'</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> cookie_dict</span><br></pre></td></tr></table></figure>
+<h1 id="2，从文件中获取cookie">2，从文件中获取cookie</h1><p>从当前目录中遍历以.weibo结尾的文件，即cookie文件。采用pickle解包成dict，比较expiry值与当前时间，若过期则返回为空；</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_cookie_from_cache</span><span class="params">()</span>:</span></span><br><span class="line"></span><br><span class="line">    cookie_dict = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> parent, dirnames, filenames <span class="keyword">in</span> os.walk(<span class="string">'./'</span>):</span><br><span class="line">        <span class="keyword">for</span> filename <span class="keyword">in</span> filenames:</span><br><span class="line">            <span class="keyword">if</span> filename.endswith(<span class="string">'.weibo'</span>):</span><br><span class="line">                <span class="keyword">print</span> filename</span><br><span class="line">                <span class="keyword">with</span> open(self.dir_temp + filename, <span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">                    d = pickle.load(f)</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> d.has_key(<span class="string">'name'</span>) <span class="keyword">and</span> d.has_key(<span class="string">'value'</span>) <span class="keyword">and</span> d.has_key(<span class="string">'expiry'</span>):</span><br><span class="line">                        expiry_date = int(d[<span class="string">'expiry'</span>])</span><br><span class="line">                        <span class="keyword">if</span> expiry_date &gt; (int)(time.time()):</span><br><span class="line">                            cookie_dict[d[<span class="string">'name'</span>]] = d[<span class="string">'value'</span>]</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            <span class="keyword">return</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> cookie_dict</span><br></pre></td></tr></table></figure>
+<h1 id="3，若缓存cookie过期，则再次从网络获取cookie">3，若缓存cookie过期，则再次从网络获取cookie</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span>  <span class="title">get_cookie</span><span class="params">()</span>:</span></span><br><span class="line"></span><br><span class="line">    cookie_dict = get_cookie_from_cache()</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> cookie_dict:</span><br><span class="line">        cookie_dict = get_cookie_from_network()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> cookie_dict</span><br></pre></td></tr></table></figure>
+<h1 id="4，带cookie请求微博其他主页">4，带cookie请求微博其他主页</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_weibo_list</span><span class="params">(self, user_id)</span>:</span></span><br><span class="line">    <span class="keyword">import</span> requests</span><br><span class="line">    <span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup <span class="keyword">as</span> bs</span><br><span class="line">    </span><br><span class="line">    cookdic = get_cookie()</span><br><span class="line"></span><br><span class="line">    url = <span class="string">'http://weibo.cn/stocknews88'</span> </span><br><span class="line">    headers = &#123;<span class="string">'User-Agent'</span>: <span class="string">'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'</span>&#125;</span><br><span class="line">    timeout = <span class="number">5</span></span><br><span class="line">    r = requests.get(url, headers=headers, cookies=cookdic,timeout=timeout)</span><br><span class="line">    soup = bs(r.text, <span class="string">'lxml'</span>)</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">    <span class="comment"># 用BeautifulSoup 解析网页</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>]]></content>
+    <summary type="html">
+    <![CDATA[<p>本文实现cookie的自动获取，及cookie过期自动更新。</p>
+<p>社交网站中的很多信息需要登录才能获取到，以微博为例，不登录账号，只能看到大V的前十条微博。保持登录状态，必须要用到Cookie。以登录www.weibo.cn 为例：</p>
+<p>在chrome中输入：<a href="http://login.weibo.cn/login/">http://login.weibo.cn/login/</a>  </p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-01-21-cookie.png" alt=""></p>
+<p>分析控制台的Headers的请求返回，会看到weibo.cn有几组返回的cookie。</p>
+<h1 id="实现步骤：">实现步骤：</h1><p>1，采用selenium自动登录获取cookie，保存到文件;</p>
+<p>2，读取cookie，比较cookie的有效期，若过期则再次执行步骤1；</p>
+<p>3，在请求其他网页时，填入cookie，实现登录状态的保持。<br>]]>
+    
+    </summary>
+    
+      <category term="Python" scheme="http://www.kekefund.com/tags/Python/"/>
+    
+      <category term="cookie" scheme="http://www.kekefund.com/tags/cookie/"/>
+    
+      <category term="crawler" scheme="http://www.kekefund.com/tags/crawler/"/>
+    
+      <category term="requests" scheme="http://www.kekefund.com/tags/requests/"/>
+    
+      <category term="selenium" scheme="http://www.kekefund.com/tags/selenium/"/>
+    
+      <category term="Python" scheme="http://www.kekefund.com/categories/Python/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[requests初步使用]]></title>
     <link href="http://www.kekefund.com/2016/01/07/use-reqeusts/"/>
     <id>http://www.kekefund.com/2016/01/07/use-reqeusts/</id>
     <published>2016-01-07T08:52:33.000Z</published>
-    <updated>2016-01-07T09:02:48.000Z</updated>
+    <updated>2016-01-21T01:15:13.000Z</updated>
     <content type="html"><![CDATA[<h1 id="基本用法">基本用法</h1><h2 id="一、发送无参数的get请求">一、发送无参数的get请求</h2><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">In [<span class="number">67</span>]: r =requests.<span class="built_in">get</span>(<span class="string">'http://httpbin.org/get'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">68</span>]: <span class="built_in">print</span> r.<span class="built_in">text</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"args"</span>: &#123;&#125;, </span><br><span class="line">  <span class="string">"headers"</span>: &#123;</span><br><span class="line">    <span class="string">"Accept"</span>: <span class="string">"*/*"</span>, </span><br><span class="line">    <span class="string">"Accept-Encoding"</span>: <span class="string">"gzip, deflate"</span>, </span><br><span class="line">    <span class="string">"Host"</span>: <span class="string">"httpbin.org"</span>, </span><br><span class="line">    <span class="string">"User-Agent"</span>: <span class="string">"python-requests/2.7.0 CPython/2.7.10 Darwin/14.5.0"</span></span><br><span class="line">  &#125;, </span><br><span class="line">  <span class="string">"origin"</span>: <span class="string">"220.231.47.169"</span>, </span><br><span class="line">  <span class="string">"url"</span>: <span class="string">"http://httpbin.org/get"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>返回一个名为 r 的Response对象。可以从这个对象中获取所有我们想要的信息。</p>
+<p>返回一个名为 r 的Response对象。可以从这个对象中获取所有我们想要的信息。<br><a id="more"></a></p>
 <h2 id="二、发送带参数的get请求">二、发送带参数的get请求</h2><p>将key与value放入一个字典中，通过params来传递，其作用相当于urllib.urlencode</p>
 <figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="label">In [69]: pyqload = &#123;'q':</span>'cbb'&#125;</span><br><span class="line"><span class="label">In [70]: r = requests.get('http:</span>//www.so.com/s', params=pqyload, , timeout=<span class="number">10</span>) # <span class="number">10</span>s</span><br><span class="line"><span class="label">In [71]:</span> r.url</span><br><span class="line"><span class="label">Out[71]: u'http:</span>//www.haosou.com/s?q=<span class="var_expand">%E7%</span>AB<span class="var_expand">%A0%</span>E6<span class="var_expand">%A5%</span>A0<span class="var_expand">%E6%</span>A5<span class="var_expand">%A0'</span></span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>注意字典里值为 None 的键都不会被添加到 URL 的查询字符串里。<br><a id="more"></a></p>
+<p>注意字典里值为 None 的键都不会被添加到 URL 的查询字符串里。</p>
 </blockquote>
 <h2 id="三、发送post请求，通过data参数来传递">三、发送post请求，通过data参数来传递</h2><figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">In [<span class="number">72</span>]: payload = &#123;<span class="string">'a'</span>:<span class="string">'嘎子'</span>, <span class="string">'b'</span>:<span class="string">'hello'</span>&#125;</span><br><span class="line">In [<span class="number">73</span>]: r = requests.post(<span class="string">'http://httpbin.org/post'</span>, data=payload)</span><br><span class="line">In [<span class="number">74</span>]: print r.text</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"args"</span>: &#123;&#125;, </span><br><span class="line">  <span class="string">"data"</span>: <span class="string">""</span>, </span><br><span class="line">  <span class="string">"files"</span>: &#123;&#125;, </span><br><span class="line">  <span class="string">"form"</span>: &#123;</span><br><span class="line">    <span class="string">"a"</span>: <span class="string">"\u560e\u5b50"</span>, </span><br><span class="line">    <span class="string">"b"</span>: <span class="string">"hello"</span></span><br><span class="line">  &#125;, </span><br><span class="line">  <span class="string">"headers"</span>: &#123;</span><br><span class="line">    <span class="string">"Accept"</span>: <span class="string">"*/*"</span>, </span><br><span class="line">    <span class="string">"Accept-Encoding"</span>: <span class="string">"gzip, deflate"</span>, </span><br><span class="line">    <span class="string">"Content-Length"</span>: <span class="string">"28"</span>, </span><br><span class="line">    <span class="string">"Content-Type"</span>: <span class="string">"application/x-www-form-urlencoded"</span>, </span><br><span class="line">    <span class="string">"Host"</span>: <span class="string">"httpbin.org"</span>, </span><br><span class="line">    <span class="string">"User-Agent"</span>: <span class="string">"python-requests/2.7.0 CPython/2.7.10 Darwin/14.5.0"</span></span><br><span class="line">  &#125;, </span><br><span class="line">  <span class="string">"json"</span>: null, </span><br><span class="line">  <span class="string">"origin"</span>: <span class="string">"220.231.47.169"</span>, </span><br><span class="line">  <span class="string">"url"</span>: <span class="string">"http://httpbin.org/post"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>data不仅可以接受字典类型的数据，还可以接受json等格式：</p>
@@ -67,11 +114,7 @@
 ]]></content>
     <summary type="html">
     <![CDATA[<h1 id="基本用法">基本用法</h1><h2 id="一、发送无参数的get请求">一、发送无参数的get请求</h2><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">In [<span class="number">67</span>]: r =requests.<span class="built_in">get</span>(<span class="string">'http://httpbin.org/get'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">68</span>]: <span class="built_in">print</span> r.<span class="built_in">text</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"args"</span>: &#123;&#125;, </span><br><span class="line">  <span class="string">"headers"</span>: &#123;</span><br><span class="line">    <span class="string">"Accept"</span>: <span class="string">"*/*"</span>, </span><br><span class="line">    <span class="string">"Accept-Encoding"</span>: <span class="string">"gzip, deflate"</span>, </span><br><span class="line">    <span class="string">"Host"</span>: <span class="string">"httpbin.org"</span>, </span><br><span class="line">    <span class="string">"User-Agent"</span>: <span class="string">"python-requests/2.7.0 CPython/2.7.10 Darwin/14.5.0"</span></span><br><span class="line">  &#125;, </span><br><span class="line">  <span class="string">"origin"</span>: <span class="string">"220.231.47.169"</span>, </span><br><span class="line">  <span class="string">"url"</span>: <span class="string">"http://httpbin.org/get"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>返回一个名为 r 的Response对象。可以从这个对象中获取所有我们想要的信息。</p>
-<h2 id="二、发送带参数的get请求">二、发送带参数的get请求</h2><p>将key与value放入一个字典中，通过params来传递，其作用相当于urllib.urlencode</p>
-<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="label">In [69]: pyqload = &#123;'q':</span>'cbb'&#125;</span><br><span class="line"><span class="label">In [70]: r = requests.get('http:</span>//www.so.com/s', params=pqyload, , timeout=<span class="number">10</span>) # <span class="number">10</span>s</span><br><span class="line"><span class="label">In [71]:</span> r.url</span><br><span class="line"><span class="label">Out[71]: u'http:</span>//www.haosou.com/s?q=<span class="var_expand">%E7%</span>AB<span class="var_expand">%A0%</span>E6<span class="var_expand">%A5%</span>A0<span class="var_expand">%E6%</span>A5<span class="var_expand">%A0'</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>注意字典里值为 None 的键都不会被添加到 URL 的查询字符串里。<br>]]>
+<p>返回一个名为 r 的Response对象。可以从这个对象中获取所有我们想要的信息。<br>]]>
     
     </summary>
     
@@ -339,16 +382,16 @@
     <link href="http://www.kekefund.com/2015/12/10/japan-candle-diagram-technique/"/>
     <id>http://www.kekefund.com/2015/12/10/japan-candle-diagram-technique/</id>
     <published>2015-12-10T03:09:01.000Z</published>
-    <updated>2015-12-17T08:10:33.000Z</updated>
+    <updated>2016-01-21T01:16:06.000Z</updated>
     <content type="html"><![CDATA[<p>日本蜡烛线形态</p>
 <h3 id="1，纺锤线">1，纺锤线</h3><p>实体较短，说明熊方与牛方正处于胶着状态，一时难分高下。</p>
 <p><img src="http://7xos68.com1.z0.glb.clouddn.com/20151210fangchuixian2.jpg" alt=""></p>
-<h3 id="2，锤子线与上吊线">2，锤子线与上吊线</h3><p>下图中的蜡烛图线具有明显的特点：它们的下影线较长，而实体较小并且在其全天价格区间里，实体处在接近顶端的位置上。</p>
+<h3 id="2，锤子线与上吊线">2，锤子线与上吊线</h3><p>下图中的蜡烛图线具有明显的特点：它们的下影线较长，而实体较小并且在其全天价格区间里，实体处在接近顶端的位置上。<br><a id="more"></a></p>
 <p><strong>锤子线</strong>：出现在下降趋势中时，成为锤子线，意思是说“市场正用锤子穷砸底部”。在日语中，这类蜡烛线原来的名称是“深水竿”，大体的意思是“试一下水的深浅”。 </p>
 <p><strong>上吊线</strong>：出现在上冲行情之后，就表明之前的市场运动也许结束，称为上吊线。这类蜡烛线看上去像吊在绞刑架上双腿晃荡的一个死人。</p>
 <p><img src="http://7xos68.com1.z0.glb.clouddn.com/20151210cuizhixian.png" alt=""></p>
 <blockquote>
-<p>注：锤子线或上吊线的实体颜色不重要，可以是白色或黑色。<br><a id="more"></a></p>
+<p>注：锤子线或上吊线的实体颜色不重要，可以是白色或黑色。</p>
 </blockquote>
 <h4 id="锤子线和上吊线的识别标准">锤子线和上吊线的识别标准</h4><blockquote>
 <p>1、实体处于整个价格区间的上端。而实体本身的颜色是无所谓的。</p>
@@ -558,12 +601,7 @@
     <![CDATA[<p>日本蜡烛线形态</p>
 <h3 id="1，纺锤线">1，纺锤线</h3><p>实体较短，说明熊方与牛方正处于胶着状态，一时难分高下。</p>
 <p><img src="http://7xos68.com1.z0.glb.clouddn.com/20151210fangchuixian2.jpg" alt=""></p>
-<h3 id="2，锤子线与上吊线">2，锤子线与上吊线</h3><p>下图中的蜡烛图线具有明显的特点：它们的下影线较长，而实体较小并且在其全天价格区间里，实体处在接近顶端的位置上。</p>
-<p><strong>锤子线</strong>：出现在下降趋势中时，成为锤子线，意思是说“市场正用锤子穷砸底部”。在日语中，这类蜡烛线原来的名称是“深水竿”，大体的意思是“试一下水的深浅”。 </p>
-<p><strong>上吊线</strong>：出现在上冲行情之后，就表明之前的市场运动也许结束，称为上吊线。这类蜡烛线看上去像吊在绞刑架上双腿晃荡的一个死人。</p>
-<p><img src="http://7xos68.com1.z0.glb.clouddn.com/20151210cuizhixian.png" alt=""></p>
-<blockquote>
-<p>注：锤子线或上吊线的实体颜色不重要，可以是白色或黑色。<br>]]>
+<h3 id="2，锤子线与上吊线">2，锤子线与上吊线</h3><p>下图中的蜡烛图线具有明显的特点：它们的下影线较长，而实体较小并且在其全天价格区间里，实体处在接近顶端的位置上。<br>]]>
     
     </summary>
     
@@ -584,16 +622,16 @@
     <link href="http://www.kekefund.com/2015/11/26/pyqt4-build-exe/"/>
     <id>http://www.kekefund.com/2015/11/26/pyqt4-build-exe/</id>
     <published>2015-11-26T09:00:51.000Z</published>
-    <updated>2015-11-27T02:14:21.000Z</updated>
+    <updated>2016-01-21T01:17:01.000Z</updated>
     <content type="html"><![CDATA[<p><strong>PyQt4 生成exe打包文件</strong></p>
 <p>pyqt是跨平台的GUI平台，本文的UI设计，代码编写在mac下进行，编译成exe，并打包在win7下做的。<br>python脚本语言，图形化平台不是其擅长的领域，一般都是直接运行脚本，这次因为客户需要一个“成型”的程序去外面给别人展示，故有了此文的背景。<br>QT作为一个跨平台的开发环境，编写出一个窗口程序，然后打包成python文件是比较迅速的。麻烦的是打包成windows的exe文件，试过py2exe,pyinstaller，都不是很好用，py2exe根本出不来图形界面，最后用到cxfreeze这个工具，才得以顺利打包。</p>
 <h2 id="前言">前言</h2><p>环境搭建参考：<a href="http://www.cnblogs.com/zouzf/p/4308912.html" target="_blank" rel="external">http://www.cnblogs.com/zouzf/p/4308912.html</a></p>
 <h2 id="一、Qt_Designer设计界面">一、Qt Designer设计界面</h2><p><em>安装Qt Designer，我的版本是5.2.1。</em><br>设计出的界面如下，保存为.ui文件。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/qt_main.png" alt="Qt_UI"></p>
+<a id="more"></a>
 <p>Qt的界面布局和MFC的比较类似，但它多了一层容器的概念。控件都放在容器Layout中，这点又和Android的手机布局比较相近。</p>
 <blockquote>
 <p><em>UI布局教程参考：<a href="http://www.linuxidc.com/Linux/2012-06/63652.htm" target="_blank" rel="external">PyQt4 精彩实例分析</a></em></p>
 </blockquote>
-<a id="more"></a>
 <h2 id="二、Qt布局文件-ui转换成-py文件">二、Qt布局文件.ui转换成.py文件</h2><p>mac和win系统下先将pyuic4命令加入环境变量。mac中我是直接把/etc/paths拷贝到桌面，添加pyuic4路径后再拷贝覆盖回去。（ps: etc下不能直接修改）<br>在终端中执行：</p>
 <pre><code><span class="tag">pyuic4</span> <span class="tag">-x</span> <span class="tag">aaaaaaa</span><span class="class">.ui</span> <span class="tag">-o</span> <span class="tag">bbbbbb</span><span class="class">.py</span>
 </code></pre><p>即可将.ui文件转成py文件。</p>
@@ -694,11 +732,7 @@ setup(name=<span class="string">'simple_PyQt4'</span>,
     <![CDATA[<p><strong>PyQt4 生成exe打包文件</strong></p>
 <p>pyqt是跨平台的GUI平台，本文的UI设计，代码编写在mac下进行，编译成exe，并打包在win7下做的。<br>python脚本语言，图形化平台不是其擅长的领域，一般都是直接运行脚本，这次因为客户需要一个“成型”的程序去外面给别人展示，故有了此文的背景。<br>QT作为一个跨平台的开发环境，编写出一个窗口程序，然后打包成python文件是比较迅速的。麻烦的是打包成windows的exe文件，试过py2exe,pyinstaller，都不是很好用，py2exe根本出不来图形界面，最后用到cxfreeze这个工具，才得以顺利打包。</p>
 <h2 id="前言">前言</h2><p>环境搭建参考：<a href="http://www.cnblogs.com/zouzf/p/4308912.html">http://www.cnblogs.com/zouzf/p/4308912.html</a></p>
-<h2 id="一、Qt_Designer设计界面">一、Qt Designer设计界面</h2><p><em>安装Qt Designer，我的版本是5.2.1。</em><br>设计出的界面如下，保存为.ui文件。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/qt_main.png" alt="Qt_UI"></p>
-<p>Qt的界面布局和MFC的比较类似，但它多了一层容器的概念。控件都放在容器Layout中，这点又和Android的手机布局比较相近。</p>
-<blockquote>
-<p><em>UI布局教程参考：<a href="http://www.linuxidc.com/Linux/2012-06/63652.htm">PyQt4 精彩实例分析</a></em></p>
-</blockquote>]]>
+<h2 id="一、Qt_Designer设计界面">一、Qt Designer设计界面</h2><p><em>安装Qt Designer，我的版本是5.2.1。</em><br>设计出的界面如下，保存为.ui文件。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/qt_main.png" alt="Qt_UI"></p>]]>
     
     </summary>
     
@@ -847,10 +881,9 @@ def <span class="function"><span class="title">test_ip_speed</span><span class="
     <link href="http://www.kekefund.com/2015/11/10/python-regex/"/>
     <id>http://www.kekefund.com/2015/11/10/python-regex/</id>
     <published>2015-11-10T07:09:20.000Z</published>
-    <updated>2015-11-19T04:53:13.000Z</updated>
+    <updated>2016-01-21T01:17:26.000Z</updated>
     <content type="html"><![CDATA[<p>许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
-<p><strong>下表为正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>
-<a id="more"></a>
+<p><strong>下表为正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br><a id="more"></a><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>
 <h2 id="贪婪模式与非贪婪模式">贪婪模式与非贪婪模式</h2><p>Python里数量词默认是贪婪的（在少数语言里也可能是默认非贪婪），总是尝试匹配尽可能多的字符；非贪婪的则相反，总是尝试匹配尽可能少的字符。<br>例如：正则表达式 “ab<em>”，如果用于查找“abbbc”，将找到“abbb”。而如果使用非贪婪的数量词“ab\</em>?“，将找到”a“</p>
 <ol>
 <li><p>*? 是一个固定的搭配，.和*代表可以匹配任意无限多个字符，加上？表示使用非贪婪模式进行匹配，也就是我们会尽可能短地做匹配。</p>
@@ -1001,7 +1034,7 @@ Out[<span class="number">8</span>]: <span class="string">'[JGood] is a handsome 
 </code></pre>]]></content>
     <summary type="html">
     <![CDATA[<p>许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
-<p><strong>下表为正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>]]>
+<p><strong>下表为正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br>]]>
     
     </summary>
     
