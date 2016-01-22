@@ -221,6 +221,169 @@
             
               
                 
+                <a class="post-title-link" href="/2016/01/22/python-multiprocess/" itemprop="url">
+                  python多线程与多进程 超简单使用
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-01-22T15:47:07+08:00" content="2016-01-22">
+              2016-01-22
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/01/22/python-multiprocess/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/22/python-multiprocess/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody">
+            
+              <p>Python 的GIL限制了多核CPU的性能，对于IO密集型的程序，采用多线程能显著提高运行速度；但对于计算密集型的程序，多线程就没多少用了，采用多进程编程，就能充分利用多核CPU的性能，CPU占用率能达到100%。</p>
+<ul>
+<li>下面是在阿里云服务器上测试的数据：</li>
+</ul>
+<blockquote>
+<p>配置：CPU：Xeon, E5-2680, 2.5GHz, 4核;  内存：16G, DDR4; 硬盘：100G, SSD</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">()</span>:</span></span><br><span class="line">    pool = multiprocessing.Pool(processes = <span class="number">8</span>)</span><br><span class="line">    result = []</span><br><span class="line">    contents = []</span><br><span class="line">    <span class="keyword">for</span> ix, row <span class="keyword">in</span> df.iterrows():</span><br><span class="line">        content = row[<span class="string">'title'</span>] + <span class="string">" "</span> + row[<span class="string">'content'</span>]</span><br><span class="line">        contents.append(content)</span><br><span class="line">    result = pool.map(get_one_article_keys, contents)</span><br><span class="line">    pool.close()</span><br><span class="line">    pool.join()</span><br><span class="line">    t1 = time.time()</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'time pass:&#123;:.3f&#125;'</span>.format(t1-t0)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_one_article_keys</span><span class="params">(content)</span>:</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        tags2 = jieba.analyse.textrank(content, topK=<span class="number">20</span>)</span><br><span class="line">        <span class="keyword">print</span> multiprocessing.current_process()</span><br><span class="line">        <span class="keyword">return</span> <span class="string">','</span>.join(tags2)</span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"get_one_article_keys():%s"</span> % str(e)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">''</span></span><br></pre></td></tr></table></figure>
+<p>执行计算密集型任务的结果：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">multi_way</th>
+<th style="text-align:center">Processes</th>
+<th style="text-align:center">Time(s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">多进程</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">378</td>
+</tr>
+<tr>
+<td style="text-align:center">多进程</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">381</td>
+</tr>
+<tr>
+<td style="text-align:center">多进程</td>
+<td style="text-align:center">20</td>
+<td style="text-align:center">464</td>
+</tr>
+<tr>
+<td style="text-align:center"><font color="red">多线程</font></td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">3174</td>
+</tr>
+</tbody>
+</table>
+<p>对于一台四核的机器，设置进程数为对应的内核数，效率是最高的；当设置比内核多的进程时，在创建python进程时开销占时比较多，造成设置为20个进程数时，时间比4个进程多了1分钟多。<br><strong>因此，设置进程数与实际内核数相同，运行最快。</strong></p>
+<blockquote>
+<p>获取内核数: multiprocessing.cpu_count() </p>
+</blockquote>
+<h1 id="一、多进程编程">一、多进程编程</h1><h2 id="1，map方式">1，map方式</h2><figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> multiprocessing</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">def do_something(i):</span><br><span class="line">    time.sleep(i)</span><br><span class="line">    print 'good:%d' % i</span><br><span class="line">    <span class="keyword">return</span> 'good:%d' % i</span><br><span class="line"></span><br><span class="line">print multiprocessing.cpu_count()</span><br><span class="line">pool = multiprocessing.<span class="type">Pool</span>(processes = <span class="number">4</span>)</span><br><span class="line"><span class="literal">result</span> = pool.map(do_something, <span class="type">range</span>(<span class="number">10</span>)）</span><br><span class="line">pool.close()</span><br><span class="line">pool.join()</span><br><span class="line"><span class="keyword">for</span> res <span class="keyword">in</span> <span class="literal">result</span>:</span><br><span class="line">    print res</span><br></pre></td></tr></table></figure>
+<p>result 可以得到多进程执行do_something返回的结果，为list</p>
+<blockquote>
+<p>1，map方式为阻塞模式，主进程必须等待所有子进程执行完毕了才能继续；<br>2，还有一种方式为非阻塞模式，<font color="red">map_async</font>，主进程不等待子进程是否完毕，接着向下执行。</p>
+</blockquote>
+<h2 id="2，apply_方式">2，apply 方式</h2><figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="literal">result</span> = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="type">range</span>(<span class="number">10</span>):</span><br><span class="line">    <span class="literal">result</span>.append(pool.apply(do_something, (i,)))</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>同map_async一样，还有非阻塞模式 <font color="red">apply_async</font>。</p>
+</blockquote>
+<h1 id="二、多线程编程">二、多线程编程</h1><p>多线程实现也非常简单，跟多进程基本一样，只是创建pool时略有不同。<br><figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing.dummy <span class="keyword">import</span> <span class="type">Pool</span> <span class="keyword">as</span> <span class="type">ThreadPool</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">def do_something(i):</span><br><span class="line">    time.sleep(i)</span><br><span class="line">    print 'good:%d' % i</span><br><span class="line">    <span class="keyword">return</span> 'good:%d' % i</span><br><span class="line"></span><br><span class="line">pool = <span class="type">ThreadPool</span>(processes = <span class="number">4</span>)</span><br><span class="line"><span class="literal">result</span> = pool.map(do_something, <span class="type">range</span>(<span class="number">10</span>)）</span><br><span class="line">pool.close()</span><br><span class="line">pool.join()</span><br><span class="line"><span class="keyword">for</span> res <span class="keyword">in</span> <span class="literal">result</span>:</span><br><span class="line">    print res</span><br></pre></td></tr></table></figure></p>
+
+            
+          </span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/01/21/spider-cookie/" itemprop="url">
                   网页爬虫之cookie自动获取
                 </a>
@@ -1289,7 +1452,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-count">10</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1303,7 +1466,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-count">19</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
