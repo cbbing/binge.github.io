@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Python and Quant]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://www.kekefund.com/"/>
-  <updated>2016-01-22T07:56:58.000Z</updated>
+  <updated>2016-01-26T08:05:32.000Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -15,17 +15,109 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[人工智能和系统化交易招聘]]></title>
+    <link href="http://www.kekefund.com/2016/01/26/js-recruit/"/>
+    <id>http://www.kekefund.com/2016/01/26/js-recruit/</id>
+    <published>2016-01-26T07:48:31.000Z</published>
+    <updated>2016-01-26T08:05:32.000Z</updated>
+    <content type="html"><![CDATA[<p>某大型资产管理公司人工智能和系统化交易招聘<br>简历发送到： [js_recruit@163.com]</p>
+<h1 id="1．_人工智能/机器学习算法研究员">1．  人工智能/机器学习算法研究员</h1><p>学历要求：博士<br>职位数量：2人</p>
+<h2 id="岗位职责：">岗位职责：</h2><ul>
+<li>使用统计学习方法，挖掘投资者行为特征的数据。</li>
+<li>对金融海量数据，针对不同的学习问题，建立起一般性的数据源选择框架。</li>
+<li>对金融相关分类和预测性问题建模，并负责系统回测。</li>
+<li>与技术人员合作，参与大数据计算框架的设计和运行<a id="more"></a>
+</li>
+</ul>
+<h2 id="职位要求：">职位要求：</h2><ul>
+<li>具有人工智能，机器学习方面较为深厚的理论研究背景。深入理解机器学习的各种算法。能独立从事大数据和人工智能方面的研究工作。</li>
+<li>对数据的预处理，分类，预测等方面有实践经验。熟练使用R，Python，C/C++, Java, Scala 等编程语言中至少一种。</li>
+<li>工作勤奋，有团队精神，能承担一定的工作压力。</li>
+</ul>
+<h1 id="2-_数据管理员">2.  数据管理员</h1><p>学历要求：本科以上<br>职位数量：1人</p>
+<h2 id="岗位职责：-1">岗位职责：</h2><ul>
+<li>负责团队数据库的运行和维护，管理，扩展工作</li>
+<li>根据业务需求，参与数据库的架构设计和数据结构的优化</li>
+<li>负责数据库的日常监控，维护，备份和恢复</li>
+<li>研究系统可能存在的性能瓶颈并进行优化</li>
+</ul>
+<h2 id="背景要求：">背景要求：</h2><ul>
+<li>具有数据库运维的3年经验。熟悉Oracle，MySQL, SQLServer等各种数据库的存储，查询，和优化。</li>
+<li>有一定的脚本语言开发能力，能用C/C++，Java，Python 其中至少一种开发数据库接口。有一定的大数据运行经验，能配合开发人员优化数据库访问语句。</li>
+<li>了解非关系型数据库NoSQL的工作原理。</li>
+<li>工作细致耐心，踏实敬业，有团队合作精神。</li>
+</ul>
+<h1 id="3．_大数据架构技术经理">3．  大数据架构技术经理</h1><p>学历要求：本科以上<br>职位数量：1人</p>
+<h2 id="岗位职责：-2">岗位职责：</h2><ul>
+<li>根据项目需求，分析，设计，并实现系统的架构方案。使系统架构具有合理性和可扩展性</li>
+<li>控制大数据项目的架构质量，协助解决项目开发过程中的技术困难。</li>
+<li>追踪大数据和云计算技术的最新科技成果，并协调团队应用于金融实践</li>
+<li>参与代码的实现，并编写技术文档，对通用技术实现复用。</li>
+</ul>
+<h2 id="背景要求：-1">背景要求：</h2><ul>
+<li>有独立开发和部署分布式存储和计算架构，比如Hadoop，Hive，Pig，Spark的经验。熟悉海量数据的查询和计算。</li>
+<li>精通C/C++, Scala, Python, Java至少两种编程语言，有较强的分布式计算基础和软件工程能力</li>
+<li>精通Linux操作系统， 对开源软件，云计算，数据仓库类产品有比较深入的认识。</li>
+<li>良好的沟通协调能力。</li>
+</ul>
+<h1 id="4．_大数据工程师">4．  大数据工程师</h1><p>学历要求：本科以上<br>职位数量：1~2人</p>
+<h2 id="岗位职责：-3">岗位职责：</h2><ul>
+<li>参与开发和建设实时、离线的数据存储和计算平台，并在该平台上实现数据的预测，分类和展现。</li>
+<li>参与构建金融类相关数据业务模型，并使用并行式计算架构实现和优化。</li>
+<li>参与开发数据可视化过程。</li>
+</ul>
+<h2 id="背景要求：-2">背景要求：</h2><ul>
+<li>精通C/C++, Scala, Python, Java中至少两种编程语言，有较强的软件工程能力，理解面向对象编程思想（类，对象，重载，继承，多态）。</li>
+<li>了解分布式存储和计算架构，比如Hadoop，Hive，Pig，Spark。</li>
+<li>精通Linux操作系统和Shell的使用， 会编写script.</li>
+<li>熟练使用关系型数据库， 熟悉Oracle，MySQL，SQLServer等各种数据库的存储和优化。</li>
+</ul>
+<h1 id="5．_金融工程研究员">5．  金融工程研究员</h1><p>学历要求：硕士或以上<br>职位数量：1人</p>
+<h2 id="岗位职责：-4">岗位职责：</h2><ul>
+<li>设计和优化二级市场被动性和主动性投资策略，并负责系统回测</li>
+<li>与团队成员合作，设计金融数据挖掘逻辑</li>
+<li>参与金融产品的开发和风险控制</li>
+</ul>
+<h2 id="职位要求：-1">职位要求：</h2><ul>
+<li>深入理解二级市场投资的各种产品，包括股票，债券，期货，指数基金等</li>
+<li>理解实证资产定价过程，对于量化投资有一定了解。</li>
+<li>理解公司财务理论，并能对上市公司进行财务分析。</li>
+<li>能够使用Matlab，R，等任意一种脚本语言，编写程序</li>
+</ul>
+<h2 id="简历发送到：_js_recruit@163-com">简历发送到： <a href="js_recruit@163.com">js_recruit@163.com</a></h2>]]></content>
+    <summary type="html">
+    <![CDATA[<p>某大型资产管理公司人工智能和系统化交易招聘<br>简历发送到： [js_recruit@163.com]</p>
+<h1 id="1．_人工智能/机器学习算法研究员">1．  人工智能/机器学习算法研究员</h1><p>学历要求：博士<br>职位数量：2人</p>
+<h2 id="岗位职责：">岗位职责：</h2><ul>
+<li>使用统计学习方法，挖掘投资者行为特征的数据。</li>
+<li>对金融海量数据，针对不同的学习问题，建立起一般性的数据源选择框架。</li>
+<li>对金融相关分类和预测性问题建模，并负责系统回测。</li>
+<li>与技术人员合作，参与大数据计算框架的设计和运行]]>
+    
+    </summary>
+    
+      <category term="人工智能" scheme="http://www.kekefund.com/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/"/>
+    
+      <category term="招聘" scheme="http://www.kekefund.com/tags/%E6%8B%9B%E8%81%98/"/>
+    
+      <category term="机器学习" scheme="http://www.kekefund.com/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="系统化交易" scheme="http://www.kekefund.com/tags/%E7%B3%BB%E7%BB%9F%E5%8C%96%E4%BA%A4%E6%98%93/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[python多线程与多进程 超简单使用]]></title>
     <link href="http://www.kekefund.com/2016/01/22/python-multiprocess/"/>
     <id>http://www.kekefund.com/2016/01/22/python-multiprocess/</id>
     <published>2016-01-22T07:47:07.000Z</published>
-    <updated>2016-01-22T07:56:58.000Z</updated>
+    <updated>2016-01-26T07:52:39.000Z</updated>
     <content type="html"><![CDATA[<p>Python 的GIL限制了多核CPU的性能，对于IO密集型的程序，采用多线程能显著提高运行速度；但对于计算密集型的程序，多线程就没多少用了，采用多进程编程，就能充分利用多核CPU的性能，CPU占用率能达到100%。</p>
 <ul>
 <li>下面是在阿里云服务器上测试的数据：</li>
 </ul>
 <blockquote>
-<p>配置：CPU：Xeon, E5-2680, 2.5GHz, 4核;  内存：16G, DDR4; 硬盘：100G, SSD</p>
+<p>配置：CPU：Xeon, E5-2680, 2.5GHz, 4核;  内存：16G, DDR4; 硬盘：100G, SSD<br><a id="more"></a></p>
 </blockquote>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">()</span>:</span></span><br><span class="line">    pool = multiprocessing.Pool(processes = <span class="number">8</span>)</span><br><span class="line">    result = []</span><br><span class="line">    contents = []</span><br><span class="line">    <span class="keyword">for</span> ix, row <span class="keyword">in</span> df.iterrows():</span><br><span class="line">        content = row[<span class="string">'title'</span>] + <span class="string">" "</span> + row[<span class="string">'content'</span>]</span><br><span class="line">        contents.append(content)</span><br><span class="line">    result = pool.map(get_one_article_keys, contents)</span><br><span class="line">    pool.close()</span><br><span class="line">    pool.join()</span><br><span class="line">    t1 = time.time()</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'time pass:&#123;:.3f&#125;'</span>.format(t1-t0)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_one_article_keys</span><span class="params">(content)</span>:</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        tags2 = jieba.analyse.textrank(content, topK=<span class="number">20</span>)</span><br><span class="line">        <span class="keyword">print</span> multiprocessing.current_process()</span><br><span class="line">        <span class="keyword">return</span> <span class="string">','</span>.join(tags2)</span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"get_one_article_keys():%s"</span> % str(e)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">''</span></span><br></pre></td></tr></table></figure>
 <p>执行计算密集型任务的结果：</p>
@@ -78,7 +170,11 @@
     <summary type="html">
     <![CDATA[<p>Python 的GIL限制了多核CPU的性能，对于IO密集型的程序，采用多线程能显著提高运行速度；但对于计算密集型的程序，多线程就没多少用了，采用多进程编程，就能充分利用多核CPU的性能，CPU占用率能达到100%。</p>
 <ul>
-<li>下面是在阿里云服务器上测试的数]]>
+<li>下面是在阿里云服务器上测试的数据：</li>
+</ul>
+<blockquote>
+<p>配置：CPU：Xeon, E5-2680, 2.5GHz, 4核;  内存：16G, DDR4; 硬盘：100G, SSD<br>]]>
+    
     </summary>
     
       <category term="Python" scheme="http://www.kekefund.com/tags/Python/"/>
