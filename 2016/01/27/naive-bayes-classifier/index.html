@@ -68,7 +68,7 @@
 <meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?P(C)*P(F_{1}|C)*P(F_{2}|C)...P(F_{n}|C) ">
 <meta property="og:image" content="http://www.forkosh.com/mathtex.cgi? P(C=0|F_{1}...F_{n})">
 <meta property="og:image" content="http://www.forkosh.com/mathtex.cgi? P(C=1|F_{1}...F_{n})">
-<meta property="og:updated_time" content="2016-01-28T01:03:36.000Z">
+<meta property="og:updated_time" content="2016-02-03T07:10:47.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python朴素贝叶斯分类器 - 自然语言处理">
 <meta name="twitter:description" content="概念朴素贝叶斯算法是一个直观的方法，使用每个属性属于某个类的概率来做预测。你可以使用这种监督性学习方法，对一个预测性建模问题进行概率建模。
@@ -319,7 +319,7 @@
 <p><em>特征名称提供一个简短的、可读的特征描述；特征值是简单类型的值，如布尔、数字和字符串。</em></p>
 <h2 id="2，准备数据">2，准备数据</h2><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attribute">In[24]</span>: <span class="string">from nltk.corpus import names</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[25]</span>: <span class="string">import random</span></span><br><span class="line"></span><br><span class="line"><span class="stylus">In[<span class="number">26</span>]: names = ([(name, <span class="string">'male'</span>) <span class="keyword">for</span> name <span class="keyword">in</span> names.<span class="function"><span class="title">words</span><span class="params">(<span class="string">'male.txt'</span>)</span></span>] + [(name, <span class="string">'female'</span>) <span class="keyword">for</span> name <span class="keyword">in</span> names.<span class="function"><span class="title">words</span><span class="params">(<span class="string">'female.txt'</span>)</span></span>])</span><br><span class="line"></span><br><span class="line">In[<span class="number">44</span>]: random.<span class="function"><span class="title">shuffle</span><span class="params">(names)</span></span>  #元素顺序打乱</span></span></span><br></pre></td></tr></table></figure>
 <h2 id="3，朴素贝叶斯分类器">3，朴素贝叶斯分类器</h2><p>将特征集的结果链表划分为训练集和测试集。训练集用于训练新的“朴素贝叶斯”分类器。</p>
-<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attribute">In[33]</span>: <span class="string">train_set, test_set = featuresets[500:], featuresets[:500]</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[34]</span>: <span class="string">classifier = nltk.NaiveBayesClassifier.train(train_set)</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[35]</span>: <span class="string">classifier.classify(gender_features('Neo'))</span></span><br><span class="line"></span><br><span class="line"><span class="delphi"><span class="keyword">Out</span>[<span class="number">35</span>]: <span class="string">'male'</span></span></span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">In[32]</span>: <span class="string">featuresets = [(gender_features(n), g) for (n, g) in names]</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[33]</span>: <span class="string">train_set, test_set = featuresets[500:], featuresets[:500]</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[34]</span>: <span class="string">classifier = nltk.NaiveBayesClassifier.train(train_set)</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[35]</span>: <span class="string">classifier.classify(gender_features('Neo'))</span></span><br><span class="line"></span><br><span class="line"><span class="delphi"><span class="keyword">Out</span>[<span class="number">35</span>]: <span class="string">'male'</span></span></span></span></span></span><br></pre></td></tr></table></figure>
 <h2 id="4，评估分类器">4，评估分类器</h2><p>准确度：</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">In</span><span class="attr_selector">[39]</span>: <span class="tag">print</span> <span class="tag">nltk</span><span class="class">.classify</span><span class="class">.accuracy</span>(<span class="tag">classifier</span>, <span class="tag">test_set</span>)</span><br><span class="line"></span><br><span class="line">0<span class="class">.602</span></span><br></pre></td></tr></table></figure>
 <p>检查分类器，确定哪些特征对于区分名字的性别是最有效的:</p>
@@ -368,6 +368,10 @@
           </div>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/15/py-tag-cloud/" rel="prev" title="python 制作标签云">
+                python 制作标签云 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -458,7 +462,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-count">13</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -472,7 +476,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">27</span>
+              <span class="site-state-item-count">29</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>

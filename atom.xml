@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Python and Quant]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://www.kekefund.com/"/>
-  <updated>2016-01-28T01:03:36.000Z</updated>
+  <updated>2016-02-15T01:24:58.000Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -15,11 +15,48 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[python 制作标签云]]></title>
+    <link href="http://www.kekefund.com/2016/02/15/py-tag-cloud/"/>
+    <id>http://www.kekefund.com/2016/02/15/py-tag-cloud/</id>
+    <published>2016-02-15T01:19:38.000Z</published>
+    <updated>2016-02-15T01:24:58.000Z</updated>
+    <content type="html"><![CDATA[<p>标签云是比较直观的频率分布表现方式，很多网站和APP在年度盘点和总结时会使用。Python生成标签云有一个比较易用的库 pytagcloud。</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-02-10-finance.png-540x360" alt=""></p>
+<h1 id="1，导入头文件">1，导入头文件</h1><figure class="highlight capnproto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pytagcloud <span class="keyword">import</span> create_tag_image, make_tags</span><br><span class="line"><span class="keyword">from</span> pytagcloud.lang.counter <span class="keyword">import</span> get_tag_counts</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h1 id="2，生成标签云">2，生成标签云</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">finance_cloud</span><span class="params">()</span>:</span></span><br><span class="line"></span><br><span class="line">      tag = <span class="string">'cc xx xx china cc keke keke keke'</span></span><br><span class="line">      tags = make_tags(get_tag_counts(tag),maxsize=<span class="number">100</span>)</span><br><span class="line">      <span class="comment"># Set your output filename</span></span><br><span class="line">      create_tag_image(tags,<span class="string">"cloud.png"</span>, size=(<span class="number">1280</span>,<span class="number">800</span>),background=(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">255</span>), fontname=<span class="string">"SimHei"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">finance_cloud()</span><br></pre></td></tr></table></figure>
+<p>生成的图片cloud.png可以指定尺寸size，设置背景background，指定字体fontname。</p>
+<p>pytagcloud库默认的字体不支持中文，生成的图片中，中文是乱码。</p>
+<p>解决办法是在py文件开始处指定图片输出的字体：</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="atom">from</span> <span class="atom">pylab</span> <span class="atom">import</span> <span class="atom">mpl</span></span><br><span class="line"><span class="atom">mpl</span>.<span class="atom">rcParams</span>[<span class="string">'font.sans-serif'</span>] = [<span class="string">'SimHei'</span>]#[<span class="string">'FangSong'</span>] # 指定默认字体</span><br><span class="line"><span class="atom">mpl</span>.<span class="atom">rcParams</span>[<span class="string">'axes.unicode_minus'</span>] = <span class="name">False</span> # 解决保存图像是负号<span class="string">'-'</span>显示为方块的问题</span><br></pre></td></tr></table></figure>
+<h1 id="3，字体名称">3，字体名称</h1><h2 id="Windows的字体对应名称">Windows的字体对应名称</h2><p>黑体     SimHei<br>微软雅黑     Microsoft YaHei<br>微软正黑体     Microsoft JhengHei<br>新宋体     NSimSun<br>新细明体     PMingLiU<br>细明体     MingLiU<br>标楷体     DFKai-SB<br>仿宋     FangSong<br>楷体     KaiTi<br>仿宋_GB2312     FangSong_GB2312<br>楷体_GB2312     KaiTi_GB2312 </p>
+<p>宋体：SimSuncss中中文字体（font-family）的英文名称<br>新細明體：PMingLiU<br>細明體：MingLiU<br>標楷體：DFKai-SB<br>黑体：SimHei<br>新宋体：NSimSun<br>仿宋：FangSong<br>楷体：KaiTi<br>仿宋_GB2312：FangSong_GB2312<br>楷体_GB2312：KaiTi_GB2312<br>微軟正黑體：Microsoft JhengHei<br>微软雅黑体：Microsoft YaHei<br>装Office会生出来的一些：<br>隶书：LiSu<br>幼圆：YouYuan<br>华文细黑：STXihei<br>华文楷体：STKaiti<br>华文宋体：STSong<br>华文中宋：STZhongsong<br>华文仿宋：STFangsong<br>方正舒体：FZShuTi<br>方正姚体：FZYaoti<br>华文彩云：STCaiyun<br>华文琥珀：STHupo<br>华文隶书：STLiti<br>华文行楷：STXingkai<br>华文新魏：STXinwei</p>
+<h2 id="Mac_OS的字体名称：">Mac OS的字体名称：</h2><p>华文细黑：STHeiti Light [STXihei]<br>华文黑体：STHeiti<br>华文楷体：STKaiti<br>华文宋体：STSong<br>华文仿宋：STFangsong<br>儷黑 Pro：LiHei Pro Medium<br>儷宋 Pro：LiSong Pro Light<br>標楷體：BiauKai<br>蘋果儷中黑：Apple LiGothic Medium<br>蘋果儷細宋：Apple LiSung Light </p>
+<blockquote>
+<p>参考：<a href="http://www.it610.com/article/2569995.htm" target="_blank" rel="external">http://www.it610.com/article/2569995.htm</a></p>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>标签云是比较直观的频率分布表现方式，很多网站和APP在年度盘点和总结时会使用。Python生成标签云有一个比较易用的库 pytagcloud。</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-02-10-finance.png-540x360" alt=""></p>
+<h1 id="1，导入头文件">1，导入头文件</h1><figure class="highlight capnproto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pytagcloud <span class="keyword">import</span> create_tag_image, make_tags</span><br><span class="line"><span class="keyword">from</span> pytagcloud.lang.counter <span class="keyword">import</span> get_tag_counts</span><br></pre></td></tr></table></figure>]]>
+    
+    </summary>
+    
+      <category term="pytagcloud" scheme="http://www.kekefund.com/tags/pytagcloud/"/>
+    
+      <category term="python" scheme="http://www.kekefund.com/tags/python/"/>
+    
+      <category term="标签云" scheme="http://www.kekefund.com/tags/%E6%A0%87%E7%AD%BE%E4%BA%91/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[Python朴素贝叶斯分类器 - 自然语言处理]]></title>
     <link href="http://www.kekefund.com/2016/01/27/naive-bayes-classifier/"/>
     <id>http://www.kekefund.com/2016/01/27/naive-bayes-classifier/</id>
     <published>2016-01-27T07:45:55.000Z</published>
-    <updated>2016-01-28T01:03:36.000Z</updated>
+    <updated>2016-02-03T07:10:47.000Z</updated>
     <content type="html"><![CDATA[<h1 id="概念">概念</h1><p>朴素贝叶斯算法是一个直观的方法，使用每个属性属于某个类的概率来做预测。你可以使用这种监督性学习方法，对一个预测性建模问题进行概率建模。</p>
 <p>给定一个类，朴素贝叶斯假设每个属性归属于此类的概率独立于其余所有属性，从而简化了概率的计算。这种强假定产生了一个快速、有效的方法。</p>
 <p>给定一个属性值，其属于某个类的概率叫做条件概率。对于一个给定的类值，将每个属性的条件概率相乘，便得到一个数据样本属于某个类的概率。</p>
@@ -53,7 +90,7 @@
 <p><em>特征名称提供一个简短的、可读的特征描述；特征值是简单类型的值，如布尔、数字和字符串。</em></p>
 <h2 id="2，准备数据">2，准备数据</h2><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attribute">In[24]</span>: <span class="string">from nltk.corpus import names</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[25]</span>: <span class="string">import random</span></span><br><span class="line"></span><br><span class="line"><span class="stylus">In[<span class="number">26</span>]: names = ([(name, <span class="string">'male'</span>) <span class="keyword">for</span> name <span class="keyword">in</span> names.<span class="function"><span class="title">words</span><span class="params">(<span class="string">'male.txt'</span>)</span></span>] + [(name, <span class="string">'female'</span>) <span class="keyword">for</span> name <span class="keyword">in</span> names.<span class="function"><span class="title">words</span><span class="params">(<span class="string">'female.txt'</span>)</span></span>])</span><br><span class="line"></span><br><span class="line">In[<span class="number">44</span>]: random.<span class="function"><span class="title">shuffle</span><span class="params">(names)</span></span>  #元素顺序打乱</span></span></span><br></pre></td></tr></table></figure>
 <h2 id="3，朴素贝叶斯分类器">3，朴素贝叶斯分类器</h2><p>将特征集的结果链表划分为训练集和测试集。训练集用于训练新的“朴素贝叶斯”分类器。</p>
-<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attribute">In[33]</span>: <span class="string">train_set, test_set = featuresets[500:], featuresets[:500]</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[34]</span>: <span class="string">classifier = nltk.NaiveBayesClassifier.train(train_set)</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[35]</span>: <span class="string">classifier.classify(gender_features('Neo'))</span></span><br><span class="line"></span><br><span class="line"><span class="delphi"><span class="keyword">Out</span>[<span class="number">35</span>]: <span class="string">'male'</span></span></span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">In[32]</span>: <span class="string">featuresets = [(gender_features(n), g) for (n, g) in names]</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[33]</span>: <span class="string">train_set, test_set = featuresets[500:], featuresets[:500]</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[34]</span>: <span class="string">classifier = nltk.NaiveBayesClassifier.train(train_set)</span></span><br><span class="line"></span><br><span class="line"><span class="http"><span class="attribute">In[35]</span>: <span class="string">classifier.classify(gender_features('Neo'))</span></span><br><span class="line"></span><br><span class="line"><span class="delphi"><span class="keyword">Out</span>[<span class="number">35</span>]: <span class="string">'male'</span></span></span></span></span></span><br></pre></td></tr></table></figure>
 <h2 id="4，评估分类器">4，评估分类器</h2><p>准确度：</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">In</span><span class="attr_selector">[39]</span>: <span class="tag">print</span> <span class="tag">nltk</span><span class="class">.classify</span><span class="class">.accuracy</span>(<span class="tag">classifier</span>, <span class="tag">test_set</span>)</span><br><span class="line"></span><br><span class="line">0<span class="class">.602</span></span><br></pre></td></tr></table></figure>
 <p>检查分类器，确定哪些特征对于区分名字的性别是最有效的:</p>
