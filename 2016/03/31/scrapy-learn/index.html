@@ -35,7 +35,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="python,scrapy," />
 
 
 
@@ -53,15 +53,68 @@
 
 
 
-<meta name="description" content="learn python and invest">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Keke‘s Blog">
-<meta property="og:url" content="http://www.kekefund.com/index.html">
+<meta name="description" content="[TOC]
+scrapy爬虫框架在业内大大有名，自己写过静态网页和动态网页的爬虫，一直没拿scrapy来写，近来看了scrapy的官方文档，了解了大致的流程，故拿来练手实践了一个项目。
+本文主要抓取股吧的文章，内容包括:
+
+定义抓取Spider
+
+数据字段的定义
+
+内容解析
+
+数据存储到mysql
+
+PyCharm调试scrapy
+
+
+一、定义抓取Spider创建一个新的Spider
+12scra">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scrapy框架初探">
+<meta property="og:url" content="http://www.kekefund.com/2016/03/31/scrapy-learn/index.html">
 <meta property="og:site_name" content="Keke‘s Blog">
-<meta property="og:description" content="learn python and invest">
+<meta property="og:description" content="[TOC]
+scrapy爬虫框架在业内大大有名，自己写过静态网页和动态网页的爬虫，一直没拿scrapy来写，近来看了scrapy的官方文档，了解了大致的流程，故拿来练手实践了一个项目。
+本文主要抓取股吧的文章，内容包括:
+
+定义抓取Spider
+
+数据字段的定义
+
+内容解析
+
+数据存储到mysql
+
+PyCharm调试scrapy
+
+
+一、定义抓取Spider创建一个新的Spider
+12scra">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba2.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba3.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba4.png">
+<meta property="og:updated_time" content="2016-03-31T09:11:54.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Keke‘s Blog">
-<meta name="twitter:description" content="learn python and invest">
+<meta name="twitter:title" content="Scrapy框架初探">
+<meta name="twitter:description" content="[TOC]
+scrapy爬虫框架在业内大大有名，自己写过静态网页和动态网页的爬虫，一直没拿scrapy来写，近来看了scrapy的官方文档，了解了大致的流程，故拿来练手实践了一个项目。
+本文主要抓取股吧的文章，内容包括:
+
+定义抓取Spider
+
+数据字段的定义
+
+内容解析
+
+数据存储到mysql
+
+PyCharm调试scrapy
+
+
+一、定义抓取Spider创建一个新的Spider
+12scra">
 
 
 
@@ -73,7 +126,7 @@
   };
 </script>
 
-  <title> Keke‘s Blog </title>
+  <title> Scrapy框架初探 | Keke‘s Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -113,9 +166,7 @@
 
 
 
-  <div class="container one-column 
-   page-home 
-">
+  <div class="container one-column page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -192,15 +243,9 @@
       <div class="main-inner">
         <div id="content" class="content">
           
-  <section id="posts" class="posts-expand">
 
+  <div id="posts" class="posts-expand">
     
-
-    
-    
-
-    
-      
 
   
   
@@ -220,10 +265,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/03/31/scrapy-learn/" itemprop="url">
-                  Scrapy框架初探
-                </a>
+                Scrapy框架初探
               
             
           </h1>
@@ -270,10 +312,7 @@
       
 
       
-        
-          <span itemprop="articleBody">
-            
-              <p>[TOC]</p>
+        <span itemprop="articleBody"><p>[TOC]</p>
 <p>scrapy爬虫框架在业内大大有名，自己写过静态网页和动态网页的爬虫，一直没拿scrapy来写，近来看了scrapy的官方文档，了解了大致的流程，故拿来练手实践了一个项目。</p>
 <p>本文主要抓取股吧的文章，内容包括:</p>
 <ul>
@@ -323,1036 +362,67 @@
 <p>在scrapy项目的根目录下（与scrapy.cfg同级）新建一个文件run.py，内容如下：</p>
 <figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"></span><br><span class="line">from scrapy.cmdline import<span class="instruction"> execute</span><br><span class="line"></span>execute(<span class="function">)</span></span><br></pre></td></tr></table></figure>
 <p>新建一个Run/Debug Configurations，Script选择run.py，Script parameters输入crawl guba。其中guba是在GubaSpider中定义的name。这样启动Debug就能单步调试了。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba4.png" alt=""></p>
-
-            
-          </span>
-        
+</span>
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/23/pandas-anlysis-basic/" itemprop="url">
-                  Pandas数据分析基础
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-02-23T10:27:49+08:00" content="2016-02-23">
-              2016-02-23
-            </time>
-          </span>
-
+        <div class="post-tags">
           
-
-                    
-          &nbsp; | &nbsp; 
+            <a href="/tags/python/" rel="tag">#python</a>
           
-          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
-
-
-
+            <a href="/tags/scrapy/" rel="tag">#scrapy</a>
           
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/02/23/pandas-anlysis-basic/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/23/pandas-anlysis-basic/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
         </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
       
 
       
-        
-          <p>使用pandas，首先导入包：</p>
-<figure class="highlight capnproto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pandas <span class="keyword">import</span> Series, DataFrame</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
-<h1 id="一、创建Series，DataFrame">一、创建Series，DataFrame</h1><h2 id="1，创建Series">1，创建Series</h2><h3 id="a，通过列表创建">a，通过列表创建</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">obj = Series([<span class="number">4</span>, <span class="number">7</span>, -<span class="number">5</span>, <span class="number">3</span>]) </span><br><span class="line">obj2 = Series([<span class="number">4</span>, <span class="number">7</span>, -<span class="number">5</span>, <span class="number">3</span>], index=[<span class="string">'d'</span>,<span class="string">'b'</span>,<span class="string">'a'</span>,<span class="string">'c'</span>]) <span class="preprocessor">#指定索引</span></span><br></pre></td></tr></table></figure>
-<h3 id="b，通过字典创建Series">b，通过字典创建Series</h3><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="setting">sdata = <span class="value">&#123;<span class="string">'Ohio'</span>:<span class="number">35000</span>, <span class="string">'Texas'</span>:<span class="number">7100</span>, <span class="string">'Oregon'</span>:<span class="number">1600</span>,<span class="string">'Utah'</span>:<span class="number">500</span>&#125;</span></span></span><br><span class="line"><span class="setting">obj3 = <span class="value">Series(sdata)</span></span></span><br></pre></td></tr></table></figure>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/23/pandas-anlysis-basic/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/23/pandas-anlysis-basic/" rel="next" title="Pandas数据分析基础">
+                <i class="fa fa-chevron-left"></i> Pandas数据分析基础
+              </a>
+            
           </div>
-        
-      
-    </div>
 
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
+          <div class="post-nav-prev post-nav-item">
             
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/15/py-tag-cloud/" itemprop="url">
-                  python 制作标签云
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-02-15T09:19:38+08:00" content="2016-02-15">
-              2016-02-15
-            </time>
-          </span>
-
-          
-
-                    
-          &nbsp; | &nbsp; 
-          
-          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
-
-
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/02/15/py-tag-cloud/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/15/py-tag-cloud/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p>标签云是比较直观的频率分布表现方式，很多网站和APP在年度盘点和总结时会使用。Python生成标签云有一个比较易用的库 pytagcloud。</p>
-<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-02-10-finance.png-540x360" alt=""></p>
-<h1 id="1，导入头文件">1，导入头文件</h1><figure class="highlight capnproto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pytagcloud <span class="keyword">import</span> create_tag_image, make_tags</span><br><span class="line"><span class="keyword">from</span> pytagcloud.lang.counter <span class="keyword">import</span> get_tag_counts</span><br></pre></td></tr></table></figure>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/15/py-tag-cloud/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
           </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/01/27/naive-bayes-classifier/" itemprop="url">
-                  Python朴素贝叶斯分类器 - 自然语言处理
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-01-27T15:45:55+08:00" content="2016-01-27">
-              2016-01-27
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-                    
-          &nbsp; | &nbsp; 
-          
-          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
-
-
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/27/naive-bayes-classifier/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/27/naive-bayes-classifier/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
         </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
       
 
       
-        
-          <h1 id="概念">概念</h1><p>朴素贝叶斯算法是一个直观的方法，使用每个属性属于某个类的概率来做预测。你可以使用这种监督性学习方法，对一个预测性建模问题进行概率建模。</p>
-<p>给定一个类，朴素贝叶斯假设每个属性归属于此类的概率独立于其余所有属性，从而简化了概率的计算。这种强假定产生了一个快速、有效的方法。</p>
-<p>给定一个属性值，其属于某个类的概率叫做条件概率。对于一个给定的类值，将每个属性的条件概率相乘，便得到一个数据样本属于某个类的概率。</p>
-<h2 id="1、贝叶斯定理">1、贝叶斯定理</h2><p>假设对于某个数据集，随机变量C表示样本为C类的概率，F1表示测试样本某特征出现的概率，套用基本贝叶斯公式，则如下所示：</p>
-<center><br><img src="http://www.forkosh.com/mathtex.cgi?P(C%20|%20F_{1})%20=%20\dfrac{P(CF_{1})}%20{P(F_{1})}%20=%20\dfrac{P(C)*P(F_{1}|C)}{P(F_{1})}" /><br></center>
-
-<p>上式表示对于某个样本，特征F1出现时，该样本被分为C类的条件概率。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/27/naive-bayes-classifier/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
+
+    <div class="post-spread">
       
+        <div class="ds-share flat" data-thread-key="2016/03/31/scrapy-learn/"
+     data-title="Scrapy框架初探"
+     data-content=""
+     data-url="http://www.kekefund.com/2016/03/31/scrapy-learn/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
 
-  
-  
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
 
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/01/26/js-recruit/" itemprop="url">
-                  人工智能和系统化交易招聘
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-01-26T15:48:31+08:00" content="2016-01-26">
-              2016-01-26
-            </time>
-          </span>
-
-          
-
-                    
-          &nbsp; | &nbsp; 
-          
-          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
-
-
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/26/js-recruit/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/26/js-recruit/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p>某大型资产管理公司人工智能和系统化交易招聘<br>简历发送到： [js_recruit@163.com]</p>
-<h1 id="1．_人工智能/机器学习算法研究员">1．  人工智能/机器学习算法研究员</h1><p>学历要求：博士<br>职位数量：2人</p>
-<h2 id="岗位职责：">岗位职责：</h2><ul>
-<li>使用统计学习方法，挖掘投资者行为特征的数据。</li>
-<li>对金融海量数据，针对不同的学习问题，建立起一般性的数据源选择框架。</li>
-<li>对金融相关分类和预测性问题建模，并负责系统回测。</li>
-<li>与技术人员合作，参与大数据计算框架的设计和运行
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/26/js-recruit/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
       
     </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/01/22/python-multiprocess/" itemprop="url">
-                  python多线程与多进程 超简单使用
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-01-22T15:47:07+08:00" content="2016-01-22">
-              2016-01-22
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-                    
-          &nbsp; | &nbsp; 
-          
-          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
-
-
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/22/python-multiprocess/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/22/python-multiprocess/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p>Python 的GIL限制了多核CPU的性能，对于IO密集型的程序，采用多线程能显著提高运行速度；但对于计算密集型的程序，多线程就没多少用了，采用多进程编程，就能充分利用多核CPU的性能，CPU占用率能达到100%。</p>
-<ul>
-<li>下面是在阿里云服务器上测试的数据：</li>
-</ul>
-<blockquote>
-<p>配置：CPU：Xeon, E5-2680, 2.5GHz, 4核;  内存：16G, DDR4; 硬盘：100G, SSD<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/22/python-multiprocess/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/01/21/spider-cookie/" itemprop="url">
-                  网页爬虫之cookie自动获取
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-01-21T09:05:36+08:00" content="2016-01-21">
-              2016-01-21
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-                    
-          &nbsp; | &nbsp; 
-          
-          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
-
-
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/21/spider-cookie/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/21/spider-cookie/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p>本文实现cookie的自动获取，及cookie过期自动更新。</p>
-<p>社交网站中的很多信息需要登录才能获取到，以微博为例，不登录账号，只能看到大V的前十条微博。保持登录状态，必须要用到Cookie。以登录www.weibo.cn 为例：</p>
-<p>在chrome中输入：<a href="http://login.weibo.cn/login/">http://login.weibo.cn/login/</a>  </p>
-<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-01-21-cookie.png" alt=""></p>
-<p>分析控制台的Headers的请求返回，会看到weibo.cn有几组返回的cookie。</p>
-<h1 id="实现步骤：">实现步骤：</h1><blockquote>
-<p>1，采用selenium自动登录获取cookie，保存到文件;</p>
-<p>2，读取cookie，比较cookie的有效期，若过期则再次执行步骤1；</p>
-<p>3，在请求其他网页时，填入cookie，实现登录状态的保持。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/21/spider-cookie/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/01/07/use-reqeusts/" itemprop="url">
-                  requests初步使用
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-01-07T16:52:33+08:00" content="2016-01-07">
-              2016-01-07
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-                    
-          &nbsp; | &nbsp; 
-          
-          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
-
-
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/07/use-reqeusts/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/07/use-reqeusts/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <h1 id="基本用法">基本用法</h1><h2 id="一、发送无参数的get请求">一、发送无参数的get请求</h2><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">In [<span class="number">67</span>]: r =requests.<span class="built_in">get</span>(<span class="string">'http://httpbin.org/get'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">68</span>]: <span class="built_in">print</span> r.<span class="built_in">text</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"args"</span>: &#123;&#125;, </span><br><span class="line">  <span class="string">"headers"</span>: &#123;</span><br><span class="line">    <span class="string">"Accept"</span>: <span class="string">"*/*"</span>, </span><br><span class="line">    <span class="string">"Accept-Encoding"</span>: <span class="string">"gzip, deflate"</span>, </span><br><span class="line">    <span class="string">"Host"</span>: <span class="string">"httpbin.org"</span>, </span><br><span class="line">    <span class="string">"User-Agent"</span>: <span class="string">"python-requests/2.7.0 CPython/2.7.10 Darwin/14.5.0"</span></span><br><span class="line">  &#125;, </span><br><span class="line">  <span class="string">"origin"</span>: <span class="string">"220.231.47.169"</span>, </span><br><span class="line">  <span class="string">"url"</span>: <span class="string">"http://httpbin.org/get"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>返回一个名为 r 的Response对象。可以从这个对象中获取所有我们想要的信息。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/07/use-reqeusts/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/01/04/python-ip-proxy-frame/" itemprop="url">
-                  IP代理池的实现框架(安装包)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2016-01-04T15:58:00+08:00" content="2016-01-04">
-              2016-01-04
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-                    
-          &nbsp; | &nbsp; 
-          
-          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
-
-
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/04/python-ip-proxy-frame/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/04/python-ip-proxy-frame/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p>上一篇 <a href="http://kekefund.com/2015/11/17/pytho-ip-proxy/">IP代理池的实现</a> 讲解了IP代理池的实现细节。</p>
-<p>由于爬虫多个项目都需要用到IP代理，打造一个公用的IP代理库就很有必要。本文主要讲解公用的IP代理库的实现框架。</p>
-<blockquote>
-<p>实现思路如下：</p>
-<p>1，数据抓取：从各个IP代理网站抓取大量IP数据；</p>
-<p>2，数据筛选：Ping每个IP，连接速度&lt;1.5s的IP地址入库；</p>
-<p>3，定时更新：设置定时任务，每日重新Ping数据库内的IP，更新连接速度；</p>
-<p>4，定时新增：设置定时任务，每日定时从IP代理网站取新数据</p>
-<p>5，提供获取接口</p>
-</blockquote>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/04/python-ip-proxy-frame/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/12/17/japan-candle-diagram-theory/" itemprop="url">
-                  日本蜡烛线理论
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-12-17T16:11:06+08:00" content="2015-12-17">
-              2015-12-17
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Stock/" itemprop="url" rel="index">
-                    <span itemprop="name">Stock</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-                    
-          &nbsp; | &nbsp; 
-          
-          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
-
-
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2015/12/17/japan-candle-diagram-theory/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/12/17/japan-candle-diagram-theory/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <h2 id="一、基本理论及原则">一、基本理论及原则</h2><ul>
-<li>信息量</li>
-</ul>
-<p>“信息量”的概念对应着包含在价格数据中的“含金量”：</p>
-<blockquote>
-<ol>
-<li><p>任何市场资料所信息量均有限</p>
-</li>
-<li><p>任何技术分析手段所提取的信息量只可能少于信息量的极限，绝不可能多于信息量的极限；</p>
-</li>
-<li><p>对于相同的市场资料，虽然可能采取不同的技术分析手段，但是所得信息量均限于上述极限之内，因此它们的结果有可能是相互重叠的。</p>
-</li>
-</ol>
-</blockquote>
-<hr>
-<ul>
-<li>杰西·利弗莫尔：只有离开研究对象一定的距离，才能更好地观察它的全貌。技术分析就是让我们退后一步来观察市场，如此才使我们对市场获得了一份不同寻常的，或许也更加贴切的观感。
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/12/17/japan-candle-diagram-theory/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-
-  </section>
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
-  </nav>
-
+  </div>
 
 
         </div>
@@ -1361,6 +431,14 @@
 
 
         
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/31/scrapy-learn/"
+           data-title="Scrapy框架初探" data-url="http://www.kekefund.com/2016/03/31/scrapy-learn/">
+      </div>
+    
+  </div>
+
 
       </div>
 
@@ -1381,8 +459,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
           <p class="site-author-name" itemprop="name">Binger</p>
@@ -1444,6 +531,23 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、定义抓取Spider"><span class="nav-number">1.</span> <span class="nav-text">一、定义抓取Spider</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、定义数据字段"><span class="nav-number">2.</span> <span class="nav-text">二、定义数据字段</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、内容解析"><span class="nav-number">3.</span> <span class="nav-text">三、内容解析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、写入数据库"><span class="nav-number">4.</span> <span class="nav-text">四、写入数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、PyCharm_Debug调试scrapy"><span class="nav-number">5.</span> <span class="nav-text">五、PyCharm Debug调试scrapy</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
       
 
     </div>
@@ -1545,6 +649,167 @@
   <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
 
   
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
 
   <script type="text/javascript" src="/js/bootstrap.js"></script>
 
