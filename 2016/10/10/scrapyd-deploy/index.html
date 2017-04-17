@@ -1,0 +1,819 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="scrapy,scrapyd,部署," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="scrapy爬虫写好后，需要用命令行运行，如果能在网页上操作就比较方便。scrapyd部署就是为了解决这个问题，能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务，功能比较强大。 一、安装1，安装scrapyd1pip install scrapyd 2， 安装 scrapyd-deploy1pip install scrapyd-client windows系统，在c:\pytho">
+<meta name="keywords" content="scrapy,scrapyd,部署">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scrapyd部署">
+<meta property="og:url" content="http://www.kekefund.com/2016/10/10/scrapyd-deploy/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="scrapy爬虫写好后，需要用命令行运行，如果能在网页上操作就比较方便。scrapyd部署就是为了解决这个问题，能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务，功能比较强大。 一、安装1，安装scrapyd1pip install scrapyd 2， 安装 scrapyd-deploy1pip install scrapyd-client windows系统，在c:\pytho">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-10-10/scrapyd.png">
+<meta property="og:updated_time" content="2017-04-07T06:00:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Scrapyd部署">
+<meta name="twitter:description" content="scrapy爬虫写好后，需要用命令行运行，如果能在网页上操作就比较方便。scrapyd部署就是为了解决这个问题，能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务，功能比较强大。 一、安装1，安装scrapyd1pip install scrapyd 2， 安装 scrapyd-deploy1pip install scrapyd-client windows系统，在c:\pytho">
+<meta name="twitter:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-10-10/scrapyd.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> Scrapyd部署 | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Scrapyd部署
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-10-10T11:10:30+08:00" content="2016-10-10">
+              2016-10-10
+            </time>
+          </span>
+
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/10/scrapyd-deploy/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/10/scrapyd-deploy/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>scrapy爬虫写好后，需要用命令行运行，如果能在网页上操作就比较方便。scrapyd部署就是为了解决这个问题，能够在网页端查看正在执行的任务，也能新建爬虫任务，和终止爬虫任务，功能比较强大。</p>
+<h1 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h1><h2 id="1，安装scrapyd"><a href="#1，安装scrapyd" class="headerlink" title="1，安装scrapyd"></a>1，安装scrapyd</h2><figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pip <span class="keyword">install</span> scrapyd</div></pre></td></tr></table></figure>
+<h2 id="2，-安装-scrapyd-deploy"><a href="#2，-安装-scrapyd-deploy" class="headerlink" title="2， 安装 scrapyd-deploy"></a>2， 安装 scrapyd-deploy</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pip <span class="keyword">install</span> scrapyd-<span class="keyword">client</span></div></pre></td></tr></table></figure>
+<p>windows系统，在c:\python27\Scripts下生成的是<strong>scrapyd-deploy</strong>，无法直接在命令行里运行scrapd-deploy。<br><strong>解决办法：</strong><br>在c:\python27\Scripts下新建一个scrapyd-deploy.bat，文件内容如下：<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@echo off</div><div class="line">C:<span class="symbol">\P</span>ython27<span class="symbol">\p</span>ython C:<span class="symbol">\P</span>ython27<span class="symbol">\S</span>cripts<span class="symbol">\s</span>crapyd-deploy <span class="variable">%*</span></div></pre></td></tr></table></figure></p>
+<p>添加环境变量：C:\Python27\Scripts;<br><a id="more"></a></p>
+<h1 id="二、使用"><a href="#二、使用" class="headerlink" title="二、使用"></a>二、使用</h1><h2 id="1，运行scrapyd"><a href="#1，运行scrapyd" class="headerlink" title="1，运行scrapyd"></a>1，运行scrapyd</h2><p>首先切换命令行路径到Scrapy项目的根目录下，<br>要执行以下的命令，需要先在命令行里执行scrapyd，将scrapyd运行起来</p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">MacBook-Pro:~ usera$ scrapyd</div><div class="line"></div><div class="line">/usr/local/bin/scrapyd:5: UserWarning: Module _markerlib was already imported from /Library/Python/2.7/site-packages/distribute<span class="string">-0</span>.6.49-py2.7.egg/_markerlib/__init__.pyc, but /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python is being added to sys.path</div><div class="line">  from pkg_resources import load_entry_point</div><div class="line">2016<span class="string">-09</span><span class="string">-24</span> 16:00:21<span class="string">+0800</span> [-] Log opened.</div><div class="line">2016<span class="string">-09</span><span class="string">-24</span> 16:00:21<span class="string">+0800</span> [-] twistd 15.5.0 (/usr/bin/python 2.7.10) starting up.</div><div class="line">2016<span class="string">-09</span><span class="string">-24</span> 16:00:21<span class="string">+0800</span> [-] reactor class: twisted.internet.selectreactor.SelectReactor.</div><div class="line">2016<span class="string">-09</span><span class="string">-24</span> 16:00:21<span class="string">+0800</span> [-] Site starting on 6800</div><div class="line">2016<span class="string">-09</span><span class="string">-24</span> 16:00:21<span class="string">+0800</span> [-] Starting factory &lt;twisted.web.server.Site instance at 0x102a21518&gt;</div><div class="line">2016<span class="string">-09</span><span class="string">-24</span> 16:00:21<span class="string">+0800</span> [Launcher] Scrapyd 1.1.0 started: max_proc=16, runner='scrapyd.runner'</div></pre></td></tr></table></figure>
+<h2 id="2，发布工程到scrapyd"><a href="#2，发布工程到scrapyd" class="headerlink" title="2，发布工程到scrapyd"></a>2，发布工程到scrapyd</h2><h3 id="a，配置scrapy-cfg"><a href="#a，配置scrapy-cfg" class="headerlink" title="a，配置scrapy.cfg"></a>a，配置scrapy.cfg</h3><p>在scrapy.cfg中，取消#url = <a href="http://localhost:6800/前面的“#”，具体如下：" target="_blank" rel="external">http://localhost:6800/前面的“#”，具体如下：</a>,<br>然后在命令行中切换命令至scrapy工程根目录，运行命令：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">scrapyd-deploy <span class="tag">&lt;<span class="name">target</span>&gt;</span> -p <span class="tag">&lt;<span class="name">project</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>示例：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">scrapd-deploy -<span class="selector-tag">p</span> MySpider</div></pre></td></tr></table></figure></p>
+<ul>
+<li>验证是否发布成功</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">scrapyd-deploy -l</div><div class="line"><span class="symbol"></span></div><div class="line">output:</div><div class="line">TS                   http:<span class="comment">//localhost:6800/</span></div></pre></td></tr></table></figure>
+<h1 id="一，开始使用"><a href="#一，开始使用" class="headerlink" title="一，开始使用"></a>一，开始使用</h1><h2 id="1，先启动-scrapyd，在命令行中执行："><a href="#1，先启动-scrapyd，在命令行中执行：" class="headerlink" title="1，先启动 scrapyd，在命令行中执行："></a>1，先启动 scrapyd，在命令行中执行：</h2><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">MyMacBook-Pro:MySpiderProject <span class="keyword">user</span>$ scrapyd</div></pre></td></tr></table></figure>
+<h2 id="2，创建爬虫任务"><a href="#2，创建爬虫任务" class="headerlink" title="2，创建爬虫任务"></a>2，创建爬虫任务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl http://localhost:6800/schedule.json <span class="_">-d</span> project=myproject <span class="_">-d</span> spider=spider2</div></pre></td></tr></table></figure>
+<ul>
+<li>bug：<br>scrapyd deploy shows 0 spiders by scrapyd-client<br>scrapy中有的spider不出现，显示只有0个spiders。</li>
+<li>解决<br>需要注释掉settings中的<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># LOG_LEVEL = <span class="string">"ERROR"</span></div><div class="line"># LOG_STDOUT = <span class="literal">True</span></div><div class="line"># LOG_FILE = <span class="string">"/tmp/spider.log"</span></div><div class="line"># LOG_FORMAT = <span class="string">"%(asctime)s [%(name)s] %(levelname)s: %(message)s"</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>When setting LOG_STDOUT=True, scrapyd-deploy will return ‘spiders: 0’. Because the output will be redirected to the file when execute ‘scrapy list’, like this: INFO:stdout:spider-name. Soget_spider_list can not parse it correctly.</p>
+<h2 id="3，查看爬虫任务"><a href="#3，查看爬虫任务" class="headerlink" title="3，查看爬虫任务"></a>3，查看爬虫任务</h2><p>在网页中输入：<a href="http://localhost:6800/" target="_blank" rel="external">http://localhost:6800/</a></p>
+<p>下图为<a href="http://localhost:6800/jobs的内容：" target="_blank" rel="external">http://localhost:6800/jobs的内容：</a><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-10-10/scrapyd.png" alt=""></p>
+<h2 id="4，运行配置"><a href="#4，运行配置" class="headerlink" title="4，运行配置"></a>4，运行配置</h2><p>配置文件：C:\Python27\Lib\site-packages\scrapyd-1.1.0-py2.7.egg\scrapyd\default_scrapyd.conf</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">[scrapyd]</div><div class="line">eggs_dir    = eggs</div><div class="line">logs_dir    = logs</div><div class="line">items_dir   = items</div><div class="line">jobs_to_keep = <span class="number">50</span></div><div class="line">dbs_dir     = dbs</div><div class="line">max_proc    = <span class="number">0</span></div><div class="line">max_proc_per_cpu = <span class="number">4</span></div><div class="line">finished_to_keep = <span class="number">100</span></div><div class="line">poll_interval = <span class="number">5</span></div><div class="line">http_port   = <span class="number">6800</span></div><div class="line">debug       = off</div><div class="line">runner      = scrapyd<span class="selector-class">.runner</span></div><div class="line">application = scrapyd<span class="selector-class">.app</span><span class="selector-class">.application</span></div><div class="line">launcher    = scrapyd<span class="selector-class">.launcher</span><span class="selector-class">.Launcher</span></div><div class="line"></div><div class="line">[services]</div><div class="line">schedule<span class="selector-class">.json</span>     = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.Schedule</span></div><div class="line">cancel<span class="selector-class">.json</span>       = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.Cancel</span></div><div class="line">addversion<span class="selector-class">.json</span>   = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.AddVersion</span></div><div class="line">listprojects<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.ListProjects</span></div><div class="line">listversions<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.ListVersions</span></div><div class="line">listspiders<span class="selector-class">.json</span>  = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.ListSpiders</span></div><div class="line">delproject<span class="selector-class">.json</span>   = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.DeleteProject</span></div><div class="line">delversion<span class="selector-class">.json</span>   = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.DeleteVersion</span></div><div class="line">listjobs<span class="selector-class">.json</span>     = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.ListJobs</span></div></pre></td></tr></table></figure>
+<p>参考</p>
+<blockquote>
+<p><a href="http://www.cnblogs.com/jinhaolin/p/5033733.html" target="_blank" rel="external">http://www.cnblogs.com/jinhaolin/p/5033733.html</a><br><a href="https://scrapyd.readthedocs.io/en/latest/api.html#cancel-json" target="_blank" rel="external">https://scrapyd.readthedocs.io/en/latest/api.html#cancel-json</a></p>
+</blockquote>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/scrapy/" rel="tag">#scrapy</a>
+          
+            <a href="/tags/scrapyd/" rel="tag">#scrapyd</a>
+          
+            <a href="/tags/部署/" rel="tag">#部署</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/distribution-map/" rel="next" title="python制作分布图">
+                <i class="fa fa-chevron-left"></i> python制作分布图
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/31/django-forms-update/" rel="prev" title="Django创建表单上传图片">
+                Django创建表单上传图片 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/10/10/scrapyd-deploy/"
+     data-title="Scrapyd部署"
+     data-content=""
+     data-url="http://www.kekefund.com/2016/10/10/scrapyd-deploy/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/10/scrapyd-deploy/"
+           data-title="Scrapyd部署" data-url="http://www.kekefund.com/2016/10/10/scrapyd-deploy/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、安装"><span class="nav-number">1.</span> <span class="nav-text">一、安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，安装scrapyd"><span class="nav-number">1.1.</span> <span class="nav-text">1，安装scrapyd</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，-安装-scrapyd-deploy"><span class="nav-number">1.2.</span> <span class="nav-text">2， 安装 scrapyd-deploy</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、使用"><span class="nav-number">2.</span> <span class="nav-text">二、使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，运行scrapyd"><span class="nav-number">2.1.</span> <span class="nav-text">1，运行scrapyd</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，发布工程到scrapyd"><span class="nav-number">2.2.</span> <span class="nav-text">2，发布工程到scrapyd</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a，配置scrapy-cfg"><span class="nav-number">2.2.1.</span> <span class="nav-text">a，配置scrapy.cfg</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一，开始使用"><span class="nav-number">3.</span> <span class="nav-text">一，开始使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，先启动-scrapyd，在命令行中执行："><span class="nav-number">3.1.</span> <span class="nav-text">1，先启动 scrapyd，在命令行中执行：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，创建爬虫任务"><span class="nav-number">3.2.</span> <span class="nav-text">2，创建爬虫任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3，查看爬虫任务"><span class="nav-number">3.3.</span> <span class="nav-text">3，查看爬虫任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4，运行配置"><span class="nav-number">3.4.</span> <span class="nav-text">4，运行配置</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

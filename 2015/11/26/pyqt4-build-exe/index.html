@@ -1,0 +1,910 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Python,PyQt,exe," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="PyQt4 生成exe打包文件 pyqt是跨平台的GUI平台，本文的UI设计，代码编写在mac下进行，编译成exe，并打包在win7下做的。python脚本语言，图形化平台不是其擅长的领域，一般都是直接运行脚本，这次因为客户需要一个“成型”的程序去外面给别人展示，故有了此文的背景。QT作为一个跨平台的开发环境，编写出一个窗口程序，然后打包成python文件是比较迅速的。麻烦的是打包成windows">
+<meta name="keywords" content="Python,PyQt,exe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PyQt4 生成exe打包文件">
+<meta property="og:url" content="http://www.kekefund.com/2015/11/26/pyqt4-build-exe/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="PyQt4 生成exe打包文件 pyqt是跨平台的GUI平台，本文的UI设计，代码编写在mac下进行，编译成exe，并打包在win7下做的。python脚本语言，图形化平台不是其擅长的领域，一般都是直接运行脚本，这次因为客户需要一个“成型”的程序去外面给别人展示，故有了此文的背景。QT作为一个跨平台的开发环境，编写出一个窗口程序，然后打包成python文件是比较迅速的。麻烦的是打包成windows">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/qt_main.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/qt_result.png">
+<meta property="og:updated_time" content="2016-01-21T01:17:01.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PyQt4 生成exe打包文件">
+<meta name="twitter:description" content="PyQt4 生成exe打包文件 pyqt是跨平台的GUI平台，本文的UI设计，代码编写在mac下进行，编译成exe，并打包在win7下做的。python脚本语言，图形化平台不是其擅长的领域，一般都是直接运行脚本，这次因为客户需要一个“成型”的程序去外面给别人展示，故有了此文的背景。QT作为一个跨平台的开发环境，编写出一个窗口程序，然后打包成python文件是比较迅速的。麻烦的是打包成windows">
+<meta name="twitter:image" content="http://7xo67b.com1.z0.glb.clouddn.com/qt_main.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> PyQt4 生成exe打包文件 | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                PyQt4 生成exe打包文件
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-11-26T17:00:51+08:00" content="2015-11-26">
+              2015-11-26
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/11/26/pyqt4-build-exe/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/26/pyqt4-build-exe/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p><strong>PyQt4 生成exe打包文件</strong></p>
+<p>pyqt是跨平台的GUI平台，本文的UI设计，代码编写在mac下进行，编译成exe，并打包在win7下做的。<br>python脚本语言，图形化平台不是其擅长的领域，一般都是直接运行脚本，这次因为客户需要一个“成型”的程序去外面给别人展示，故有了此文的背景。<br>QT作为一个跨平台的开发环境，编写出一个窗口程序，然后打包成python文件是比较迅速的。麻烦的是打包成windows的exe文件，试过py2exe,pyinstaller，都不是很好用，py2exe根本出不来图形界面，最后用到cxfreeze这个工具，才得以顺利打包。</p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>环境搭建参考：<a href="http://www.cnblogs.com/zouzf/p/4308912.html" target="_blank" rel="external">http://www.cnblogs.com/zouzf/p/4308912.html</a></p>
+<h2 id="一、Qt-Designer设计界面"><a href="#一、Qt-Designer设计界面" class="headerlink" title="一、Qt Designer设计界面"></a>一、Qt Designer设计界面</h2><p><em>安装Qt Designer，我的版本是5.2.1。</em><br>设计出的界面如下，保存为.ui文件。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/qt_main.png" alt="Qt_UI"></p>
+<a id="more"></a>
+<p>Qt的界面布局和MFC的比较类似，但它多了一层容器的概念。控件都放在容器Layout中，这点又和Android的手机布局比较相近。</p>
+<blockquote>
+<p><em>UI布局教程参考：<a href="http://www.linuxidc.com/Linux/2012-06/63652.htm" target="_blank" rel="external">PyQt4 精彩实例分析</a></em></p>
+</blockquote>
+<h2 id="二、Qt布局文件-ui转换成-py文件"><a href="#二、Qt布局文件-ui转换成-py文件" class="headerlink" title="二、Qt布局文件.ui转换成.py文件"></a>二、Qt布局文件.ui转换成.py文件</h2><p>mac和win系统下先将pyuic4命令加入环境变量。mac中我是直接把/etc/paths拷贝到桌面，添加pyuic4路径后再拷贝覆盖回去。（ps: etc下不能直接修改）<br>在终端中执行：</p>
+<pre><code>pyuic4 -x aaaaaaa.ui -o bbbbbb.py
+</code></pre><p>即可将.ui文件转成py文件。</p>
+<h2 id="三、添加按钮动作"><a href="#三、添加按钮动作" class="headerlink" title="三、添加按钮动作"></a>三、添加按钮动作</h2><p>这里实现了三个功能：上传文件，运行py脚本，打开另一个Qt窗口</p>
+<h3 id="1，上传文件"><a href="#1，上传文件" class="headerlink" title="1，上传文件"></a>1，上传文件</h3><h4 id="a，post上传"><a href="#a，post上传" class="headerlink" title="a，post上传"></a>a，post上传</h4><pre><code>dlg = QFileDialog()
+filename = dlg.getOpenFileName()
+from os.path import isfile
+if isfile(filename):
+    filename = str(filename)
+    print type(filename)
+    #dir_f = os.path.dirname(str(filename))
+
+    # ------ web post -----
+    # 在 urllib2 上注册 http 流处理句柄
+    register_openers()
+
+    # headers 包含必须的 Content-Type 和 Content-Length
+    # datagen 是一个生成器对象，返回编码过后的参数
+    datagen, headers = multipart_encode({&quot;myfile&quot;: open(str(filename), &quot;rb&quot;)})
+
+    # 创建请求对象
+    request = urllib2.Request(&quot;http://yourwebsite:8080/upload&quot;, datagen, headers)
+    # 实际执行请求并取得返回
+    print urllib2.urlopen(request).read()
+</code></pre><h4 id="b，通过-ftp-上传"><a href="#b，通过-ftp-上传" class="headerlink" title="b，通过 ftp 上传"></a>b，通过 ftp 上传</h4><pre><code>dlg = QFileDialog()
+filename = dlg.getOpenFileName()
+from os.path import isfile
+if isfile(filename):
+    filename = str(filename)
+
+    # ------- ftp --------
+    from ftplib import FTP
+
+    ftp=FTP()
+    ftp.set_debuglevel(2)#打开调试级别2，显示详细信息;0为关闭调试信息
+    ftp.connect(&apos;127.0.0.1&apos;,&apos;21&apos;)#连接
+    ftp.login(&apos;Administrator&apos;,&apos;password&apos;)#登录，如果匿名登录则用空串代替即可
+    print ftp.getwelcome()#显示ftp服务器欢迎信息
+    #ftp.cwd(dir_f) #选择操作目录
+    #filename=&apos;keys.xlsx&apos;
+    bufsize = 1024#设置缓冲块大小
+    file_handler = open(filename,&apos;rb&apos;)#以读模式在本地打开文件
+    ftp.storbinary(&apos;STOR %s&apos; % os.path.basename(filename),file_handler,bufsize)#上传文件
+    ftp.set_debuglevel(0)
+    file_handler.close()
+    ftp.quit()
+    print &quot;ftp up OK&quot;
+</code></pre><h3 id="2，运行py脚本"><a href="#2，运行py脚本" class="headerlink" title="2，运行py脚本"></a>2，运行py脚本</h3><p>在服务器上用web.py搭建web服务器，通过网页请求运行py文件。</p>
+<pre><code>#运行
+def on_run_clicked(self):
+    self.pushButton_run.setText(_translate(&quot;Dialog&quot;, &quot;运行中&quot;, None))
+    self.pushButton_run.setEnabled(False)
+    response = urllib2.urlopen(&apos;http://%s:8080/run_video_search&apos; % self.ip, timeout=3)
+    print response
+</code></pre><p>这里采用的是同步的方式请求，服务器端的py脚本没执行完，则程序一直等待。不过设置了超时，过了3s返回超时错误，这种情况适合不需要得到服务器的反馈，只是执行远程py脚本而已。</p>
+<h3 id="3，打开另一个Qt窗口"><a href="#3，打开另一个Qt窗口" class="headerlink" title="3，打开另一个Qt窗口"></a>3，打开另一个Qt窗口</h3><p>pyqt 用起来的比较简单，直接run qt对应的py类</p>
+<pre><code>#结果
+def on_show_result(self):
+
+    Dialog = QtGui.QDialog()
+    ui = Ui_Result_Dialog()
+    ui.setupUi(Dialog)
+    Dialog.show()
+    Dialog.exec_()
+</code></pre><p>跳转过来的窗口如下，是一个数据库的查询界面。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/qt_result.png" alt="result ui">                        </p>
+<h2 id="四、打包"><a href="#四、打包" class="headerlink" title="四、打包"></a>四、打包</h2><p>cx_Freeze 支持跨平台，可在windows、linux，mac下使用。下载地址为(<a href="http://sourceforge.net/projects/cx-freeze/files/),,也可以直接通过pip安装" target="_blank" rel="external">http://sourceforge.net/projects/cx-freeze/files/),,也可以直接通过pip安装</a></p>
+<pre><code>pip install cx_freeze
+</code></pre><p>安装成功后，在C:\Python27\Lib\site-packages\cx_Freeze\samples\PyQt4中找到pyqt4的使用例子。<br>查看setup.py</p>
+<pre><code>import sys
+from cx_Freeze import setup, Executable
+
+base = None
+if sys.platform == &apos;win32&apos;:
+    base = &apos;Win32GUI&apos;
+
+options = {
+    &apos;build_exe&apos;: {
+        &apos;includes&apos;: &apos;atexit&apos;
+    }
+}
+
+executables = [
+    Executable(&apos;PyQt4app.py&apos;, base=base)
+]
+
+setup(name=&apos;simple_PyQt4&apos;,
+      version=&apos;0.1&apos;,
+      description=&apos;Sample cx_Freeze PyQt4 script&apos;,
+      options=options,
+      executables=executables
+      )
+</code></pre><p>把这个setup.py文件拷贝到你要打包py文件的目录，然后将setup.py中的“PyQt4app.py”改成你要打包的py文件。<br>在cmd命令行，cd到当前目录，运行:</p>
+<pre><code>python setup.py build
+</code></pre><p>打包exe成功后，在当前目录下会生成build文件夹，在\build\exe.win32-2.7\中找到exe后缀的文件，执行。</p>
+<h2 id="五、制作安装包"><a href="#五、制作安装包" class="headerlink" title="五、制作安装包"></a>五、制作安装包</h2><p>采用的是Inno Setup 制作安装包，按照向导来生成.iss脚本，傻瓜化操作。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag">#Python</a>
+          
+            <a href="/tags/PyQt/" rel="tag">#PyQt</a>
+          
+            <a href="/tags/exe/" rel="tag">#exe</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/10/japan-candle-diagram-technique/" rel="next" title="日本蜡烛线形态">
+                <i class="fa fa-chevron-left"></i> 日本蜡烛线形态
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/11/17/pytho-ip-proxy/" rel="prev" title="IP代理池的Python实现">
+                IP代理池的Python实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2015/11/26/pyqt4-build-exe/"
+     data-title="PyQt4 生成exe打包文件"
+     data-content=""
+     data-url="http://www.kekefund.com/2015/11/26/pyqt4-build-exe/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2015/11/26/pyqt4-build-exe/"
+           data-title="PyQt4 生成exe打包文件" data-url="http://www.kekefund.com/2015/11/26/pyqt4-build-exe/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Qt-Designer设计界面"><span class="nav-number">2.</span> <span class="nav-text">一、Qt Designer设计界面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Qt布局文件-ui转换成-py文件"><span class="nav-number">3.</span> <span class="nav-text">二、Qt布局文件.ui转换成.py文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、添加按钮动作"><span class="nav-number">4.</span> <span class="nav-text">三、添加按钮动作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1，上传文件"><span class="nav-number">4.1.</span> <span class="nav-text">1，上传文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a，post上传"><span class="nav-number">4.1.1.</span> <span class="nav-text">a，post上传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b，通过-ftp-上传"><span class="nav-number">4.1.2.</span> <span class="nav-text">b，通过 ftp 上传</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2，运行py脚本"><span class="nav-number">4.2.</span> <span class="nav-text">2，运行py脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3，打开另一个Qt窗口"><span class="nav-number">4.3.</span> <span class="nav-text">3，打开另一个Qt窗口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、打包"><span class="nav-number">5.</span> <span class="nav-text">四、打包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、制作安装包"><span class="nav-number">6.</span> <span class="nav-text">五、制作安装包</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

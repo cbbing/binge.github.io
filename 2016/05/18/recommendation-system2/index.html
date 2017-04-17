@@ -1,0 +1,928 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Python,机器学习,推荐算法," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="基于用户的协同过滤我们将一个用户和其他所有用户进行对比，找到相似的人。这种算法有两个弊端：  扩展性 随着用户数量的增加，其计算量也会增加。这种算法在只有几千个用户的情况下能够工作得很好，但达到一百万个用户时就会出现瓶颈。  稀疏性 大多数推荐系统中，物品的数量要远大于用户的数量，因此用户仅仅对一小部分物品进行了评价，这就造成了数据的稀疏性。比如亚马逊有上百万本书，但用户只评论了很少一部分，于是就">
+<meta name="keywords" content="Python,机器学习,推荐算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="构建推荐系统（二）">
+<meta property="og:url" content="http://www.kekefund.com/2016/05/18/recommendation-system2/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="基于用户的协同过滤我们将一个用户和其他所有用户进行对比，找到相似的人。这种算法有两个弊端：  扩展性 随着用户数量的增加，其计算量也会增加。这种算法在只有几千个用户的情况下能够工作得很好，但达到一百万个用户时就会出现瓶颈。  稀疏性 大多数推荐系统中，物品的数量要远大于用户的数量，因此用户仅仅对一小部分物品进行了评价，这就造成了数据的稀疏性。比如亚马逊有上百万本书，但用户只评论了很少一部分，于是就">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?s(i, j) = \frac{\sum_{u\in U}(R_{u,i} - \overline R_{u})(R_{u,j} - \overline R_{u})} {\sqrt{\sum_{u\in U}(R_{u,i} - \overline R_{u})^2}\sqrt{\sum_{u\in U}(R_{u,j} - \overline R_{u})^2}}">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/yuxianplus.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/yuxian_result.png">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?p(u, i) = \frac{\sum_{N\in similarTo(i)}(S_{i,N}\times R_{u,N})}{\sum_{N\in similarTo(i)}(|S_{i,N}|)}">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?S_{i,n}">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?R_{u,N}">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?NR_{u,N} = \frac{2(R_{u,N} - Min_{R}) - (Max_{R} - Min_{R}) }{(Max_{R} - Min_{R})}">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?R_{u,N} = \frac{1}{2}((NR_{u,N} + 1)\times(Max_{R} - Min_{R})) + Min_{R} = \frac12((-0.5 + 1)*4) + 1 = 2">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian3.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian4.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian5.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian6.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian7.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian8.png">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?card(S_{i,j}(X))">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian9.png">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?C_{j,i} = card(S_{j,i}(X))">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?P^{WS1}(u)_{j}">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?P^{WS1}(Ben)_{Whitney Houston}">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?\sum_{i \in {S(u)-\{j\}} }">
+<meta property="og:updated_time" content="2016-05-18T02:53:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="构建推荐系统（二）">
+<meta name="twitter:description" content="基于用户的协同过滤我们将一个用户和其他所有用户进行对比，找到相似的人。这种算法有两个弊端：  扩展性 随着用户数量的增加，其计算量也会增加。这种算法在只有几千个用户的情况下能够工作得很好，但达到一百万个用户时就会出现瓶颈。  稀疏性 大多数推荐系统中，物品的数量要远大于用户的数量，因此用户仅仅对一小部分物品进行了评价，这就造成了数据的稀疏性。比如亚马逊有上百万本书，但用户只评论了很少一部分，于是就">
+<meta name="twitter:image" content="http://www.forkosh.com/mathtex.cgi?s(i, j) = \frac{\sum_{u\in U}(R_{u,i} - \overline R_{u})(R_{u,j} - \overline R_{u})} {\sqrt{\sum_{u\in U}(R_{u,i} - \overline R_{u})^2}\sqrt{\sum_{u\in U}(R_{u,j} - \overline R_{u})^2}}">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 构建推荐系统（二） | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                构建推荐系统（二）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-05-18T10:43:56+08:00" content="2016-05-18">
+              2016-05-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/18/recommendation-system2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/18/recommendation-system2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h1 id="基于用户的协同过滤"><a href="#基于用户的协同过滤" class="headerlink" title="基于用户的协同过滤"></a>基于用户的协同过滤</h1><p>我们将一个用户和其他所有用户进行对比，找到相似的人。这种算法有两个弊端：</p>
+<ol>
+<li><p><strong>扩展性</strong> 随着用户数量的增加，其计算量也会增加。这种算法在只有几千个用户的情况下能够工作得很好，但达到一百万个用户时就会出现瓶颈。</p>
+</li>
+<li><p><strong>稀疏性</strong> 大多数推荐系统中，物品的数量要远大于用户的数量，因此用户仅仅对一小部分物品进行了评价，这就造成了数据的稀疏性。比如亚马逊有上百万本书，但用户只评论了很少一部分，于是就很难找到两个相似的用户了。</p>
+</li>
+</ol>
+<p>鉴于以上两个局限性，我们不妨考察一下基于物品的协同过滤算法。</p>
+<h1 id="基于物品的协同过滤"><a href="#基于物品的协同过滤" class="headerlink" title="基于物品的协同过滤"></a>基于物品的协同过滤</h1><p>假设我们有一种算法可以计算出两件物品之间的相似度，比如Phoenix专辑和Manners很相似。如果一个用户给Phoenix打了很高的分数，我们就可以向他推荐Manners了。</p>
+<h1 id="需要注意这两种算法的区别："><a href="#需要注意这两种算法的区别：" class="headerlink" title="需要注意这两种算法的区别："></a>需要注意这两种算法的区别：</h1><ul>
+<li><p>基于用户的协同过滤是通过计算用户之间的距离找出最相似的用户，并将他评价过的物品推荐给目标用户；</p>
+</li>
+<li><p>而基于物品的协同过滤则是找出最相似的物品，再结合用户的评价来给出推荐结果。</p>
+</li>
+</ul>
+<ul>
+<li><p>基于用户的协同过滤又称为内存型协同过滤，因为我们需要将所有的评价数据都保存在内存中来进行推荐。</p>
+</li>
+<li><p>基于物品的协同过滤也称为基于模型的协同过滤，因为我们不需要保存所有的评价数据，而是通过构建一个物品相似度模型来做推荐。</p>
+<a id="more"></a>
+</li>
+</ul>
+<h1 id="修正的余弦相似度"><a href="#修正的余弦相似度" class="headerlink" title="修正的余弦相似度"></a>修正的余弦相似度</h1><p>我们使用余弦相似度来计算两个物品的距离。上一章提过“分数膨胀”现象，因此我们会从用户的评价中减去他所有评价的均值，这就是修正的余弦相似度。</p>
+<p><img src="http://www.forkosh.com/mathtex.cgi?s(i, j) = \frac{\sum_{u\in U}(R_{u,i} - \overline R_{u})(R_{u,j} - \overline R_{u})} {\sqrt{\sum_{u\in U}(R_{u,i} - \overline R_{u})^2}\sqrt{\sum_{u\in U}(R_{u,j} - \overline R_{u})^2}}"></p>
+<p>U表示同时评价过物品i和j的用户集合。</p>
+<h1 id="计算修正余弦相似度的Python代码"><a href="#计算修正余弦相似度的Python代码" class="headerlink" title="计算修正余弦相似度的Python代码"></a>计算修正余弦相似度的Python代码</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/yuxianplus.png" alt=""></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"># -*- codin<span class="variable">g:</span> utf-<span class="number">8</span> -*-</div><div class="line"></div><div class="line">from math import <span class="built_in">sqrt</span></div><div class="line"></div><div class="line">users3 = &#123;<span class="string">"David"</span>: &#123;<span class="string">"Imagine Dragons"</span>: <span class="number">3</span>, <span class="string">"Daft Punk"</span>: <span class="number">5</span>,</div><div class="line">                    <span class="string">"Lorde"</span>: <span class="number">4</span>, <span class="string">"Fall Out Boy"</span>: <span class="number">1</span>&#125;,</div><div class="line">          <span class="string">"Matt"</span>: &#123;<span class="string">"Imagine Dragons"</span>: <span class="number">3</span>, <span class="string">"Daft Punk"</span>: <span class="number">4</span>,</div><div class="line">                   <span class="string">"Lorde"</span>: <span class="number">4</span>, <span class="string">"Fall Out Boy"</span>: <span class="number">1</span>&#125;,</div><div class="line">          <span class="string">"Ben"</span>: &#123;<span class="string">"Kacey Musgraves"</span>: <span class="number">4</span>, <span class="string">"Imagine Dragons"</span>: <span class="number">3</span>,</div><div class="line">                  <span class="string">"Lorde"</span>: <span class="number">3</span>, <span class="string">"Fall Out Boy"</span>: <span class="number">1</span>&#125;,</div><div class="line">          <span class="string">"Chris"</span>: &#123;<span class="string">"Kacey Musgraves"</span>: <span class="number">4</span>, <span class="string">"Imagine Dragons"</span>: <span class="number">4</span>,</div><div class="line">                    <span class="string">"Daft Punk"</span>: <span class="number">4</span>, <span class="string">"Lorde"</span>: <span class="number">3</span>, <span class="string">"Fall Out Boy"</span>: <span class="number">1</span>&#125;,</div><div class="line">          <span class="string">"Tori"</span>: &#123;<span class="string">"Kacey Musgraves"</span>: <span class="number">5</span>, <span class="string">"Imagine Dragons"</span>: <span class="number">4</span>,</div><div class="line">                   <span class="string">"Daft Punk"</span>: <span class="number">5</span>, <span class="string">"Fall Out Boy"</span>: <span class="number">3</span>&#125;&#125;</div><div class="line"></div><div class="line">def computeSimilarity(band1, band2, userRatings):</div><div class="line">    <span class="string">""</span><span class="comment">"</span></div><div class="line">    :param band1：物品<span class="number">1</span></div><div class="line">    :param band2：物品<span class="number">2</span></div><div class="line">    :param userRatings：用户评分dict</div><div class="line"></div><div class="line">    averages = &#123;&#125;</div><div class="line">    <span class="keyword">for</span> (key, ratings) in userRatings.<span class="built_in">items</span>():</div><div class="line">        averages[key] = float(sum(ratings.<span class="built_in">values</span>()))/<span class="built_in">len</span>(ratings.<span class="built_in">values</span>())</div><div class="line"></div><div class="line">    num = <span class="number">0</span> # 分子</div><div class="line">    dem1 = <span class="number">0</span> # 分母的第一部分</div><div class="line">    dem2 = <span class="number">0</span> #</div><div class="line">    <span class="keyword">for</span> (user, ratings) in userRatings.<span class="built_in">items</span>():</div><div class="line">        <span class="keyword">if</span> band1 in ratings <span class="built_in">and</span> band2 in rating<span class="variable">s:</span></div><div class="line">            avg = averages[user]</div><div class="line">            num += (ratings[band1] - avg) * (ratings[band2] - avg)</div><div class="line">            dem1 += (ratings[band1] - avg)**<span class="number">2</span></div><div class="line">            dem2 += (ratings[band2] - avg)**<span class="number">2</span></div><div class="line">    <span class="keyword">return</span> num / (<span class="built_in">sqrt</span>(dem1) * <span class="built_in">sqrt</span>(dem2))</div><div class="line"></div><div class="line"><span class="keyword">print</span> computeSimilarity(<span class="string">'Kacey Musgraves'</span>, <span class="string">'Lorde'</span>, users3)</div><div class="line"><span class="keyword">print</span> computeSimilarity(<span class="string">'Imagine Dragons'</span>, <span class="string">'Lorde'</span>, users3)</div><div class="line"><span class="keyword">print</span> computeSimilarity(<span class="string">'Daft Punk'</span>, <span class="string">'Lorde'</span>, users3)</div><div class="line"></div><div class="line"></div><div class="line">Outpu<span class="variable">t:</span></div><div class="line"></div><div class="line"><span class="number">0.320959291341</span></div><div class="line"></div><div class="line">-<span class="number">0.252526537229</span></div><div class="line"></div><div class="line"><span class="number">0.784114958467</span></div></pre></td></tr></table></figure>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/yuxian_result.png" alt=""></p>
+<h1 id="相似度矩阵的预测"><a href="#相似度矩阵的预测" class="headerlink" title="相似度矩阵的预测"></a>相似度矩阵的预测</h1><blockquote>
+<p>这个矩阵看起来不错，那下面该如何使用它来做预测呢？比如我想知道David有多喜欢Kecey Musgraves？</p>
+</blockquote>
+<p><img src="http://www.forkosh.com/mathtex.cgi?p(u, i) = \frac{\sum_{N\in similarTo(i)}(S_{i,N}\times R_{u,N})}{\sum_{N\in similarTo(i)}(|S_{i,N}|)}"></p>
+<p>p(u,i)表示我们会来预测用户u对物品i的评分，所以p(David, Kacey Musgraves)就表示我们将预测David会给Kacey打多少分。</p>
+<p>N是一个物品的集合，有如下特性：用户u对集合中的物品打过分；物品i和集合中的物品有相似度数据（即上文中的矩阵）。</p>
+<p><img src="http://www.forkosh.com/mathtex.cgi?S_{i,n}"> 表示物品i和N的相似度， <img src="http://www.forkosh.com/mathtex.cgi?R_{u,N}">表示用户u对物品N的评分。</p>
+<h2 id="归一化转换"><a href="#归一化转换" class="headerlink" title="归一化转换"></a>归一化转换</h2><p>为了让公式的计算效果更佳，对物品的评价分值最好介于-1和1之间。由于我们的评分系统是1至5星，所以需要使用一些运算将其转换到-1至1之间。</p>
+<p><img src="http://www.forkosh.com/mathtex.cgi?NR_{u,N} = \frac{2(R_{u,N} - Min_{R}) - (Max_{R} - Min_{R}) }{(Max_{R} - Min_{R})}"></p>
+<p>比如一位用户给Fall Out Boy打了2分，那修正后的评分为：</p>
+<p>$$ NR_{u,N} = \frac{2(2-1) - (5-1)}{5-1} = -2/4 = -0.5 $$</p>
+<p>反过来则是：</p>
+<p><img src="http://www.forkosh.com/mathtex.cgi?R_{u,N} = \frac{1}{2}((NR_{u,N} + 1)\times(Max_{R} - Min_{R})) + Min_{R} = \frac12((-0.5 + 1)*4) + 1 = 2"></p>
+<p>下表为求得的David的修正评分：</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian3.png" alt=""></p>
+<p>则David对Kacey Musgraves的预测评分为：</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian4.png" alt=""></p>
+<p>转换为5星评价体系为：</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian5.png" alt=""></p>
+<p>最终的预测结果为4.506分。</p>
+<h1 id="Slope-One算法"><a href="#Slope-One算法" class="headerlink" title="Slope One算法"></a>Slope One算法</h1><p>还有一种比较流行的基于物品的协同过滤算法，名为Slope One，它的最大的优势是简单，因此易于实现。</p>
+<p>我们用一个简单的例子来了解这个算法。假设Amy给PSY打了3分，Whitney Houston打了4份；Ben给PSY打了4分。我们要预测Ben会给Whitney Houston打几分。</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian6.png" alt=""></p>
+<h2 id="第一步：计算差值"><a href="#第一步：计算差值" class="headerlink" title="第一步：计算差值"></a>第一步：计算差值</h2><p>我们先为上述例子增加一些数据：</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian7.png" alt=""></p>
+<p>计算物品之间差异的公式是：</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian8.png" alt=""></p>
+<p>其中，card(S)表示S中有多少个元素；X表示所有评分值的集合；<img src="http://www.forkosh.com/mathtex.cgi?card(S_{i,j}(X))"> 表示同时评价过物品j和i的用户数。</p>
+<p>我们来考察PSY和Taylor Swift之间的差值，因为只有两个用户（Amy和Ben）同时对PSY和Taylor Swift打过分。</p>
+<p>$$ dev_{swift, psy} = (4-3)/2 + (5-2)/2 = 2 $$</p>
+<p>所以PSY和Taylor Swift的差异为2。反过来，Taylor Swift和PSY的差异：</p>
+<p>$$ dev_{psy, swift} = (3-4)/2 + (2-5)/2 = -2 $$</p>
+<p>其他物品之间的差异</p>
+<table>
+<thead>
+<tr>
+<th>0</th>
+<th>Taylor Swift</th>
+<th>PSY</th>
+<th>Whitney Houston</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Taylor Swift</td>
+<td>0</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>PSY</td>
+<td>-2</td>
+<td>0</td>
+<td>-0.75</td>
+</tr>
+<tr>
+<td>Whitney Houston</td>
+<td>-1</td>
+<td>0.75</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="第二步：使用加权的Slope-One算法进行预测"><a href="#第二步：使用加权的Slope-One算法进行预测" class="headerlink" title="第二步：使用加权的Slope One算法进行预测"></a>第二步：使用加权的Slope One算法进行预测</h2><p>公式为：</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-17/tuijian9.png" alt=""></p>
+<p>其中：</p>
+<p><img src="http://www.forkosh.com/mathtex.cgi?C_{j,i} = card(S_{j,i}(X))"></p>
+<p><img src="http://www.forkosh.com/mathtex.cgi?P^{WS1}(u)_{j}">表示我们将预测用户u对物品i的评分。比如<img src="http://www.forkosh.com/mathtex.cgi?P^{WS1}(Ben)_{Whitney Houston}">表示Ben对Whitney Houston的预测评分。</p>
+<p><img src="http://www.forkosh.com/mathtex.cgi?\sum_{i \in {S(u)-\{j\}} }">表示遍历Ben评价过的所有歌手，除了Whitney Houston之外。</p>
+<p>整个分子的意思是：对于Ben评价过的所有歌手（Whitney Houston除外），找出Whitney Houston和这些歌手之间的差值，并将差值加上Ben对这个歌手的评分。同时，我们要将这个结果乘以同时评价过两位歌手的用户数。</p>
+<h1 id="Slope-One的Python实现"><a href="#Slope-One的Python实现" class="headerlink" title="Slope One的Python实现"></a>Slope One的Python实现</h1><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">users2 = &#123;<span class="string">"Amy"</span>: &#123;<span class="string">"Taylor Swift"</span>: <span class="number">4</span>, <span class="string">"PSY"</span>: <span class="number">3</span>, <span class="string">"Whitney Houston"</span>: <span class="number">4</span>&#125;,</div><div class="line">          <span class="string">"Ben"</span>: &#123;<span class="string">"Taylor Swift"</span>: <span class="number">5</span>, <span class="string">"PSY"</span>: <span class="number">2</span>&#125;,</div><div class="line">          <span class="string">"Clara"</span>: &#123;<span class="string">"PSY"</span>: <span class="number">3.5</span>, <span class="string">"Whitney Houston"</span>: <span class="number">4</span>&#125;,</div><div class="line">          <span class="string">"Daisy"</span>: &#123;<span class="string">"Taylor Swift"</span>: <span class="number">5</span>, <span class="string">"Whitney Houston"</span>: <span class="number">3</span>&#125;&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Recommender</span>():</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(<span class="keyword">self</span>, data, k=<span class="number">1</span>, metric=<span class="string">'pearson'</span>, n=<span class="number">5</span>)</span></span>:</div><div class="line">        <span class="keyword">self</span>.data = data</div><div class="line">        <span class="comment"># 以下变量将用于Slope One算法</span></div><div class="line">        <span class="keyword">self</span>.frequencies = &#123;&#125;</div><div class="line">        <span class="keyword">self</span>.deviations = &#123;&#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">computeDeviations</span><span class="params">(<span class="keyword">self</span>)</span></span>:</div><div class="line">        <span class="string">""</span><span class="string">"</span></div><div class="line">        计算物品之间的差异</div><div class="line">        :return:</div><div class="line">        "<span class="string">""</span></div><div class="line"></div><div class="line">        <span class="comment"># 获取每位用户的评分数据</span></div><div class="line">        <span class="keyword">for</span> ratings <span class="keyword">in</span> <span class="keyword">self</span>.data.values():</div><div class="line">            <span class="comment"># 对于该用户的每个评分项（歌手、分数）</span></div><div class="line">            <span class="keyword">for</span> (item, rating) <span class="keyword">in</span> ratings.items():</div><div class="line">                <span class="keyword">self</span>.frequencies.setdefault(item, &#123;&#125;)</div><div class="line">                <span class="keyword">self</span>.deviations.setdefault(item, &#123;&#125;)</div><div class="line">                <span class="comment"># 再次遍历该用户的每个评分项</span></div><div class="line">                <span class="keyword">for</span> (item2, rating2) <span class="keyword">in</span> ratings.items():</div><div class="line">                    <span class="keyword">if</span> item != <span class="symbol">item2:</span></div><div class="line">                        <span class="comment"># 将评分的差异保存到变量中</span></div><div class="line">                        <span class="keyword">self</span>.frequencies[item].setdefault(item2, <span class="number">0</span>)</div><div class="line">                        <span class="keyword">self</span>.deviations[item].setdefault(item2, <span class="number">0</span>.<span class="number">0</span>)</div><div class="line">                        <span class="keyword">self</span>.frequencies[item][item2] += <span class="number">1</span></div><div class="line">                        <span class="keyword">self</span>.deviations[item][item2] += rating - rating2</div><div class="line"></div><div class="line">        <span class="keyword">for</span> (item, ratings) <span class="keyword">in</span> <span class="keyword">self</span>.deviations.items():</div><div class="line">            <span class="keyword">for</span> item2 <span class="keyword">in</span> <span class="symbol">ratings:</span></div><div class="line">                ratings[item2] /= <span class="keyword">self</span>.frequencies[item][item2]</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">slopeOneRecommendations</span><span class="params">(<span class="keyword">self</span>, userRatings)</span></span>:</div><div class="line">        <span class="string">""</span><span class="string">"</span></div><div class="line">        加权的Slope One算法</div><div class="line">        :param userRatings:</div><div class="line">        :return:</div><div class="line">        "<span class="string">""</span></div><div class="line">        recommendations = &#123;&#125;</div><div class="line">        frequencies = &#123;&#125;</div><div class="line">        <span class="comment"># 遍历目标用户的评分项（歌手、分数）</span></div><div class="line">        <span class="keyword">for</span> (userItem, userRating) <span class="keyword">in</span> userRatings.items():</div><div class="line">            <span class="comment"># 对目标用户未评价的歌手进行计算</span></div><div class="line">            <span class="keyword">for</span> (diffItem, diffRatings) <span class="keyword">in</span> <span class="keyword">self</span>.deviations.items():</div><div class="line">                <span class="keyword">if</span> diffItem <span class="keyword">not</span> <span class="keyword">in</span> userRatings <span class="keyword">and</span> userItem <span class="keyword">in</span> <span class="keyword">self</span>.deviations[diffItem]:</div><div class="line">                    freq = <span class="keyword">self</span>.frequencies[diffItem][userItem]</div><div class="line">                    recommendations.setdefault(diffItem, <span class="number">0</span>.<span class="number">0</span>)</div><div class="line">                    frequencies.setdefault(diffItem, <span class="number">0</span>)</div><div class="line">                    <span class="comment"># 分子</span></div><div class="line">                    recommendations[diffItem] += (diffRatings[userItem] + userRating) * freq</div><div class="line">                    <span class="comment"># 分母</span></div><div class="line">                    frequencies[diffItem] += freq</div><div class="line"></div><div class="line">        recommendations = [(k, v / frequencies[k]) <span class="keyword">for</span> (k, v) <span class="keyword">in</span> recommendations.items()]</div><div class="line">        <span class="comment"># 排序并返回</span></div><div class="line">        recommendations.sort(key=lambda <span class="symbol">artistTuple:</span> artistTuple[<span class="number">1</span>], reverse=True)</div><div class="line">        <span class="keyword">return</span> recommendations</div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; r = Recommender()</div><div class="line"><span class="meta">&gt;&gt;</span>&gt; r.computeDeviations()</div><div class="line"><span class="meta">&gt;&gt;</span>&gt; r.deviations</div><div class="line">&#123;<span class="string">'PSY'</span>: &#123;<span class="string">'Taylor Swift'</span>: -<span class="number">2.0</span>, <span class="string">'Whitney Houston'</span>: -<span class="number">0</span>.<span class="number">75</span>&#125;, <span class="string">'Taylor Swift'</span>: &#123;<span class="string">'PSY'</span>: <span class="number">2.0</span>, <span class="string">'Whitney Houston'</span>: <span class="number">1.0</span>&#125;, <span class="string">'Whitney Houston'</span>: &#123;<span class="string">'PSY'</span>: <span class="number">0</span>.<span class="number">75</span>, <span class="string">'Taylor Swift'</span>: -<span class="number">1.0</span>&#125;&#125;</div><div class="line"><span class="meta">&gt;&gt;</span> &gt; r.slopeOneRecommendations(users2[<span class="string">'Ben'</span>])</div><div class="line">    [(<span class="string">'Whitney Houston'</span>, <span class="number">3.375</span>)]</div></pre></td></tr></table></figure>
+<p><em>参考</em></p>
+<blockquote>
+<p>1,《集体智慧编程》</p>
+<p>2, <a href="https://github.com/egrcc/guidetodatamining/blob/master/chapter-3.md" target="_blank" rel="external">https://github.com/egrcc/guidetodatamining/blob/master/chapter-3.md</a></p>
+</blockquote>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag">#Python</a>
+          
+            <a href="/tags/机器学习/" rel="tag">#机器学习</a>
+          
+            <a href="/tags/推荐算法/" rel="tag">#推荐算法</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/27/gensim-similarity/" rel="next" title="gensim文档相似度判断">
+                <i class="fa fa-chevron-left"></i> gensim文档相似度判断
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/11/recommendation-system/" rel="prev" title="构建推荐系统（一）">
+                构建推荐系统（一） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/05/18/recommendation-system2/"
+     data-title="构建推荐系统（二）"
+     data-content=""
+     data-url="http://www.kekefund.com/2016/05/18/recommendation-system2/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/05/18/recommendation-system2/"
+           data-title="构建推荐系统（二）" data-url="http://www.kekefund.com/2016/05/18/recommendation-system2/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基于用户的协同过滤"><span class="nav-number">1.</span> <span class="nav-text">基于用户的协同过滤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基于物品的协同过滤"><span class="nav-number">2.</span> <span class="nav-text">基于物品的协同过滤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#需要注意这两种算法的区别："><span class="nav-number">3.</span> <span class="nav-text">需要注意这两种算法的区别：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#修正的余弦相似度"><span class="nav-number">4.</span> <span class="nav-text">修正的余弦相似度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#计算修正余弦相似度的Python代码"><span class="nav-number">5.</span> <span class="nav-text">计算修正余弦相似度的Python代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#相似度矩阵的预测"><span class="nav-number">6.</span> <span class="nav-text">相似度矩阵的预测</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#归一化转换"><span class="nav-number">6.1.</span> <span class="nav-text">归一化转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Slope-One算法"><span class="nav-number">7.</span> <span class="nav-text">Slope One算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一步：计算差值"><span class="nav-number">7.1.</span> <span class="nav-text">第一步：计算差值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二步：使用加权的Slope-One算法进行预测"><span class="nav-number">7.2.</span> <span class="nav-text">第二步：使用加权的Slope One算法进行预测</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Slope-One的Python实现"><span class="nav-number">8.</span> <span class="nav-text">Slope One的Python实现</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

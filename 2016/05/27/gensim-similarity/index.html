@@ -1,0 +1,889 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="gensim,主题模型,相似度,文档去重," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="在文本处理中，比如商品评论挖掘，有时需要了解每个评论分别和商品的描述之间的相似度，以此衡量评论的客观性。 文本相似度计算的需求始于搜索引擎，搜索引擎需要计算“用户查询”和爬下来的众多“网页”之间的相似度，从而把最相似的排在最前，返回给用户。 一、基本概念TF-IDF TF：term frequency，词频  $$ 词频(TF) = 某个词在文章中的出现次数 $$ $$ 词频(TF) = \fra">
+<meta name="keywords" content="gensim,主题模型,相似度,文档去重">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gensim文档相似度判断">
+<meta property="og:url" content="http://www.kekefund.com/2016/05/27/gensim-similarity/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="在文本处理中，比如商品评论挖掘，有时需要了解每个评论分别和商品的描述之间的相似度，以此衡量评论的客观性。 文本相似度计算的需求始于搜索引擎，搜索引擎需要计算“用户查询”和爬下来的众多“网页”之间的相似度，从而把最相似的排在最前，返回给用户。 一、基本概念TF-IDF TF：term frequency，词频  $$ 词频(TF) = 某个词在文章中的出现次数 $$ $$ 词频(TF) = \fra">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?cos\theta=\frac{x_{1}x_{2} + y_{1}y_{2}}{\sqrt{x_{1}^2+y_{1}^2} \times \sqrt{x_{2}^2+y_{2}^2}}">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?cos\theta=\frac{\sum_{i=1}^{n}(A_{i}\times B_{i})}{\sqrt{\sum_{i=1}^{n}(A_{i})^2}\times \sqrt{\sum_{i=1}^{n}(B_{i})^2}}=\frac{A\cdot B}{|A|\times |B|}">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-27/1.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-27/2.png">
+<meta property="og:updated_time" content="2016-05-27T10:11:28.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gensim文档相似度判断">
+<meta name="twitter:description" content="在文本处理中，比如商品评论挖掘，有时需要了解每个评论分别和商品的描述之间的相似度，以此衡量评论的客观性。 文本相似度计算的需求始于搜索引擎，搜索引擎需要计算“用户查询”和爬下来的众多“网页”之间的相似度，从而把最相似的排在最前，返回给用户。 一、基本概念TF-IDF TF：term frequency，词频  $$ 词频(TF) = 某个词在文章中的出现次数 $$ $$ 词频(TF) = \fra">
+<meta name="twitter:image" content="http://www.forkosh.com/mathtex.cgi?cos\theta=\frac{x_{1}x_{2} + y_{1}y_{2}}{\sqrt{x_{1}^2+y_{1}^2} \times \sqrt{x_{2}^2+y_{2}^2}}">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> gensim文档相似度判断 | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                gensim文档相似度判断
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-05-27T17:55:25+08:00" content="2016-05-27">
+              2016-05-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/27/gensim-similarity/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/27/gensim-similarity/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>在文本处理中，比如商品评论挖掘，有时需要了解每个评论分别和商品的描述之间的相似度，以此衡量评论的客观性。</p>
+<p>文本相似度计算的需求始于搜索引擎，搜索引擎需要计算“用户查询”和爬下来的众多“网页”之间的相似度，从而把最相似的排在最前，返回给用户。</p>
+<h1 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h1><h2 id="TF-IDF"><a href="#TF-IDF" class="headerlink" title="TF-IDF"></a>TF-IDF</h2><ul>
+<li>TF：term frequency，词频</li>
+</ul>
+<p>$$ 词频(TF) = 某个词在文章中的出现次数 $$</p>
+<p>$$ 词频(TF) = \frac{某个词在文章中的出现次数}{文章的总次数} $$</p>
+<p>$$ 词频(TF) = \frac{某个词在文章中的出现次数}{该文出现次数最多的词的出现次数} $$</p>
+<ul>
+<li>IDF：inverse document frequency，逆文档频率</li>
+</ul>
+<p>$$ IDF = log(\frac{语料库的文档总数}{包含该词的文档数+1}) $$</p>
+<ul>
+<li>TF-IDF</li>
+</ul>
+<p>$$ TF-IDF = 词频(TF) \times逆文档频率(IDF) $$</p>
+<p>主要思想是：如果某个词或短语在一篇文章中出现的频率高，并且在其他文章中很少出现，则认为此词或者短语具有很好的类别区分能力，适合用来分类。<br><a id="more"></a></p>
+<h2 id="TF-IDF计算步骤"><a href="#TF-IDF计算步骤" class="headerlink" title="TF-IDF计算步骤"></a>TF-IDF计算步骤</h2><ul>
+<li><p>第一步：把每个网页文本分词，称为词包（bag of words）</p>
+</li>
+<li><p>第二步：统计网页（文档）总数M</p>
+</li>
+<li><p>第三步：统计第一个网页次数N，计算第一个网页第一个词在该网页中出现的次数n，再找出该词在所有文档中出现的次数m。</p>
+</li>
+</ul>
+<p>则该词的tf-idf为：</p>
+<p>$$ \frac{\frac{n}{N}}{\frac{m}{M}} $$</p>
+<ul>
+<li><p>第四步：重复第三步，计算出一个网页所有词的tf-idf值。</p>
+</li>
+<li><p>第五步：重复第四步，计算出所有网页每个词的tf-idf值。</p>
+</li>
+</ul>
+<h2 id="SVD，奇异值分解（Singular-value-decomposition）"><a href="#SVD，奇异值分解（Singular-value-decomposition）" class="headerlink" title="SVD，奇异值分解（Singular value decomposition）"></a>SVD，奇异值分解（Singular value decomposition）</h2><p>奇异值分解是一个有着明显的物理意义的一种方法，它可以将一个比较复杂的矩阵用更小更简单的几个子矩阵的相乘来表示，这些小矩阵描述的是矩阵的重要的特性。就像是描述一个人一样，给别人描述说这个人长得浓眉大眼，方脸，络腮胡，而且带个黑框的眼镜，这样寥寥的几个特征，就让别人脑海里面就有一个较为清楚的认识，实际上，人脸上的特征是有着无数种的，之所以能这么描述，是因为人天生就有着非常好的抽取重要特征的能力，让机器学会抽取重要的特征，SVD是一个重要的方法。</p>
+<h2 id="LSI，浅层语义索引（Latent-Semantic-Indexing）"><a href="#LSI，浅层语义索引（Latent-Semantic-Indexing）" class="headerlink" title="LSI，浅层语义索引（Latent Semantic Indexing）"></a>LSI，浅层语义索引（Latent Semantic Indexing）</h2><p>潜在语义索引，指的是通过海量文献找出词汇之间的关系。当两个词或一组词大量出现在一个文档中时，这些词就可以被认为是语义相关的。</p>
+<p>潜在语义索引是一种用SVD（Singular Value Decomposition）奇异值分解方法获得在文本中术语和概念之间关系的索引和获取方法。该方法的主要依据是在相同文章中的词语一般有类似的含义。该方法可以从一篇文章中提取术语关系，从而建立起主要概念内容。</p>
+<h2 id="余弦相似度-cosine-similiarity"><a href="#余弦相似度-cosine-similiarity" class="headerlink" title="余弦相似度 (cosine similiarity)"></a>余弦相似度 (cosine similiarity)</h2><p>$$ cos\theta=\frac{a^2+b^2-c^2}{2ab} $$</p>
+<p><img src="http://www.forkosh.com/mathtex.cgi?cos\theta=\frac{x_{1}x_{2} + y_{1}y_{2}}{\sqrt{x_{1}^2+y_{1}^2} \times \sqrt{x_{2}^2+y_{2}^2}}"></p>
+<p><img src="http://www.forkosh.com/mathtex.cgi?cos\theta=\frac{\sum_{i=1}^{n}(A_{i}\times B_{i})}{\sqrt{\sum_{i=1}^{n}(A_{i})^2}\times \sqrt{\sum_{i=1}^{n}(B_{i})^2}}=\frac{A\cdot B}{|A|\times |B|}"></p>
+<h1 id="二、相似度计算步骤"><a href="#二、相似度计算步骤" class="headerlink" title="二、相似度计算步骤"></a>二、相似度计算步骤</h1><p>1，处理用户查询</p>
+<ul>
+<li><p>第一步：对用户查询进行分词</p>
+</li>
+<li><p>第二步： 根据网页库（文档）的数据，  计算用户查询中每个词的tf-idf值。</p>
+</li>
+</ul>
+<p>2，相似度的计算</p>
+<p>使用余弦相似度来计算用户查询和每个网页之间的夹角。夹角越小，越相似。</p>
+<h1 id="三、gensim介绍"><a href="#三、gensim介绍" class="headerlink" title="三、gensim介绍"></a>三、gensim介绍</h1><p>Gensim是一个相当专业的主题模型Python工具包。是一个用于主题建模、文档索引以及使用大规模语料数据的相似性检索。相比RAM，它能处理更多的输入数据。作者称它是“根据纯文本进行非监督性建模最健壮、最有效的、最让人放心的软件。”</p>
+<p><em>gensim安装： pip install gensim</em></p>
+<h1 id="四、实现步骤"><a href="#四、实现步骤" class="headerlink" title="四、实现步骤"></a>四、实现步骤</h1><h2 id="1，中文分词"><a href="#1，中文分词" class="headerlink" title="1，中文分词"></a>1，中文分词</h2><p>以数据库中关于美联储的新闻6000条，为例。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-27/1.png" alt=""></p>
+<p>首先对标题和内容进行分词。<br>标题分词的结果如下：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-27/2.png" alt=""></p>
+<h3 id="Python代码"><a href="#Python代码" class="headerlink" title="Python代码"></a>Python代码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">self.df 为pandas 的DataFrame结构</div><div class="line"><span class="comment">#self.df = pd.read_sql(sql, engine)</span></div><div class="line"><span class="comment">#df.columns: title, content, href, etc..</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> re</div><div class="line">regex = re.compile(<span class="string">ur"[^\u4e00-\u9f5aa-zA-Z0-9]"</span>) <span class="comment"># 中英文和数字</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">jieba_cut</span><span class="params">(self)</span>:</span></div><div class="line">    <span class="string">"""</span></div><div class="line">    对标题和内容分词</div><div class="line">    :return:</div><div class="line">    """</div><div class="line">    <span class="keyword">import</span> jieba</div><div class="line">    jieba.load_userdict(<span class="string">'Data/userdict.txt'</span>)  <span class="comment"># 自己准备用户词典，也可不指定</span></div><div class="line"></div><div class="line">    <span class="comment"># 1，去掉标点和特殊字符</span></div><div class="line">    <span class="comment"># 2，分词</span></div><div class="line">    self.df[<span class="string">'title_fenci'</span>] = self.df[<span class="string">'title'</span>].apply(<span class="keyword">lambda</span> x : <span class="string">'|'</span>.join(jieba.cut(regex.sub(<span class="string">''</span>,x))))</div></pre></td></tr></table></figure>
+<h2 id="2，去掉频率为1的词"><a href="#2，去掉频率为1的词" class="headerlink" title="2，去掉频率为1的词"></a>2，去掉频率为1的词</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">remove_low_freq_word</span><span class="params">(self, texts, times=<span class="number">1</span>)</span>:</span></div><div class="line">    <span class="string">"""</span></div><div class="line">    去掉低频词</div><div class="line">    :param times:出现次数</div><div class="line">    :return:</div><div class="line">    """</div><div class="line">    all_tokens = sum(texts, [])</div><div class="line">    title_token_once = set(word <span class="keyword">for</span> word <span class="keyword">in</span> set(all_tokens) <span class="keyword">if</span> all_tokens.count(word) == times)</div><div class="line"></div><div class="line">    texts_result = [[word <span class="keyword">for</span> word <span class="keyword">in</span> text <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> title_token_once] <span class="keyword">for</span> text <span class="keyword">in</span> texts]</div><div class="line">    <span class="keyword">return</span> texts_result</div><div class="line"></div><div class="line">texts = []</div><div class="line"><span class="keyword">for</span> ix, row <span class="keyword">in</span> self.df.iterrows():</div><div class="line">    texts_cuts = row[<span class="string">'title_fenci'</span>].split(<span class="string">'|'</span>)</div><div class="line">    texts.append(texts_cuts)</div><div class="line"></div><div class="line">texts = self.remove_low_freq_word(texts)</div></pre></td></tr></table></figure>
+<h2 id="3，建立LSI模型"><a href="#3，建立LSI模型" class="headerlink" title="3，建立LSI模型"></a>3，建立LSI模型</h2><p>通过上一步的texts抽取一个“词袋（bag of words），将文档的token映射为id。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">dictionary = corpora.Dictionary(texts)</div><div class="line"><span class="keyword">print</span> dictionary</div><div class="line"><span class="keyword">print</span> dictionary.token2id</div><div class="line"></div><div class="line">Dictionary(<span class="number">179</span> unique tokens: [<span class="string">u'\u8868\u793a'</span>, <span class="string">u''</span>, <span class="string">u'\u53bb\u5e74'</span>, <span class="string">u'\u4ee5\u6765'</span>, <span class="string">u'\u800c'</span>]...)</div><div class="line">&#123;<span class="string">u'\u8868\u793a'</span>: <span class="number">0</span>, <span class="string">u''</span>: <span class="number">124</span>, <span class="string">u'\u53bb\u5e74'</span>: <span class="number">127</span>, <span class="string">u'\u4ee5\u6765'</span>: <span class="number">1</span>, <span class="string">u'\u800c'</span>: <span class="number">113</span>, <span class="string">u'\u5219'</span>: <span class="number">121</span>, <span class="string">u'\u7f57\u68ee\u683c\u4f26'</span>: <span class="number">175</span>, ...&#125;</div></pre></td></tr></table></figure>
+<p>接下来用字符串表示的文档转换为用id表示的文档向量.</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">corpus = [dictionary.doc2bow(text) for text in texts]</div><div class="line">print corpus</div><div class="line"></div><div class="line">[[(<span class="number">0</span>, <span class="number">3</span>), (<span class="number">1</span>, <span class="number">5</span>), (<span class="number">2</span>, <span class="number">1</span>), (<span class="number">3</span>, <span class="number">2</span>), (<span class="number">4</span>, <span class="number">2</span>), (<span class="number">5</span>, <span class="number">1</span>), (<span class="number">6</span>, <span class="number">1</span>), (<span class="number">7</span>, <span class="number">1</span>), (<span class="number">8</span>, <span class="number">2</span>), (<span class="number">9</span>, <span class="number">1</span>), (<span class="number">10</span>, <span class="number">1</span>), (<span class="number">11</span>, <span class="number">2</span>), (<span class="number">12</span>, <span class="number">3</span>), (<span class="number">13</span>, <span class="number">2</span>), (<span class="number">14</span>, <span class="number">1</span>), (<span class="number">15</span>, <span class="number">1</span>), (<span class="number">16</span>, <span class="number">1</span>), (<span class="number">17</span>, <span class="number">5</span>), (<span class="number">18</span>, <span class="number">2</span>), (<span class="number">19</span>, <span class="number">1</span>), (<span class="number">20</span>, <span class="number">1</span>), (<span class="number">21</span>, <span class="number">8</span>), (<span class="number">22</span>, <span class="number">5</span>), (<span class="number">23</span>, <span class="number">1</span>), (<span class="number">24</span>, <span class="number">2</span>), (<span class="number">25</span>, <span class="number">1</span>), (<span class="number">26</span>, <span class="number">4</span>), (<span class="number">27</span>, <span class="number">1</span>), (<span class="number">28</span>, <span class="number">1</span>), (<span class="number">29</span>, <span class="number">2</span>), (<span class="number">30</span>, <span class="number">1</span>), (<span class="number">31</span>, <span class="number">2</span>), (<span class="number">32</span>, <span class="number">1</span>), (<span class="number">33</span>, <span class="number">2</span>), (<span class="number">34</span>, <span class="number">3</span>), (<span class="number">35</span>, <span class="number">8</span>), (<span class="number">36</span>, <span class="number">7</span>), (<span class="number">37</span>, <span class="number">1</span>), (<span class="number">38</span>, <span class="number">1</span>), (<span class="number">39</span>, <span class="number">1</span>), (<span class="number">40</span>, <span class="number">1</span>), (<span class="number">41</span>, <span class="number">1</span>), (<span class="number">42</span>, <span class="number">5</span>), (<span class="number">43</span>, <span class="number">4</span>), (<span class="number">44</span>, <span class="number">3</span>), (<span class="number">45</span>, <span class="number">5</span>), (<span class="number">46</span>, <span class="number">9</span>), (<span class="number">47</span>, <span class="number">1</span>), (<span class="number">48</span>, <span class="number">2</span>), (<span class="number">49</span>, <span class="number">1</span>), (<span class="number">50</span>, <span class="number">2</span>), (<span class="number">51</span>, <span class="number">4</span>), (<span class="number">52</span>, <span class="number">2</span>), (<span class="number">53</span>, <span class="number">3</span>), (<span class="number">54</span>, <span class="number">2</span>), (<span class="number">55</span>, <span class="number">2</span>), (<span class="number">56</span>, <span class="number">2</span>), (<span class="number">57</span>, <span class="number">1</span>), (<span class="number">58</span>, <span class="number">1</span>), (<span class="number">59</span>, <span class="number">1</span>), (<span class="number">60</span>, <span class="number">3</span>), (<span class="number">61</span>, <span class="number">6</span>), (<span class="number">62</span>, <span class="number">3</span>), (<span class="number">63</span>, <span class="number">2</span>), (<span class="number">64</span>, <span class="number">3</span>), (<span class="number">65</span>, <span class="number">1</span>), (<span class="number">66</span>, <span class="number">2</span>), (<span class="number">67</span>, <span class="number">1</span>), (<span class="number">68</span>, <span class="number">2</span>), (<span class="number">69</span>, <span class="number">1</span>), (<span class="number">70</span>, <span class="number">1</span>), (<span class="number">71</span>, <span class="number">1</span>), (<span class="number">72</span>, <span class="number">1</span>), (<span class="number">73</span>, <span class="number">5</span>), (<span class="number">74</span>, <span class="number">1</span>), (<span class="number">75</span>, <span class="number">1</span>), (<span class="number">76</span>, <span class="number">1</span>), (<span class="number">77</span>, <span class="number">1</span>), (<span class="number">78</span>, <span class="number">1</span>), (<span class="number">79</span>, <span class="number">1</span>), (<span class="number">80</span>, <span class="number">1</span>), (<span class="number">81</span>, <span class="number">3</span>), (<span class="number">82</span>, <span class="number">3</span>), (<span class="number">83</span>, <span class="number">2</span>), (<span class="number">84</span>, <span class="number">2</span>), (<span class="number">85</span>, <span class="number">1</span>), (<span class="number">86</span>, <span class="number">3</span>), (<span class="number">87</span>, <span class="number">1</span>), (<span class="number">88</span>, <span class="number">1</span>), (<span class="number">89</span>, <span class="number">1</span>), (<span class="number">90</span>, <span class="number">1</span>), (<span class="number">91</span>, <span class="number">2</span>), (<span class="number">92</span>, <span class="number">1</span>), (<span class="number">93</span>, <span class="number">3</span>), (<span class="number">94</span>, <span class="number">1</span>), (<span class="number">95</span>, <span class="number">13</span>), (<span class="number">96</span>, <span class="number">1</span>), (<span class="number">97</span>, <span class="number">1</span>), (<span class="number">98</span>, <span class="number">2</span>), (<span class="number">99</span>, <span class="number">1</span>), (<span class="number">100</span>, <span class="number">1</span>), (<span class="number">101</span>, <span class="number">1</span>), (<span class="number">102</span>, <span class="number">1</span>)], [(<span class="number">0</span>, <span class="number">1</span>), (<span class="number">3</span>, <span class="number">2</span>), (<span class="number">6</span>, <span class="number">1</span>), (<span class="number">7</span>, <span class="number">1</span>), (<span class="number">8</span>, <span class="number">4</span>), (<span class="number">9</span>, <span class="number">2</span>), (<span class="number">12</span>, <span class="number">2</span>), (<span class="number">13</span>, <span class="number">1</span>), (<span class="number">15</span>, <span class="number">1</span>), (<span class="number">16</span>, <span class="number">1</span>), (<span class="number">17</span>, <span class="number">2</span>), (<span class="number">18</span>, <span class="number">1</span>), (<span class="number">19</span>, <span class="number">1</span>), (<span class="number">21</span>, <span class="number">10</span>), (<span class="number">23</span>, <span class="number">2</span>), (<span class="number">25</span>, <span class="number">1</span>), (<span class="number">26</span>, <span class="number">1</span>), (<span class="number">34</span>, <span class="number">1</span>), (<span class="number">35</span>, <span class="number">2</span>), (<span class="number">38</span>, <span class="number">1</span>), (<span class="number">39</span>, <span class="number">1</span>), (<span class="number">42</span>, <span class="number">3</span>), (<span class="number">43</span>, <span class="number">1</span>), (<span class="number">44</span>, <span class="number">2</span>), (<span class="number">45</span>, <span class="number">2</span>), (<span class="number">46</span>, <span class="number">1</span>), (<span class="number">48</span>, <span class="number">1</span>), (<span class="number">50</span>, <span class="number">1</span>), (<span class="number">52</span>, <span class="number">1</span>), (<span class="number">58</span>, <span class="number">1</span>), (<span class="number">61</span>, <span class="number">1</span>), (<span class="number">63</span>, <span class="number">1</span>), (<span class="number">64</span>, <span class="number">2</span>), (<span class="number">65</span>, <span class="number">1</span>), (<span class="number">68</span>, <span class="number">3</span>), (<span class="number">69</span>, <span class="number">1</span>), (<span class="number">73</span>, <span class="number">2</span>), (<span class="number">75</span>, <span class="number">1</span>), (<span class="number">79</span>, <span class="number">1</span>), (<span class="number">85</span>, <span class="number">1</span>), (<span class="number">86</span>, <span class="number">1</span>), (<span class="number">89</span>, <span class="number">1</span>), (<span class="number">91</span>, <span class="number">1</span>), (<span class="number">94</span>, <span class="number">1</span>), (<span class="number">95</span>, <span class="number">3</span>), (<span class="number">96</span>, <span class="number">4</span>), (<span class="number">99</span>, <span class="number">2</span>), (<span class="number">103</span>, <span class="number">1</span>), (<span class="number">104</span>, <span class="number">2</span>), (<span class="number">105</span>, <span class="number">1</span>), (<span class="number">106</span>, <span class="number">1</span>), (<span class="number">107</span>, <span class="number">1</span>), (<span class="number">108</span>, <span class="number">1</span>), (<span class="number">109</span>, <span class="number">2</span>), (<span class="number">110</span>, <span class="number">1</span>), (<span class="number">111</span>, <span class="number">2</span>), (<span class="number">112</span>, <span class="number">4</span>), (<span class="number">113</span>, <span class="number">1</span>), (<span class="number">114</span>, <span class="number">1</span>), (<span class="number">115</span>, <span class="number">1</span>), (<span class="number">116</span>, <span class="number">2</span>), (<span class="number">117</span>, <span class="number">2</span>), (<span class="number">118</span>, <span class="number">1</span>), (<span class="number">119</span>, <span class="number">1</span>), (<span class="number">120</span>, <span class="number">2</span>), (<span class="number">121</span>, <span class="number">1</span>), (<span class="number">122</span>, <span class="number">3</span>), (<span class="number">123</span>, <span class="number">1</span>)],</div></pre></td></tr></table></figure>
+<p>例如，最后一列的(123,1)表示第二篇文档中id为123的单词出现了1次。</p>
+<p>接下来基于这个“训练文集”计算TF-IDF模型：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">tfidf</span> = models.TfidfModel(corpus)</div><div class="line"><span class="attr">corpus_tfidf</span> = tfidf[corpus]</div></pre></td></tr></table></figure>
+<p>有了tf-idf值的文档向量，接下来开始训练LSI模型：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">lsi = models.LsiModel(corpus_tfidf, id2word=self.dictionary, num_topics=<span class="number">10</span>)</div><div class="line"></div><div class="line"><span class="number">2016</span>-<span class="number">05</span>-<span class="number">21</span> <span class="number">22</span>:<span class="number">27</span>:<span class="number">45</span>,<span class="number">601</span> : <span class="type">INFO</span> : <span class="type">topic</span> #<span class="number">0</span>(<span class="number">2.646</span>): <span class="number">1.000</span>*<span class="string">""</span> + <span class="number">0.000</span>*<span class="string">"柯薛拉柯塔"</span> + <span class="number">0.000</span>*<span class="string">"应该"</span> + <span class="number">0.000</span>*<span class="string">"加息"</span> + <span class="number">0.000</span>*<span class="string">"不"</span> + <span class="number">0.000</span>*<span class="string">"美联储"</span> + <span class="number">0.000</span>*<span class="string">"今年"</span> + <span class="number">0.000</span>*<span class="string">"下降"</span> + -<span class="number">0.000</span>*<span class="string">"有"</span> + <span class="number">0.000</span>*<span class="string">"2014"</span></div><div class="line"><span class="number">2016</span>-<span class="number">05</span>-<span class="number">21</span> <span class="number">22</span>:<span class="number">27</span>:<span class="number">45</span>,<span class="number">601</span> : <span class="type">INFO</span> : <span class="type">topic</span> #<span class="number">1</span>(<span class="number">1.594</span>): <span class="number">0.375</span>*<span class="string">"的"</span> + <span class="number">0.266</span>*<span class="string">"美联储"</span> + <span class="number">0.244</span>*<span class="string">"美国"</span> + <span class="number">0.232</span>*<span class="string">"br"</span> + <span class="number">0.200</span>*<span class="string">"加息"</span> + <span class="number">0.191</span>*<span class="string">"柯薛拉柯塔"</span> + <span class="number">0.163</span>*<span class="string">"在"</span> + <span class="number">0.162</span>*<span class="string">"罗森格伦"</span> + <span class="number">0.138</span>*<span class="string">"应该"</span> + <span class="number">0.131</span>*<span class="string">"是"</span></div><div class="line"><span class="number">2016</span>-<span class="number">05</span>-<span class="number">21</span> <span class="number">22</span>:<span class="number">27</span>:<span class="number">45</span>,<span class="number">602</span> : <span class="type">INFO</span> : <span class="type">topic</span> #<span class="number">2</span>(<span class="number">1.055</span>): <span class="number">0.320</span>*<span class="string">"柯薛拉柯塔"</span> + <span class="number">0.257</span>*<span class="string">"美联储"</span> + -<span class="number">0.245</span>*<span class="string">"埃文斯"</span> + <span class="number">0.216</span>*<span class="string">"罗森格伦"</span> + -<span class="number">0.214</span>*<span class="string">"增速"</span> + <span class="number">0.213</span>*<span class="string">"加息"</span> + -<span class="number">0.205</span>*<span class="string">"到"</span> + -<span class="number">0.205</span>*<span class="string">"了"</span> + -<span class="number">0.197</span>*<span class="string">"都"</span> + -<span class="number">0.188</span>*<span class="string">"美国"</span></div><div class="line"><span class="number">2016</span>-<span class="number">05</span>-<span class="number">21</span> <span class="number">22</span>:<span class="number">27</span>:<span class="number">45</span>,<span class="number">602</span> : <span class="type">INFO</span> : <span class="type">topic</span> #<span class="number">3</span>(<span class="number">0.989</span>): <span class="number">0.420</span>*<span class="string">"柯薛拉柯塔"</span> + -<span class="number">0.355</span>*<span class="string">"罗森格伦"</span> + <span class="number">0.304</span>*<span class="string">"应该"</span> + -<span class="number">0.270</span>*<span class="string">"鉴于"</span> + -<span class="number">0.270</span>*<span class="string">"处于"</span> + -<span class="number">0.245</span>*<span class="string">"利率"</span> + <span class="number">0.233</span>*<span class="string">"今年"</span> + <span class="number">0.222</span>*<span class="string">"不"</span> + -<span class="number">0.216</span>*<span class="string">"目前"</span> + -<span class="number">0.194</span>*<span class="string">"很"</span></div><div class="line"><span class="number">2016</span>-<span class="number">05</span>-<span class="number">21</span> <span class="number">22</span>:<span class="number">27</span>:<span class="number">45</span>,<span class="number">604</span> : <span class="type">INFO</span> : <span class="type">topic</span> #<span class="number">4</span>(<span class="number">0.908</span>): -<span class="number">0.347</span>*<span class="string">"到"</span> + -<span class="number">0.347</span>*<span class="string">"了"</span> + -<span class="number">0.346</span>*<span class="string">"都"</span> + -<span class="number">0.331</span>*<span class="string">"增速"</span> + -<span class="number">0.244</span>*<span class="string">"美联储"</span> + -<span class="number">0.203</span>*<span class="string">"埃文斯"</span> + -<span class="number">0.176</span>*<span class="string">"就业"</span> + -<span class="number">0.158</span>*<span class="string">"柯薛拉柯塔"</span> + -<span class="number">0.151</span>*<span class="string">"市场"</span> + <span class="number">0.131</span>*<span class="string">"月"</span></div></pre></td></tr></table></figure>
+<p>lsi最核心的意义是将训练文档向量组成的矩阵SVD分解，并做了一个秩为2的近似SVD分解。<br>有了LSI模型，建立索引:</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">index = similarities.MatrixSimilarity(lsi[corpus])</div><div class="line"><span class="number">2016</span>-<span class="number">05</span>-<span class="number">21</span> <span class="number">22</span>:<span class="number">32</span>:<span class="number">20</span>,<span class="number">877</span> : <span class="type">INFO</span> : <span class="type">creating</span> matrix <span class="keyword">with</span> <span class="number">4</span> documents <span class="keyword">and</span> <span class="number">4</span> features</div></pre></td></tr></table></figure>
+<h2 id="4，计算相似度"><a href="#4，计算相似度" class="headerlink" title="4，计算相似度"></a>4，计算相似度</h2><figure class="highlight gcode"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="attr"># 计算某一篇文档的相似度</span></div><div class="line">tl_bow = dictionary.doc2bow<span class="comment">(df.ix[10, 'title_fenci'].split('|')</span>)</div><div class="line">tl_lsi = lsi[tl_bow]</div><div class="line"><span class="attr"># print tl_lsi</span></div><div class="line">sims = index[tl_lsi]</div><div class="line"># print sims</div><div class="line"></div><div class="line">sort_sims = sorted(enumerate(sims), key=lambda item: -item[1]) <span class="attr">#</span></div><div class="line">print sort_sims[0:<span class="number">10</span>]</div><div class="line"></div><div class="line"></div><div class="line"><span class="attr"># Output:</span></div><div class="line"></div><div class="line">[(10, <span class="number">1.0</span>), <span class="comment">(12, 0.74251199)</span>, <span class="comment">(0, 0.62192106)</span>, <span class="comment">(1, 0.61248362)</span>, <span class="comment">(13, 0.45317733)</span>, <span class="comment">(11, 0.44128361)</span>, <span class="comment">(8, 0.40342486)</span>, <span class="comment">(2, 0.0)</span>, <span class="comment">(3, 0.0)</span>, <span class="comment">(4, 0.0)</span>]</div></pre></td></tr></table></figure>
+<p>第10篇的为它自己，相似度为1，完全相似；与第12篇的相似度为0.74等等。</p>
+<h1 id="五、进阶"><a href="#五、进阶" class="headerlink" title="五、进阶"></a>五、进阶</h1><p>计算出文章的相似度，就可以对相似度设定一个阈值，高于阈值的文章算是重复文章。这样就引出了另外一个用途，文章去重！</p>
+<p>本文的应用背景是将多个资讯平台的文章汇总，很有可能出现不同的平台报道同样的内容，这是大概率事件，所以，为了保证内容的唯一性，需要对汇总的文章去重处理。</p>
+<h2 id="Python实现代码"><a href="#Python实现代码" class="headerlink" title="Python实现代码"></a>Python实现代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#coding:utf-8</span></div><div class="line"><span class="string">"""</span></div><div class="line">文章去重</div><div class="line">"""</div><div class="line"></div><div class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</div><div class="line"><span class="keyword">import</span> os</div><div class="line"><span class="keyword">import</span> cPickle</div><div class="line"><span class="keyword">from</span> gensim <span class="keyword">import</span> corpora, models, similarities</div><div class="line"><span class="keyword">from</span> db_config <span class="keyword">import</span> engine</div><div class="line"></div><div class="line"><span class="keyword">import</span> re</div><div class="line">regex = re.compile(<span class="string">ur"[^\u4e00-\u9f5aa-zA-Z0-9]"</span>)</div><div class="line"></div><div class="line"><span class="keyword">import</span> logging</div><div class="line">logging.basicConfig(format=<span class="string">'%(asctime)s : %(levelname)s : %(message)s'</span>, level=logging.INFO)</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">NewsCorpus</span><span class="params">()</span>:</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, column)</span>:</span></div><div class="line">        self.dictionary = []</div><div class="line">        self.column = column</div><div class="line">        self.similarity = <span class="number">0.85</span></div><div class="line">        self.num_topics = <span class="number">10</span></div><div class="line"></div><div class="line">        self.filename = <span class="string">'Data/pkl/pkl_news'</span></div><div class="line">        <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(self.filename):</div><div class="line">            sql = <span class="string">'select id, title, content from article_news order by published_date desc limit 1000'</span></div><div class="line"></div><div class="line">            self.df = pd.read_sql(sql, engine)</div><div class="line">            <span class="keyword">with</span> open(self.filename, <span class="string">'wb'</span>) <span class="keyword">as</span> f:</div><div class="line">                cPickle.dump(self.df, f)</div><div class="line"></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">with</span> open(self.filename, <span class="string">'rb'</span>) <span class="keyword">as</span> f:</div><div class="line">                self.df = cPickle.load(f)</div><div class="line"></div><div class="line">        <span class="keyword">print</span> <span class="string">'标题去重前:&#123;&#125;'</span>.format(len(self.df))</div><div class="line">        self.df = self.df.drop_duplicates([<span class="string">'title'</span>])</div><div class="line">        <span class="keyword">print</span> <span class="string">'标题去重后:&#123;&#125;'</span>.format(len(self.df))</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">jieba_cut</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="string">"""</span></div><div class="line">        对标题和内容分词</div><div class="line">        :return:</div><div class="line">        """</div><div class="line"></div><div class="line">        <span class="keyword">if</span> self.column+<span class="string">"_fenci"</span> <span class="keyword">in</span> self.df.columns:</div><div class="line">            <span class="keyword">return</span></div><div class="line"></div><div class="line">        <span class="keyword">import</span> jieba</div><div class="line">        jieba.load_userdict(<span class="string">'userdict.txt'</span>)   <span class="comment"># 自己准备用户词典，也可不指定</span></div><div class="line"></div><div class="line">        <span class="comment"># 去掉标点和特殊字符 然后分词</span></div><div class="line">        self.df[self.column+<span class="string">'_fenci'</span>] = self.df[self.column].apply(<span class="keyword">lambda</span> x : <span class="string">'|'</span>.join(jieba.cut(regex.sub(<span class="string">''</span>,x))) <span class="keyword">if</span> x <span class="keyword">and</span> len(x) <span class="keyword">else</span> <span class="string">''</span>)</div><div class="line"></div><div class="line">        <span class="keyword">with</span> open(self.filename, <span class="string">'wb'</span>) <span class="keyword">as</span> f:</div><div class="line">            cPickle.dump(self.df, f)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">remove_low_freq_word</span><span class="params">(self, texts, times=<span class="number">1</span>)</span>:</span></div><div class="line">        <span class="string">"""</span></div><div class="line">        去掉低频词</div><div class="line">        :param times:出现次数</div><div class="line">        :return:</div><div class="line">        """</div><div class="line">        all_tokens = sum(texts, [])</div><div class="line">        title_token_once = set(word <span class="keyword">for</span> word <span class="keyword">in</span> set(all_tokens) <span class="keyword">if</span> all_tokens.count(word) == times)</div><div class="line"></div><div class="line">        texts_result = [[word <span class="keyword">for</span> word <span class="keyword">in</span> text <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> title_token_once] <span class="keyword">for</span> text <span class="keyword">in</span> texts]</div><div class="line"></div><div class="line">        <span class="keyword">return</span> texts_result</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">create_dictionary</span><span class="params">(self, df)</span>:</span></div><div class="line">        <span class="string">"""</span></div><div class="line">        创建词典</div><div class="line">        :return:</div><div class="line">        """</div><div class="line"></div><div class="line">        <span class="keyword">try</span>:</div><div class="line">            texts = []</div><div class="line">            <span class="keyword">for</span> ix, row <span class="keyword">in</span> df.iterrows():</div><div class="line">                texts_cuts = row[self.column+<span class="string">'_fenci'</span>].split(<span class="string">'|'</span>)</div><div class="line">                texts.append(texts_cuts)</div><div class="line"></div><div class="line">            texts = self.remove_low_freq_word(texts)</div><div class="line">            self.dictionary = corpora.Dictionary(texts)</div><div class="line">            <span class="keyword">print</span> self.dictionary</div><div class="line">            <span class="keyword">print</span> self.dictionary.token2id</div><div class="line"></div><div class="line">            corpus = [self.dictionary.doc2bow(text) <span class="keyword">for</span> text <span class="keyword">in</span> texts]</div><div class="line">            <span class="keyword">print</span> corpus</div><div class="line"></div><div class="line">            tfidf = models.TfidfModel(corpus)</div><div class="line">            corpus_tfidf = tfidf[corpus]</div><div class="line"></div><div class="line">            <span class="comment"># 训练topic数量为10的LSI模型</span></div><div class="line">            lsi = models.LsiModel(corpus_tfidf, id2word=self.dictionary, num_topics=self.num_topics)</div><div class="line"></div><div class="line">            <span class="keyword">print</span> lsi.print_topic(<span class="number">3</span>)</div><div class="line">            <span class="comment"># 建立索引</span></div><div class="line">            index = similarities.MatrixSimilarity(lsi[corpus])</div><div class="line"></div><div class="line">            <span class="comment"># 计算相似度</span></div><div class="line">            sims_all = []</div><div class="line">            <span class="keyword">for</span> ix, row <span class="keyword">in</span> df.iterrows():</div><div class="line">                tl_bow = self.dictionary.doc2bow(row[self.column+<span class="string">'_fenci'</span>].split(<span class="string">'|'</span>))</div><div class="line">                tl_lsi = lsi[tl_bow]</div><div class="line">                <span class="comment"># print tl_lsi</span></div><div class="line">                sims = index[tl_lsi]</div><div class="line">                <span class="comment"># print sims</span></div><div class="line">                sims_all.append(sims)</div><div class="line"></div><div class="line">                sort_sims = sorted(enumerate(sims), key=<span class="keyword">lambda</span> item: -item[<span class="number">1</span>])</div><div class="line"></div><div class="line">                <span class="keyword">print</span> sort_sims[<span class="number">0</span>:<span class="number">10</span>]</div><div class="line"></div><div class="line">            <span class="keyword">return</span> sims_all</div><div class="line">        <span class="keyword">except</span> Exception,e:</div><div class="line">            <span class="keyword">print</span> <span class="string">'create_dictionary:'</span>, e</div><div class="line">            <span class="keyword">return</span> []</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_results</span><span class="params">(self, df, sims_all)</span>:</span></div><div class="line"></div><div class="line">        df_sims = pd.DataFrame(sims_all)</div><div class="line">        df_sims[df_sims &lt; self.similarity] = <span class="number">0</span></div><div class="line">        <span class="keyword">print</span> df_sims</div><div class="line"></div><div class="line">        indexs_dict = &#123;&#125;</div><div class="line">        df_sims = df_sims[df_sims&gt;<span class="number">0</span>]</div><div class="line"></div><div class="line">        ixs = [] <span class="comment"># 记录已跑过的index</span></div><div class="line">        <span class="keyword">for</span> ix, row <span class="keyword">in</span> df_sims.iterrows():</div><div class="line">            row0 = row[row &gt; <span class="number">0</span>]</div><div class="line">            ixs.append(ix)</div><div class="line">            <span class="keyword">if</span> len(row0) == <span class="number">0</span>:</div><div class="line">                <span class="keyword">continue</span></div><div class="line"></div><div class="line">            <span class="comment"># print row0</span></div><div class="line">            index = row0.index.tolist()</div><div class="line">            index = set(index) - set(ixs)</div><div class="line">            <span class="keyword">if</span> len(index) &gt; <span class="number">0</span>:</div><div class="line">                indexs_dict[ix] = list(index)</div><div class="line"></div><div class="line">        file_name = <span class="string">'Data/&#123;&#125;_&#123;&#125;.xlsx'</span>.format(self.column, df.ix[<span class="number">0</span>, <span class="string">'date'</span>])</div><div class="line"></div><div class="line">        <span class="keyword">print</span> file_name</div><div class="line">        <span class="keyword">if</span> indexs_dict:</div><div class="line">            <span class="keyword">with</span> pd.ExcelWriter(file_name) <span class="keyword">as</span> writer:</div><div class="line">                <span class="keyword">for</span> key <span class="keyword">in</span> indexs_dict.keys():</div><div class="line">                    index_list = []</div><div class="line">                    index_list.append(key)</div><div class="line">                    index_list.extend(indexs_dict[key])</div><div class="line"></div><div class="line">                    <span class="keyword">print</span> df[<span class="string">'title'</span>].head()</div><div class="line">                    df_ouput = df[df[<span class="string">'id'</span>].apply(<span class="keyword">lambda</span> x : x <span class="keyword">in</span> index_list)]</div><div class="line">                    <span class="keyword">print</span> df_ouput.head()</div><div class="line">                    <span class="keyword">if</span> len(df_ouput) == <span class="number">0</span>:</div><div class="line">                        <span class="keyword">continue</span></div><div class="line"></div><div class="line">                    <span class="comment"># dfs_ouput.append(df_ouput)</span></div><div class="line">                    df_ouput.to_excel(writer, sheet_name=str(key))</div><div class="line"></div><div class="line"></div><div class="line">        indexs_all = sum(indexs_dict.values(), [])</div><div class="line">        <span class="keyword">print</span> indexs_all[:<span class="number">5</span>]</div><div class="line">        indexs_all = list(set(indexs_all))</div><div class="line"></div><div class="line">        se_result = df[<span class="string">'id'</span>].apply(<span class="keyword">lambda</span> x : x <span class="keyword">not</span> <span class="keyword">in</span> indexs_all)</div><div class="line">        df_result = df[se_result==<span class="keyword">True</span>]</div><div class="line">        <span class="keyword">print</span> len(df_result)</div><div class="line">        <span class="keyword">print</span> df_result[<span class="string">'title'</span>].head()</div><div class="line">        <span class="keyword">return</span> df_result</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></div><div class="line">        self.jieba_cut()</div><div class="line">        <span class="comment"># 按周期(天)分隔</span></div><div class="line">        df = self.df</div><div class="line">        <span class="keyword">if</span> len(df) &lt;= <span class="number">1</span>:</div><div class="line">            <span class="keyword">continue</span></div><div class="line"></div><div class="line"></div><div class="line">        df.index = pd.Int64Index(range(len(df)))</div><div class="line">        df[<span class="string">'id'</span>] = df.index</div><div class="line">        <span class="keyword">print</span> df[<span class="string">'title'</span>].head()</div><div class="line">        <span class="keyword">print</span> <span class="string">"len:"</span>, len(df)</div><div class="line"></div><div class="line">        sims_all = self.create_dictionary(df)</div><div class="line">        <span class="keyword">if</span> len(sims_all) == <span class="number">0</span>:</div><div class="line">            <span class="keyword">continue</span></div><div class="line">        df_result = self.get_results(df, sims_all)</div><div class="line">        <span class="keyword">if</span> len(df_result):</div><div class="line">            df_results.append(df_result)</div><div class="line">        df_o = pd.concat(df_results, ignore_index=<span class="keyword">True</span>)</div><div class="line">        df_o.to_excel(<span class="string">'Data/sim_&#123;&#125;.xlsx'</span>.format(self.column))</div><div class="line">        <span class="comment"># df_o.to_csv('Data/sim_&#123;&#125;.csv'.format(self.column))</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line"></div><div class="line">    news = NewsCorpus(<span class="string">'content'</span>)</div><div class="line">    news.similarity = <span class="number">0.95</span></div><div class="line">    news.num_topics = <span class="number">10</span></div><div class="line">    news.run()</div></pre></td></tr></table></figure>
+<p><em>参考</em></p>
+<blockquote>
+<ol>
+<li><p><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/01/19/svd-and-applications.html" target="_blank" rel="external">机器学习中的数学(5)-强大的矩阵奇异值分解(SVD)及其应用</a></p>
+</li>
+<li><p><a href="http://www.52nlp.cn/如何计算两个文档的相似度" target="_blank" rel="external">如何计算两个文档的相似度</a></p>
+</li>
+</ol>
+</blockquote>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gensim/" rel="tag">#gensim</a>
+          
+            <a href="/tags/主题模型/" rel="tag">#主题模型</a>
+          
+            <a href="/tags/相似度/" rel="tag">#相似度</a>
+          
+            <a href="/tags/文档去重/" rel="tag">#文档去重</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/17/pandas-groupby/" rel="next" title="pandas GroupBy使用">
+                <i class="fa fa-chevron-left"></i> pandas GroupBy使用
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/18/recommendation-system2/" rel="prev" title="构建推荐系统（二）">
+                构建推荐系统（二） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/05/27/gensim-similarity/"
+     data-title="gensim文档相似度判断"
+     data-content=""
+     data-url="http://www.kekefund.com/2016/05/27/gensim-similarity/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/05/27/gensim-similarity/"
+           data-title="gensim文档相似度判断" data-url="http://www.kekefund.com/2016/05/27/gensim-similarity/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、基本概念"><span class="nav-number">1.</span> <span class="nav-text">一、基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TF-IDF"><span class="nav-number">1.1.</span> <span class="nav-text">TF-IDF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TF-IDF计算步骤"><span class="nav-number">1.2.</span> <span class="nav-text">TF-IDF计算步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SVD，奇异值分解（Singular-value-decomposition）"><span class="nav-number">1.3.</span> <span class="nav-text">SVD，奇异值分解（Singular value decomposition）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LSI，浅层语义索引（Latent-Semantic-Indexing）"><span class="nav-number">1.4.</span> <span class="nav-text">LSI，浅层语义索引（Latent Semantic Indexing）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#余弦相似度-cosine-similiarity"><span class="nav-number">1.5.</span> <span class="nav-text">余弦相似度 (cosine similiarity)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、相似度计算步骤"><span class="nav-number">2.</span> <span class="nav-text">二、相似度计算步骤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、gensim介绍"><span class="nav-number">3.</span> <span class="nav-text">三、gensim介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、实现步骤"><span class="nav-number">4.</span> <span class="nav-text">四、实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，中文分词"><span class="nav-number">4.1.</span> <span class="nav-text">1，中文分词</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Python代码"><span class="nav-number">4.1.1.</span> <span class="nav-text">Python代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，去掉频率为1的词"><span class="nav-number">4.2.</span> <span class="nav-text">2，去掉频率为1的词</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3，建立LSI模型"><span class="nav-number">4.3.</span> <span class="nav-text">3，建立LSI模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4，计算相似度"><span class="nav-number">4.4.</span> <span class="nav-text">4，计算相似度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、进阶"><span class="nav-number">5.</span> <span class="nav-text">五、进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Python实现代码"><span class="nav-number">5.1.</span> <span class="nav-text">Python实现代码</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

@@ -1,0 +1,817 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Django,DjangoRestFramework,API," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="在web apps上实现身份验证时，首先考虑到的解决方案就是Cookie。基于Cookie的身份验证使用服务器端Cookie来对每个请求进行身份验证，这意味着您需要在数据库中（如Redis）保留一个会话存储。 基于token令牌的身份验证是一个最近比较流行的解决方案，它依赖于每个请求发送到服务器的签名令牌，对于移动端和网页端都比较适用。 一、安装需先按照django rest framework">
+<meta name="keywords" content="Django,DjangoRestFramework,API">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Django Rest Framework 通过token访问">
+<meta property="og:url" content="http://www.kekefund.com/2017/03/30/django-rest-framework-jwt/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="在web apps上实现身份验证时，首先考虑到的解决方案就是Cookie。基于Cookie的身份验证使用服务器端Cookie来对每个请求进行身份验证，这意味着您需要在数据库中（如Redis）保留一个会话存储。 基于token令牌的身份验证是一个最近比较流行的解决方案，它依赖于每个请求发送到服务器的签名令牌，对于移动端和网页端都比较适用。 一、安装需先按照django rest framework">
+<meta property="og:updated_time" content="2017-03-30T10:00:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Django Rest Framework 通过token访问">
+<meta name="twitter:description" content="在web apps上实现身份验证时，首先考虑到的解决方案就是Cookie。基于Cookie的身份验证使用服务器端Cookie来对每个请求进行身份验证，这意味着您需要在数据库中（如Redis）保留一个会话存储。 基于token令牌的身份验证是一个最近比较流行的解决方案，它依赖于每个请求发送到服务器的签名令牌，对于移动端和网页端都比较适用。 一、安装需先按照django rest framework">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> Django Rest Framework 通过token访问 | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Django Rest Framework 通过token访问
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2017-03-30T11:47:57+08:00" content="2017-03-30">
+              2017-03-30
+            </time>
+          </span>
+
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/03/30/django-rest-framework-jwt/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/30/django-rest-framework-jwt/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>在web apps上实现身份验证时，首先考虑到的解决方案就是Cookie。基于Cookie的身份验证使用服务器端Cookie来对每个请求进行身份验证，这意味着您需要在数据库中（如Redis）保留一个会话存储。</p>
+<p>基于token令牌的身份验证是一个最近比较流行的解决方案，它依赖于每个请求发送到服务器的签名令牌，对于移动端和网页端都比较适用。</p>
+<h1 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h1><p>需先按照django rest framework</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pip <span class="keyword">install</span> djangorestframework-jwt</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h1 id="二、使用"><a href="#二、使用" class="headerlink" title="二、使用"></a>二、使用</h1><p>setting.py<br><figure class="highlight roboconf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">REST_FRAMEWORK = &#123;</div><div class="line">    '<span class="attribute">DEFAULT_PERMISSION_CLASSES'</span>: (</div><div class="line">        'rest_framework<span class="variable">.permissions</span><span class="variable">.IsAuthenticated</span>',</div><div class="line">    ),</div><div class="line">    'DEFAULT_AUTHENTICATION_CLASSES': (</div><div class="line">        'rest_framework_jwt<span class="variable">.authentication</span><span class="variable">.JSONWebTokenAuthentication</span>',</div><div class="line">        'rest_framework<span class="variable">.authentication</span><span class="variable">.SessionAuthentication</span>',</div><div class="line">        'rest_framework<span class="variable">.authentication</span><span class="variable">.BasicAuthentication</span>',</div><div class="line">    ),</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>工程的urls.py<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> rest_framework_jwt.views <span class="keyword">import</span> obtain_jwt_token</div><div class="line"><span class="comment">#...</span></div><div class="line"></div><div class="line">urlpatterns = [</div><div class="line">    <span class="string">''</span>,</div><div class="line">    <span class="comment"># ...</span></div><div class="line"></div><div class="line">    url(<span class="string">r'^api-token-auth/'</span>, obtain_jwt_token),</div><div class="line">]</div></pre></td></tr></table></figure></p>
+<h1 id="三、python-访问"><a href="#三、python-访问" class="headerlink" title="三、python 访问"></a>三、python 访问</h1><h2 id="1-获得令牌"><a href="#1-获得令牌" class="headerlink" title="1, 获得令牌"></a>1, 获得令牌</h2><figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">n [<span class="number">41</span>]: <span class="keyword">import</span> requests</div><div class="line"></div><div class="line">In [<span class="number">42</span>]: r = requests.post(<span class="string">"http://localhost:8000/api-token-auth/"</span>, <span class="keyword">data</span>=&#123;<span class="string">'username'</span>:<span class="string">'cbb'</span>,<span class="string">'password'</span>:<span class="string">'cbb'</span>&#125;)</div><div class="line"></div><div class="line">In [<span class="number">43</span>]: print r.<span class="keyword">text</span></div><div class="line">&#123;<span class="string">"token"</span>:<span class="string">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNiYiIsInVzZXJfaWQiOjEsImVtYWlsIjoiY2JiaW5nQDE2My5jb20iLCJleHAiOjE0OTA4MjI5MDF9.k5fznq2RoEnsIIFYvc-afHLKXiEyfZyHjRwV8-db5FM"</span>&#125;</div></pre></td></tr></table></figure>
+<p>注意，post请求需要网址最后带“/”，django默认自动补全是关闭的。</p>
+<blockquote>
+<p>网址不带/的出错提示： You called this URL via POST, but the URL doesn’t end in a slash and you have APPEND_SLASH set. Django can’t redirect to the slash URL while maintaining POST data. Change your form to point to 127.0.0.1:8000/api/users/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">44</span>]: <span class="keyword">import</span> json</div><div class="line"></div><div class="line">In [<span class="number">45</span>]: jsonData = json.loads(r.text)</div><div class="line"></div><div class="line">In [<span class="number">46</span>]: jsonData[<span class="string">u'token'</span>]</div><div class="line">Out[<span class="number">46</span>]: <span class="string">u'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNiYiIsInVzZXJfaWQiOjEsImVtYWlsIjoiY2JiaW5nQDE2My5jb20iLCJleHAiOjE0OTA4MjI5MDF9.k5fznq2RoEnsIIFYvc-afHLKXiEyfZyHjRwV8-db5FM'</span></div></pre></td></tr></table></figure>
+<h2 id="2，通过令牌访问"><a href="#2，通过令牌访问" class="headerlink" title="2，通过令牌访问"></a>2，通过令牌访问</h2><ul>
+<li><p>构造headers</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">48</span>]: headers = &#123;<span class="string">'Authorization'</span>: <span class="string">'JWT &#123;&#125;'</span>.format(jsonData[<span class="string">u'token'</span>])&#125;</div><div class="line"></div><div class="line">In [<span class="number">49</span>]: headers</div><div class="line">Out[<span class="number">49</span>]: &#123;<span class="string">'Authorization'</span>: <span class="string">'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNiYiIsInVzZXJfaWQiOjEsImVtYWlsIjoiY2JiaW5nQDE2My5jb20iLCJleHAiOjE0OTA4MjI5MDF9.k5fznq2RoEnsIIFYvc-afHLKXiEyfZyHjRwV8-db5FM'</span>&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>get请求</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">50</span>]: r = requests.get(<span class="string">"http://127.0.0.1:8000/api/users?format=json"</span>, headers=headers)</div><div class="line"></div><div class="line">In [<span class="number">51</span>]: print r.text</div><div class="line">[&#123;<span class="string">"name"</span>:<span class="string">"cbb"</span>,<span class="string">"birthday"</span>:<span class="string">"2017-03-07"</span>,<span class="string">"gender"</span>:<span class="number">1</span>&#125;,&#123;<span class="string">"name"</span>:<span class="string">"xx"</span>,<span class="string">"birthday"</span>:<span class="string">"2017-03-01"</span>,<span class="string">"gender"</span>:<span class="number">2</span>&#125;,&#123;<span class="string">"name"</span>:<span class="string">"keke"</span>,<span class="string">"birthday"</span>:<span class="string">"2016-03-01"</span>,<span class="string">"gender"</span>:<span class="number">2</span>&#125;,&#123;<span class="string">"name"</span>:<span class="string">"小小"</span>,<span class="string">"birthday"</span>:<span class="string">"2017-03-07"</span>,<span class="string">"gender"</span>:<span class="number">2</span>&#125;,&#123;<span class="string">"name"</span>:<span class="string">"小小1"</span>,<span class="string">"birthday"</span>:<span class="string">"2017-03-07"</span>,<span class="string">"gender"</span>:<span class="number">2</span>&#125;,&#123;<span class="string">"name"</span>:<span class="string">"小小1"</span>,<span class="string">"birthday"</span>:<span class="string">"2017-03-07"</span>,<span class="string">"gender"</span>:<span class="number">2</span>&#125;,&#123;<span class="string">"name"</span>:<span class="string">"xx"</span>,<span class="string">"birthday"</span>:<span class="string">"2017-03-07"</span>,<span class="string">"gender"</span>:<span class="number">1</span>&#125;,&#123;<span class="string">"name"</span>:<span class="string">"ckk"</span>,<span class="string">"birthday"</span>:<span class="string">"2017-03-22"</span>,<span class="string">"gender"</span>:<span class="number">2</span>&#125;,&#123;<span class="string">"name"</span>:<span class="string">"ckk"</span>,<span class="string">"birthday"</span>:<span class="string">"2017-03-22"</span>,<span class="string">"gender"</span>:<span class="number">2</span>&#125;,&#123;<span class="string">"name"</span>:<span class="string">"ckkk"</span>,<span class="string">"birthday"</span>:<span class="string">"2017-03-09"</span>,<span class="string">"gender"</span>:<span class="number">2</span>&#125;,&#123;<span class="string">"name"</span>:<span class="string">"cbb"</span>,<span class="string">"birthday"</span>:<span class="string">"2017-03-07"</span>,<span class="string">"gender"</span>:<span class="number">1</span>&#125;,&#123;<span class="string">"name"</span>:<span class="string">"cbb"</span>,<span class="string">"birthday"</span>:<span class="string">"2017-03-07"</span>,<span class="string">"gender"</span>:<span class="number">1</span>&#125;]</div></pre></td></tr></table></figure>
+</li>
+<li><p>post请求</p>
+<figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">In [54]: data = &#123;"name":"xx","birthday":"2017-03-01","gender":2&#125;</div><div class="line"></div><div class="line">In [55]: r = requests.post("http://127.0.0.1:8000/api/users/",data=data, headers=headers)</div><div class="line"></div><div class="line">In [56]: print r.text</div><div class="line">"&#123;<span class="symbol">\"</span>birthdayNumberCount<span class="symbol">\"</span>: &#123;<span class="symbol">\"</span>1<span class="symbol">\"</span>: 4, <span class="symbol">\"</span>2<span class="symbol">\"</span>: 1, <span class="symbol">\"</span>3<span class="symbol">\"</span>: 1, <span class="symbol">\"</span>4<span class="symbol">\"</span>: 2, <span class="symbol">\"</span>5<span class="symbol">\"</span>: 3, <span class="symbol">\"</span>6<span class="symbol">\"</span>: 0, <span class="symbol">\"</span>7<span class="symbol">\"</span>: 1, <span class="symbol">\"</span>8<span class="symbol">\"</span>: 0, <span class="symbol">\"</span>9<span class="symbol">\"</span>: 0&#125;, <span class="symbol">\"</span>suitableJob<span class="symbol">\"</span>: <span class="symbol">\"</span>公众人物、开发商、投机者、设计师、新闻工作(媒体)、表演者、变革推动者、广告创意人才、探险家、心灵导师、作家、自由职业<span class="symbol">\"</span>, <span class="symbol">\"</span>destinyNumber<span class="symbol">\"</span>: 5, <span class="symbol">\"</span>destinyMean<span class="symbol">\"</span>: <span class="symbol">\"</span>很注重感观享受，喜欢冒险、自由，个性开朗，人缘好；有口才，社交能力强，拥有演说和促销的天才。不容易离婚，爱美。<span class="symbol">\"</span>, <span class="symbol">\"</span>destinyDetailMean<span class="symbol">\"</span>: <span class="symbol">\"</span>因4的能力充斥内在，更需要职业的稳定来协助创造力与变动，不然就会形成外强中干，而无法让自己身心自由。<span class="symbol">\"</span>, <span class="symbol">\"</span>birthdayNumbers<span class="symbol">\"</span>: [2, 0, 1, 7, 0, 3, 0, 1, 1, 4, 5], <span class="symbol">\"</span>toLearn<span class="symbol">\"</span>: <span class="symbol">\"</span>节制自由，学习承诺与勇气。<span class="symbol">\"</span>, <span class="symbol">\"</span>userInfo<span class="symbol">\"</span>: &#123;<span class="symbol">\"</span>username<span class="symbol">\"</span>: <span class="symbol">\"</span>xx<span class="symbol">\"</span>, <span class="symbol">\"</span>gender<span class="symbol">\"</span>: 2, <span class="symbol">\"</span>birthday<span class="symbol">\"</span>: <span class="symbol">\"</span>2017-03-01<span class="symbol">\"</span>&#125;, <span class="symbol">\"</span>talentNumbers<span class="symbol">\"</span>: [14]&#125;"</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="四、进阶"><a href="#四、进阶" class="headerlink" title="四、进阶"></a>四、进阶</h1><p>自定义令牌有效期，如设置有效期为5小时，在setting.py中添加<br><figure class="highlight gcode"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">JWT_AUTH = &#123;</div><div class="line">    <span class="string">'JWT_EXPIRATION_DELTA'</span>: datetime.timedelta<span class="comment">(hours=5)</span>,  <span class="attr">#seconds=300</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>官方文档中所有能自定义的参数如下：<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">JWT_AUTH = &#123;</div><div class="line">    <span class="string">'JWT_ENCODE_HANDLER'</span>:</div><div class="line">    <span class="string">'rest_framework_jwt.utils.jwt_encode_handler'</span>,</div><div class="line"></div><div class="line">    <span class="string">'JWT_DECODE_HANDLER'</span>:</div><div class="line">    <span class="string">'rest_framework_jwt.utils.jwt_decode_handler'</span>,</div><div class="line"></div><div class="line">    <span class="string">'JWT_PAYLOAD_HANDLER'</span>:</div><div class="line">    <span class="string">'rest_framework_jwt.utils.jwt_payload_handler'</span>,</div><div class="line"></div><div class="line">    <span class="string">'JWT_PAYLOAD_GET_USER_ID_HANDLER'</span>:</div><div class="line">    <span class="string">'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler'</span>,</div><div class="line"></div><div class="line">    <span class="string">'JWT_RESPONSE_PAYLOAD_HANDLER'</span>:</div><div class="line">    <span class="string">'rest_framework_jwt.utils.jwt_response_payload_handler'</span>,</div><div class="line"></div><div class="line">    <span class="string">'JWT_SECRET_KEY'</span>: settings.SECRET_KEY,</div><div class="line">    <span class="string">'JWT_GET_USER_SECRET_KEY'</span>: <span class="literal">None</span>,</div><div class="line">    <span class="string">'JWT_PUBLIC_KEY'</span>: <span class="literal">None</span>,</div><div class="line">    <span class="string">'JWT_PRIVATE_KEY'</span>: <span class="literal">None</span>,</div><div class="line">    <span class="string">'JWT_ALGORITHM'</span>: <span class="string">'HS256'</span>,</div><div class="line">    <span class="string">'JWT_VERIFY'</span>: <span class="literal">True</span>,</div><div class="line">    <span class="string">'JWT_VERIFY_EXPIRATION'</span>: <span class="literal">True</span>,</div><div class="line">    <span class="string">'JWT_LEEWAY'</span>: <span class="number">0</span>,</div><div class="line">    <span class="string">'JWT_EXPIRATION_DELTA'</span>: datetime.timedelta(seconds=<span class="number">300</span>),</div><div class="line">    <span class="string">'JWT_AUDIENCE'</span>: <span class="literal">None</span>,</div><div class="line">    <span class="string">'JWT_ISSUER'</span>: <span class="literal">None</span>,</div><div class="line"></div><div class="line">    <span class="string">'JWT_ALLOW_REFRESH'</span>: <span class="literal">False</span>,</div><div class="line">    <span class="string">'JWT_REFRESH_EXPIRATION_DELTA'</span>: datetime.timedelta(days=<span class="number">7</span>),</div><div class="line"></div><div class="line">    <span class="string">'JWT_AUTH_HEADER_PREFIX'</span>: <span class="string">'JWT'</span>,</div><div class="line">    <span class="string">'JWT_AUTH_COOKIE'</span>: <span class="literal">None</span>,</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
+<p><a href="https://github.com/GetBlimp/django-rest-framework-jwt" target="_blank" rel="external">https://github.com/GetBlimp/django-rest-framework-jwt</a><br><a href="http://getblimp.github.io/django-rest-framework-jwt/#requirements" target="_blank" rel="external">http://getblimp.github.io/django-rest-framework-jwt/#requirements</a><br><a href="http://stackoverflow.com/questions/21317899/how-do-i-create-a-login-api-using-django-rest-framework" target="_blank" rel="external">http://stackoverflow.com/questions/21317899/how-do-i-create-a-login-api-using-django-rest-framework</a></p>
+</blockquote>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Django/" rel="tag">#Django</a>
+          
+            <a href="/tags/DjangoRestFramework/" rel="tag">#DjangoRestFramework</a>
+          
+            <a href="/tags/API/" rel="tag">#API</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/30/docker-django/" rel="next" title="docker版Django">
+                <i class="fa fa-chevron-left"></i> docker版Django
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/30/django-restful-framework/" rel="prev" title="Django Rest Framwork实现RESTful API">
+                Django Rest Framwork实现RESTful API <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2017/03/30/django-rest-framework-jwt/"
+     data-title="Django Rest Framework 通过token访问"
+     data-content=""
+     data-url="http://www.kekefund.com/2017/03/30/django-rest-framework-jwt/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/03/30/django-rest-framework-jwt/"
+           data-title="Django Rest Framework 通过token访问" data-url="http://www.kekefund.com/2017/03/30/django-rest-framework-jwt/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、安装"><span class="nav-number">1.</span> <span class="nav-text">一、安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、使用"><span class="nav-number">2.</span> <span class="nav-text">二、使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、python-访问"><span class="nav-number">3.</span> <span class="nav-text">三、python 访问</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-获得令牌"><span class="nav-number">3.1.</span> <span class="nav-text">1, 获得令牌</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，通过令牌访问"><span class="nav-number">3.2.</span> <span class="nav-text">2，通过令牌访问</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、进阶"><span class="nav-number">4.</span> <span class="nav-text">四、进阶</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

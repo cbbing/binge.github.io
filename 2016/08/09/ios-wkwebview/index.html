@@ -1,0 +1,844 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="IOS开发,Objective-C,WKWebView,XCode," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="一年多没接触xcode了，这一年主要用python做开发，刹一接触xcode代码，还是有点陌生的感觉。在网上闲逛了一通，发现网上的ios教程用swift编写的比oc的多多了。看来苹果的swift推广的比较好。我偶尔写写简单的app，objective-c用过一段时间，这次还是用oc，swift等有时间了好好研究一下。前段时间有朋友让做一个ipad程序，用webview封装一个网站，实现一个独立的a">
+<meta name="keywords" content="IOS开发,Objective-C,WKWebView,XCode">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【IOS开发】WKWebView封装APP">
+<meta property="og:url" content="http://www.kekefund.com/2016/08/09/ios-wkwebview/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="一年多没接触xcode了，这一年主要用python做开发，刹一接触xcode代码，还是有点陌生的感觉。在网上闲逛了一通，发现网上的ios教程用swift编写的比oc的多多了。看来苹果的swift推广的比较好。我偶尔写写简单的app，objective-c用过一段时间，这次还是用oc，swift等有时间了好好研究一下。前段时间有朋友让做一个ipad程序，用webview封装一个网站，实现一个独立的a">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios1.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios2.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios3.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios4.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios5.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios6.png">
+<meta property="og:updated_time" content="2017-04-07T06:00:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【IOS开发】WKWebView封装APP">
+<meta name="twitter:description" content="一年多没接触xcode了，这一年主要用python做开发，刹一接触xcode代码，还是有点陌生的感觉。在网上闲逛了一通，发现网上的ios教程用swift编写的比oc的多多了。看来苹果的swift推广的比较好。我偶尔写写简单的app，objective-c用过一段时间，这次还是用oc，swift等有时间了好好研究一下。前段时间有朋友让做一个ipad程序，用webview封装一个网站，实现一个独立的a">
+<meta name="twitter:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 【IOS开发】WKWebView封装APP | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                【IOS开发】WKWebView封装APP
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-08-09T11:11:54+08:00" content="2016-08-09">
+              2016-08-09
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/IOS/" itemprop="url" rel="index">
+                    <span itemprop="name">IOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/09/ios-wkwebview/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/09/ios-wkwebview/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>一年多没接触xcode了，这一年主要用python做开发，刹一接触xcode代码，还是有点陌生的感觉。在网上闲逛了一通，发现网上的ios教程用swift编写的比oc的多多了。看来苹果的swift推广的比较好。我偶尔写写简单的app，objective-c用过一段时间，这次还是用oc，swift等有时间了好好研究一下。<br>前段时间有朋友让做一个ipad程序，用webview封装一个网站，实现一个独立的app应用。<br>功能虽然简单，实现起来发现ios开发的好些功能都有涉及，丢了一年的ios开发中的概念捡起来不易，于是记录下来，以免后面重复造轮子时又忘了。</p>
+<p><strong>主要功能介绍：</strong></p>
+<ul>
+<li>自适应iphone和ipad</li>
+<li>屏幕翻转自适应拉伸</li>
+<li>自定义导航栏返回按钮</li>
+<li>网页加载进度条显示</li>
+<li>主屏幕左滑后退</li>
+</ul>
+<a id="more"></a>
+<p>以创建app的流程来编写。</p>
+<h1 id="一、新建工程"><a href="#一、新建工程" class="headerlink" title="一、新建工程"></a>一、新建工程</h1><h2 id="1，新建一个Single-View-Application。"><a href="#1，新建一个Single-View-Application。" class="headerlink" title="1，新建一个Single View Application。"></a>1，新建一个Single View Application。</h2><p>依次点击 File -&gt; New -&gt; Project，选择IOS-&gt;Application-&gt;Single View Application。<br> <img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios1.png" alt=""></p>
+<p>点击Next，设置程序名称和组织名称和标识，选择开发语言为Objective-C，支持设备为Universal（iphone和ipad都支持），其它默认。<br> <img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios2.png" alt=""><br>点击Next，Create项目。</p>
+<h2 id="2，程序目录结构"><a href="#2，程序目录结构" class="headerlink" title="2，程序目录结构"></a>2，程序目录结构</h2><h3 id="a-默认生成的目录结构如下："><a href="#a-默认生成的目录结构如下：" class="headerlink" title="a, 默认生成的目录结构如下："></a>a, 默认生成的目录结构如下：</h3><p> <img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios3.png" alt=""></p>
+<h3 id="b，storyboard"><a href="#b，storyboard" class="headerlink" title="b，storyboard"></a>b，storyboard</h3><p>程序默认创建的Main.storyboard中有一个ViewController，本程序需要导航栏，先拖一个Navigation Controller到storyboard中<br> <img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios4.png" alt=""></p>
+<p>删除默认的TableViewController，将Navigation Controller和View Controller关联，拖动首启动箭头从View Controller到Navigation Controller。<br> <img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios5.png" alt=""></p>
+<h1 id="二，代码实现"><a href="#二，代码实现" class="headerlink" title="二，代码实现"></a>二，代码实现</h1><p>浏览器用WKWebView。ViewController头文件如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//ViewController.h</span></div><div class="line"></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIKit.h&gt;</span></span></div><div class="line"><span class="keyword">@import</span> WebKit;</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> : <span class="title">UIViewController</span>&lt;<span class="title">WKUIDelegate</span>, <span class="title">WKNavigationDelegate</span>&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>)<span class="built_in">WKWebView</span> *webView;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure></p>
+<h2 id="1，WKUIDelegate委托"><a href="#1，WKUIDelegate委托" class="headerlink" title="1，WKUIDelegate委托"></a>1，WKUIDelegate委托</h2><p>WKWebView默认只能访问https开头的网站，为了能够支持http开头的普通网站，实现下面的委托方法。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#pragma mark - WKUIDelegate</span></div><div class="line"><span class="comment">//系统阻止了不安全的连接</span></div><div class="line">- (<span class="built_in">WKWebView</span> *)webView:(<span class="built_in">WKWebView</span> *)webView createWebViewWithConfiguration:(<span class="built_in">WKWebViewConfiguration</span> *)configuration forNavigationAction:(<span class="built_in">WKNavigationAction</span> *)navigationAction windowFeatures:(<span class="built_in">WKWindowFeatures</span> *)windowFeatures</div><div class="line">&#123;</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (!navigationAction.targetFrame.isMainFrame) &#123;</div><div class="line">        </div><div class="line">        [webView loadRequest:navigationAction.request];</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="keyword">return</span> <span class="literal">nil</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="2，WKNavigationDelegate委托"><a href="#2，WKNavigationDelegate委托" class="headerlink" title="2，WKNavigationDelegate委托"></a>2，WKNavigationDelegate委托</h2><p>didFinishNavigation方法主要作用用来更新导航栏的显示。updateNavigationItems在后续讲解导航栏时介绍。<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#pragma mark - WKNavigationDelegate</span></div><div class="line"><span class="comment">//页面已全部加载</span></div><div class="line">- (<span class="keyword">void</span>)webView:(<span class="built_in">WKWebView</span> *)webView didFinishNavigation:(<span class="keyword">null_unspecified</span> <span class="built_in">WKNavigation</span> *)navigation &#123;</div><div class="line">    [<span class="keyword">self</span> updateNavigationItems];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="3，自定义导航栏"><a href="#3，自定义导航栏" class="headerlink" title="3，自定义导航栏"></a>3，自定义导航栏</h2><p>定义变量<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">@property</span>(<span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="built_in">UIBarButtonItem</span> *navigationBackBarButtonItem;</div><div class="line"><span class="keyword">@property</span>(<span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="built_in">UIBarButtonItem</span> *navigationRefresheBarButtonItem;</div></pre></td></tr></table></figure></p>
+<p>创建函数如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#pragma mark - 导航按钮</span></div><div class="line"></div><div class="line"><span class="comment">//自定义返回按钮</span></div><div class="line">- (<span class="built_in">UIBarButtonItem</span> *)navigationBackBarButtonItem &#123;</div><div class="line">    <span class="keyword">if</span> (_navigationBackBarButtonItem) <span class="keyword">return</span> _navigationBackBarButtonItem;</div><div class="line">    <span class="built_in">UIImage</span>* backItemImage = [[[<span class="built_in">UINavigationBar</span> appearance] backIndicatorImage] imageWithRenderingMode:<span class="built_in">UIImageRenderingModeAlwaysTemplate</span>]?:[[<span class="built_in">UIImage</span> imageNamed:<span class="string">@"backItemImage"</span>] imageWithRenderingMode:<span class="built_in">UIImageRenderingModeAlwaysTemplate</span>];</div><div class="line">    <span class="built_in">UIGraphicsBeginImageContextWithOptions</span>(backItemImage.size, <span class="literal">NO</span>, backItemImage.scale);</div><div class="line">    <span class="built_in">CGContextRef</span> context = <span class="built_in">UIGraphicsGetCurrentContext</span>();</div><div class="line">    <span class="built_in">CGContextTranslateCTM</span>(context, <span class="number">0</span>, backItemImage.size.height);</div><div class="line">    <span class="built_in">CGContextScaleCTM</span>(context, <span class="number">1.0</span>, <span class="number">-1.0</span>);</div><div class="line">    <span class="built_in">CGContextSetBlendMode</span>(context, kCGBlendModeNormal);</div><div class="line">    <span class="built_in">CGRect</span> rect = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, backItemImage.size.width, backItemImage.size.height);</div><div class="line">    <span class="built_in">CGContextClipToMask</span>(context, rect, backItemImage.CGImage);</div><div class="line">    [[<span class="keyword">self</span>.navigationController.navigationBar.tintColor colorWithAlphaComponent:<span class="number">0.5</span>] setFill];</div><div class="line">    <span class="built_in">CGContextFillRect</span>(context, rect);</div><div class="line">    <span class="built_in">UIImage</span> *newImage = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>();</div><div class="line">    <span class="built_in">UIGraphicsEndImageContext</span>();</div><div class="line">    <span class="built_in">UIImage</span>* backItemHlImage = newImage?:[[<span class="built_in">UIImage</span> imageNamed:<span class="string">@"backItemImage-hl"</span>] imageWithRenderingMode:<span class="built_in">UIImageRenderingModeAlwaysTemplate</span>];</div><div class="line">    <span class="built_in">UIButton</span>* backButton = [<span class="built_in">UIButton</span> buttonWithType:<span class="built_in">UIButtonTypeSystem</span>];</div><div class="line">    <span class="built_in">NSDictionary</span> *attr = [[<span class="built_in">UIBarButtonItem</span> appearance] titleTextAttributesForState:<span class="built_in">UIControlStateNormal</span>];</div><div class="line"></div><div class="line">     </div><div class="line">   [backButton setAttributedTitle:[[<span class="built_in">NSAttributedString</span> alloc] initWithString:<span class="string">@"返回"</span> attributes:attr] forState:<span class="built_in">UIControlStateNormal</span>];</div><div class="line">    <span class="built_in">UIOffset</span> offset = [[<span class="built_in">UIBarButtonItem</span> appearance] backButtonTitlePositionAdjustmentForBarMetrics:<span class="built_in">UIBarMetricsDefault</span>];</div><div class="line">    backButton.titleEdgeInsets = <span class="built_in">UIEdgeInsetsMake</span>(offset.vertical, offset.horizontal, <span class="number">0</span>, <span class="number">0</span>);</div><div class="line">    backButton.imageEdgeInsets = <span class="built_in">UIEdgeInsetsMake</span>(offset.vertical, offset.horizontal, <span class="number">0</span>, <span class="number">0</span>);</div><div class="line">   </div><div class="line">    [backButton setImage:backItemImage forState:<span class="built_in">UIControlStateNormal</span>];</div><div class="line">    [backButton setImage:backItemHlImage forState:<span class="built_in">UIControlStateHighlighted</span>];</div><div class="line">    [backButton sizeToFit];</div><div class="line">    </div><div class="line">    [backButton addTarget:<span class="keyword">self</span> action:<span class="keyword">@selector</span>(toBack) forControlEvents:<span class="built_in">UIControlEventTouchUpInside</span>];</div><div class="line">    _navigationBackBarButtonItem = [[<span class="built_in">UIBarButtonItem</span> alloc] initWithCustomView:backButton];</div><div class="line">    <span class="keyword">return</span> _navigationBackBarButtonItem;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//刷新按钮</span></div><div class="line">- (<span class="built_in">UIBarButtonItem</span> *)navigationRefreshBarButtonItem &#123;</div><div class="line">    <span class="keyword">if</span> (_navigationCloseBarButtonItem) <span class="keyword">return</span> _navigationCloseBarButtonItem;</div><div class="line">      </div><div class="line">   _navigationCloseBarButtonItem = [[<span class="built_in">UIBarButtonItem</span> alloc] initWithTitle:<span class="string">@"刷新"</span> style:<span class="number">0</span> target:<span class="keyword">self</span> action:<span class="keyword">@selector</span>(navigationIemHandleRefresh:)];</div><div class="line">    <span class="keyword">return</span> _navigationCloseBarButtonItem;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>按钮点击响应函数<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)toBack&#123;</div><div class="line">    <span class="keyword">if</span> ([<span class="keyword">self</span>.webView canGoBack])&#123;</div><div class="line">        [<span class="keyword">self</span>.webView goBack];</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)navigationIemHandleRefresh:(<span class="built_in">UIBarButtonItem</span> *)sender &#123;</div><div class="line"><span class="comment">//    [self.navigationController popViewControllerAnimated:YES];</span></div><div class="line"><span class="comment">//    [self dismissViewControllerAnimated:YES completion:NULL];</span></div><div class="line">    [<span class="keyword">self</span>.webView reload];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>调度函数，由WKNavigationDelegate调起<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)updateNavigationItems &#123;</div><div class="line">    [<span class="keyword">self</span>.navigationItem setLeftBarButtonItems:<span class="literal">nil</span> animated:<span class="literal">NO</span>];</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.webView.canGoBack) &#123;<span class="comment">// Web view can go back means a lot requests exist.</span></div><div class="line">        <span class="built_in">UIBarButtonItem</span> *spaceButtonItem = [[<span class="built_in">UIBarButtonItem</span> alloc] initWithBarButtonSystemItem:<span class="built_in">UIBarButtonSystemItemFixedSpace</span> target:<span class="literal">nil</span> action:<span class="literal">nil</span>];</div><div class="line">        spaceButtonItem.width = <span class="number">-6.5</span>;</div><div class="line">        <span class="keyword">self</span>.navigationController.interactivePopGestureRecognizer.enabled = <span class="literal">NO</span>;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">self</span>.navigationController.viewControllers.count == <span class="number">1</span>) &#123;</div><div class="line">            [<span class="keyword">self</span>.navigationItem setLeftBarButtonItems:@[spaceButtonItem, <span class="keyword">self</span>.navigationBackBarButtonItem, <span class="keyword">self</span>. navigationRefreshBarButtonItem] animated:<span class="literal">NO</span>];</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            [<span class="keyword">self</span>.navigationItem setLeftBarButtonItems:@[<span class="keyword">self</span>. navigationRefreshBarButtonItem] animated:<span class="literal">NO</span>];</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">self</span>.navigationController.interactivePopGestureRecognizer.enabled = <span class="literal">YES</span>;</div><div class="line">        [<span class="keyword">self</span>.navigationItem setLeftBarButtonItems:<span class="literal">nil</span> animated:<span class="literal">NO</span>];</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="4，进度条"><a href="#4，进度条" class="headerlink" title="4，进度条"></a>4，进度条</h2><p>定义变量<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>)<span class="built_in">UIProgressView</span> *progressView;</div><div class="line"></div><div class="line">- (<span class="built_in">UIProgressView</span> *)progressView &#123;</div><div class="line">    <span class="keyword">if</span> (_progressView) <span class="keyword">return</span> _progressView;</div><div class="line">    <span class="built_in">CGFloat</span> progressBarHeight = <span class="number">2.0</span>f;</div><div class="line">    <span class="built_in">CGRect</span> navigationBarBounds = <span class="keyword">self</span>.navigationController.navigationBar.bounds;</div><div class="line">    <span class="built_in">CGRect</span> barFrame = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, navigationBarBounds.size.height - progressBarHeight, navigationBarBounds.size.width, progressBarHeight);</div><div class="line">    _progressView = [[<span class="built_in">UIProgressView</span> alloc] initWithFrame:barFrame];</div><div class="line">    _progressView.trackTintColor = [<span class="built_in">UIColor</span> clearColor];</div><div class="line">    _progressView.autoresizingMask = <span class="built_in">UIViewAutoresizingFlexibleWidth</span> | <span class="built_in">UIViewAutoresizingFlexibleTopMargin</span>;</div><div class="line">    <span class="keyword">return</span> _progressView;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>添加到View<br><figure class="highlight erlang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">- <span class="params">(void)</span>viewWillAppear:<span class="params">(BOOL)</span>animated&#123;</div><div class="line">    ...</div><div class="line">    [self.navigationController.navigationBar addSubview:self.progressView];</div><div class="line">     ...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="5，键值观察（Key-value-observing-KVO）"><a href="#5，键值观察（Key-value-observing-KVO）" class="headerlink" title="5，键值观察（Key-value observing,  KVO）"></a>5，键值观察（Key-value observing,  KVO）</h2><p>KVO允许一个对象观察另一个对象的属性。该属性值改变时，会通知观察对象。与NSNotificationCenter通知相似，多个KVO观察者可以观察单一属性。此外，KVO更动态，因为它允许对象观察任意属性，而不需任何新的API。</p>
+<p>在viewDidLoad函数中添加：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[self.webView <span class="string">addObserver:</span>self <span class="string">forKeyPath:</span>@<span class="string">"estimatedProgress"</span> <span class="string">options:</span>NSKeyValueObservingOptionNew <span class="string">context:</span>NULL];</div><div class="line">[self.webView <span class="string">addObserver:</span>self <span class="string">forKeyPath:</span>@<span class="string">"title"</span> <span class="string">options:</span>NSKeyValueObservingOptionNew <span class="string">context:</span>NULL];</div></pre></td></tr></table></figure></p>
+<p>定义键值变化的响应代码<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)<span class="string">observeValueForKeyPath:</span>(NSString *)keyPath <span class="string">ofObject:</span>(id)object <span class="string">change:</span>(NSDictionary&lt;NSString *,id&gt; *)change <span class="string">context:</span>(<span class="keyword">void</span> *)context&#123;</div><div class="line">    <span class="keyword">if</span> ([keyPath <span class="string">isEqualToString:</span>@<span class="string">"estimatedProgress"</span>])&#123;</div><div class="line">        <span class="keyword">if</span> (object == self.webView)&#123;</div><div class="line">            [self.progressView <span class="string">setAlpha:</span><span class="number">1.0</span>f];</div><div class="line">            [self.progressView <span class="string">setProgress:</span>self.webView.estimatedProgress];</div><div class="line">            <span class="keyword">if</span> (self.webView.estimatedProgress &gt;= <span class="number">1.0</span>f)&#123;</div><div class="line">                [UIView <span class="string">animateWithDuration:</span><span class="number">0.3</span> <span class="string">delay:</span><span class="number">0.3</span> <span class="string">options:</span>UIViewAnimationOptionCurveEaseIn <span class="string">animations:</span>^&#123;</div><div class="line">                    [self.progressView <span class="string">setAlpha:</span><span class="number">0.0</span>f];</div><div class="line">                &#125;<span class="string">completion:</span>^(BOOL finished)&#123;</div><div class="line">                    [self.progressView <span class="string">setProgress:</span><span class="number">0.0</span>f];</div><div class="line">                &#125;];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span>&#123;</div><div class="line">            [<span class="keyword">super</span> <span class="string">observeValueForKeyPath:</span>keyPath <span class="string">ofObject:</span>object <span class="string">change:</span>change <span class="string">context:</span>context];</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span> <span class="keyword">if</span>([keyPath <span class="string">isEqualToString:</span>@<span class="string">"title"</span>])&#123;</div><div class="line">        <span class="keyword">if</span> (object == self.webView)&#123;</div><div class="line">            self.title = self.webView.title;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span>&#123;</div><div class="line">            [<span class="keyword">super</span> <span class="string">observeValueForKeyPath:</span>keyPath <span class="string">ofObject:</span>object <span class="string">change:</span>change <span class="string">context:</span>context];</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>别忘了在程序退出时注销键值观察<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)<span class="string">viewWillDisappear:</span>(BOOL)animated&#123;</div><div class="line">    [self.webView <span class="string">removeObserver:</span>self <span class="string">forKeyPath:</span>@<span class="string">"estimatedProgress"</span>];</div><div class="line">    [self.webView <span class="string">removeObserver:</span>self <span class="string">forKeyPath:</span>@<span class="string">"title"</span>];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="三，总结"><a href="#三，总结" class="headerlink" title="三，总结"></a>三，总结</h1><p>程序运行效果如下：<br> <img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-09/ios6.png" alt=""></p>
+<p>IOS开发的流程比较清晰明了，实现界面现在都可以在storyboard中拖拽实现，真正需要代码实现的是一些界面之外的逻辑流程，都可以按模块来各自实现。理解透了，开发起来是比较顺手的。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/IOS开发/" rel="tag">#IOS开发</a>
+          
+            <a href="/tags/Objective-C/" rel="tag">#Objective-C</a>
+          
+            <a href="/tags/WKWebView/" rel="tag">#WKWebView</a>
+          
+            <a href="/tags/XCode/" rel="tag">#XCode</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/24/scrapy-redis-increment/" rel="next" title="Scrapy结合Redis实现增量爬取">
+                <i class="fa fa-chevron-left"></i> Scrapy结合Redis实现增量爬取
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/05/pandas-and-g2/" rel="prev" title="python结合G2绘制精美图形">
+                python结合G2绘制精美图形 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/08/09/ios-wkwebview/"
+     data-title="【IOS开发】WKWebView封装APP"
+     data-content=""
+     data-url="http://www.kekefund.com/2016/08/09/ios-wkwebview/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/09/ios-wkwebview/"
+           data-title="【IOS开发】WKWebView封装APP" data-url="http://www.kekefund.com/2016/08/09/ios-wkwebview/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、新建工程"><span class="nav-number">1.</span> <span class="nav-text">一、新建工程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，新建一个Single-View-Application。"><span class="nav-number">1.1.</span> <span class="nav-text">1，新建一个Single View Application。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，程序目录结构"><span class="nav-number">1.2.</span> <span class="nav-text">2，程序目录结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a-默认生成的目录结构如下："><span class="nav-number">1.2.1.</span> <span class="nav-text">a, 默认生成的目录结构如下：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b，storyboard"><span class="nav-number">1.2.2.</span> <span class="nav-text">b，storyboard</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二，代码实现"><span class="nav-number">2.</span> <span class="nav-text">二，代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，WKUIDelegate委托"><span class="nav-number">2.1.</span> <span class="nav-text">1，WKUIDelegate委托</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，WKNavigationDelegate委托"><span class="nav-number">2.2.</span> <span class="nav-text">2，WKNavigationDelegate委托</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3，自定义导航栏"><span class="nav-number">2.3.</span> <span class="nav-text">3，自定义导航栏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4，进度条"><span class="nav-number">2.4.</span> <span class="nav-text">4，进度条</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5，键值观察（Key-value-observing-KVO）"><span class="nav-number">2.5.</span> <span class="nav-text">5，键值观察（Key-value observing,  KVO）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三，总结"><span class="nav-number">3.</span> <span class="nav-text">三，总结</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

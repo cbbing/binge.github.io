@@ -1,0 +1,841 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Python,scrapy," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="scrapy爬虫框架在业内大大有名，自己写过静态网页和动态网页的爬虫，一直没拿scrapy来写，近来看了scrapy的官方文档，了解了大致的流程，故拿来练手实践了一个项目。 本文主要抓取股吧的文章，内容包括:  定义抓取Spider  数据字段的定义  内容解析  数据存储到mysql  PyCharm调试scrapy   一、定义抓取Spider创建一个新的Spider 12scrapy sta">
+<meta name="keywords" content="Python,scrapy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scrapy框架初探">
+<meta property="og:url" content="http://www.kekefund.com/2016/03/31/scrapy-learn/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="scrapy爬虫框架在业内大大有名，自己写过静态网页和动态网页的爬虫，一直没拿scrapy来写，近来看了scrapy的官方文档，了解了大致的流程，故拿来练手实践了一个项目。 本文主要抓取股吧的文章，内容包括:  定义抓取Spider  数据字段的定义  内容解析  数据存储到mysql  PyCharm调试scrapy   一、定义抓取Spider创建一个新的Spider 12scrapy sta">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba2.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba3.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba4.png">
+<meta property="og:updated_time" content="2016-08-31T02:05:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Scrapy框架初探">
+<meta name="twitter:description" content="scrapy爬虫框架在业内大大有名，自己写过静态网页和动态网页的爬虫，一直没拿scrapy来写，近来看了scrapy的官方文档，了解了大致的流程，故拿来练手实践了一个项目。 本文主要抓取股吧的文章，内容包括:  定义抓取Spider  数据字段的定义  内容解析  数据存储到mysql  PyCharm调试scrapy   一、定义抓取Spider创建一个新的Spider 12scrapy sta">
+<meta name="twitter:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> Scrapy框架初探 | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Scrapy框架初探
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-03-31T17:00:03+08:00" content="2016-03-31">
+              2016-03-31
+            </time>
+          </span>
+
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/31/scrapy-learn/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/31/scrapy-learn/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>scrapy爬虫框架在业内大大有名，自己写过静态网页和动态网页的爬虫，一直没拿scrapy来写，近来看了scrapy的官方文档，了解了大致的流程，故拿来练手实践了一个项目。</p>
+<p>本文主要抓取股吧的文章，内容包括:</p>
+<ul>
+<li><p>定义抓取Spider</p>
+</li>
+<li><p>数据字段的定义</p>
+</li>
+<li><p>内容解析</p>
+</li>
+<li><p>数据存储到mysql</p>
+</li>
+<li><p>PyCharm调试scrapy</p>
+</li>
+</ul>
+<h1 id="一、定义抓取Spider"><a href="#一、定义抓取Spider" class="headerlink" title="一、定义抓取Spider"></a>一、定义抓取Spider</h1><p>创建一个新的Spider</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">scrapy </span>startproject tutorial</div><div class="line"><span class="keyword">scrapy </span>genspider guba_spider eastmoney.com</div></pre></td></tr></table></figure>
+<p>默认创建的Spider是继承与BaseSpider，一般我们继承功能更多的CrawlSpider。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> scrapy.spiders <span class="keyword">import</span> CrawlSpider, Rule</div><div class="line"><span class="keyword">from</span> scrapy.linkextractors <span class="keyword">import</span> LinkExtractor</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">GubaSpider</span><span class="params">(CrawlSpider)</span>:</span></div><div class="line">    name = <span class="string">'guba'</span></div><div class="line">    allowed_domains = [<span class="string">'eastmoney.com'</span>]</div></pre></td></tr></table></figure>
+<p>定义好GubaSpider类后，然后要指定开始网页start_urls和rules抓取网页规则。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">start_urls = [</div><div class="line">    <span class="string">'http://guba.eastmoney.com/default_%d.html'</span> % index <span class="keyword">for</span> index <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">100</span>)</div><div class="line">]</div><div class="line"></div><div class="line">rules = (</div><div class="line">    <span class="comment"># 提取匹配 文章 的链接并使用spider的parse_article方法进行分析</span></div><div class="line">    Rule(LinkExtractor(allow=(<span class="string">r'^http://guba.eastmoney.com/news.'</span>, )), callback=<span class="string">'parse_article'</span>),</div><div class="line"></div><div class="line">    Rule(LinkExtractor(allow=(<span class="string">r'^http://iguba.eastmoney.com/\d+.'</span>,)), callback=<span class="string">'parse_auther'</span>)</div><div class="line">)</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>我们主要爬取的是下面这块区域：</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba.png" alt=""></p>
+<p>rules规则定义了两类链接，一个是文章链接，一个是作者链接。</p>
+<p>链接的规则可以通过Chrome的开发者工具得到，如下：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba2.png" alt=""></p>
+<p>Rule中的LinkExtractor是从网页(scrapy.http.Response)中抽取满足allow条件的链接，callback回调至指定函数。</p>
+<p>启动Spider，执行的流程是：</p>
+<ol>
+<li><p>从start_urls中开始爬取网页，</p>
+</li>
+<li><p>找到满足文章链接的规则，跳转到self.parse_article()函数进一步处理。</p>
+</li>
+</ol>
+<h1 id="二、定义数据字段"><a href="#二、定义数据字段" class="headerlink" title="二、定义数据字段"></a>二、定义数据字段</h1><p>在scrapy目录下的items.py中定义结构化数据字段。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> scrapy</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="type">ArticleItem</span>(<span class="title">scrapy</span>.<span class="type">Item</span>):</span></div><div class="line">    uuid = scrapy.<span class="type">Field</span>() # 唯一标识符</div><div class="line">    user_id = scrapy.<span class="type">Field</span>()</div><div class="line">    user_name = scrapy.<span class="type">Field</span>()</div><div class="line">    title = scrapy.<span class="type">Field</span>()</div><div class="line">    classify = scrapy.<span class="type">Field</span>()</div><div class="line">    content = scrapy.<span class="type">Field</span>()</div><div class="line">    readed_count = scrapy.<span class="type">Field</span>()</div><div class="line">    comment_count = scrapy.<span class="type">Field</span>()</div><div class="line">    href = scrapy.<span class="type">Field</span>()</div><div class="line">    source = scrapy.<span class="type">Field</span>()</div><div class="line">    published_date = scrapy.<span class="type">Field</span>()</div><div class="line">    scrapy_date = scrapy.<span class="type">Field</span>()    # 抓取日期</div></pre></td></tr></table></figure>
+<h1 id="三、内容解析"><a href="#三、内容解析" class="headerlink" title="三、内容解析"></a>三、内容解析</h1><p>scrapy默认的是用xpath解析网页，由于对Beautifulsoup更熟悉，我在本文中用的Beautifulsoup来解析网页内容，道理都是一样的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup <span class="keyword">as</span> bs</div><div class="line"><span class="keyword">import</span> re</div><div class="line"><span class="keyword">from</span> hashlib <span class="keyword">import</span> md5</div><div class="line"></div><div class="line"><span class="keyword">from</span> gubademo.items <span class="keyword">import</span> ArticleItem</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_article</span><span class="params">(self, response)</span>:</span></div><div class="line">    <span class="keyword">print</span> <span class="string">"content news:%s"</span> % response.url</div><div class="line"></div><div class="line">    soup = bs(response.body, <span class="string">'lxml'</span>)</div><div class="line"></div><div class="line">    item = ArticleItem()</div><div class="line"></div><div class="line">    item[<span class="string">'title'</span>] = response.url</div><div class="line">    item[<span class="string">'href'</span>] = response.url</div><div class="line"></div><div class="line">    div_name = soup.find(<span class="string">'div'</span>,&#123;<span class="string">'id'</span>:<span class="string">'zwconttbn'</span>&#125;)</div><div class="line">    <span class="keyword">if</span> div_name:</div><div class="line">        item[<span class="string">'user_name'</span>] = div_name.find(<span class="string">'a'</span>).text</div><div class="line">        <span class="keyword">if</span> div_name.find(<span class="string">'a'</span>).has_attr(<span class="string">'data-popper'</span>):</div><div class="line">            item[<span class="string">'user_id'</span>] = div_name.find(<span class="string">'a'</span>)[<span class="string">'data-popper'</span>]</div><div class="line"></div><div class="line">    span_stockname = soup.find(<span class="string">'span'</span>, &#123;<span class="string">'id'</span>:<span class="string">'stockname'</span>&#125;)</div><div class="line">    <span class="keyword">if</span> span_stockname:</div><div class="line">        item[<span class="string">'classify'</span>] = span_stockname.find(<span class="string">'a'</span>).text</div><div class="line"></div><div class="line">    <span class="comment"># 内容</span></div><div class="line">    c_div = soup.find(<span class="string">'div'</span>, &#123;<span class="string">'class'</span>:<span class="string">'stockcodec'</span>&#125;)</div><div class="line">    <span class="keyword">if</span> c_div:</div><div class="line">        item[<span class="string">'content'</span>] = <span class="string">''</span></div><div class="line">        <span class="keyword">for</span> s <span class="keyword">in</span> c_div.strings:</div><div class="line">            item[<span class="string">'content'</span>] += s</div><div class="line"></div><div class="line">    <span class="comment"># 时间</span></div><div class="line">    t_div = soup.find(<span class="string">'div'</span>, &#123;<span class="string">'class'</span>:<span class="string">'zwfbtime'</span>&#125;)</div><div class="line">    <span class="keyword">if</span> t_div:</div><div class="line">        s1 = re.search(<span class="string">'\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125; \d&#123;2&#125;:\d&#123;2&#125;:\d&#123;2&#125;'</span>,t_div.text)</div><div class="line">        <span class="keyword">if</span> s1:</div><div class="line">            item[<span class="string">'published_date'</span>] = s1.group()</div><div class="line"></div><div class="line">    <span class="comment"># 阅读数和评论数</span></div><div class="line">    m = re.search(<span class="string">'num=(\d+).*?var count=\d+'</span>, response.body)</div><div class="line">    <span class="keyword">if</span> m:</div><div class="line">        item[<span class="string">'readed_count'</span>] = m.group(<span class="number">1</span>)</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        item[<span class="string">'readed_count'</span>] = <span class="string">u'0'</span></div><div class="line"></div><div class="line">    m = re.search(<span class="string">'var pinglun_num=(\d+)'</span>, response.body)</div><div class="line">    <span class="keyword">if</span> m:</div><div class="line">        item[<span class="string">'comment_count'</span>] = m.group(<span class="number">1</span>)</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        item[<span class="string">'comment_count'</span>] = <span class="string">u'0'</span></div><div class="line">    item[<span class="string">'source'</span>] = <span class="string">'guba_eastmoney'</span></div><div class="line">    item[<span class="string">'scrapy_date'</span>] =  GetNowTime()</div><div class="line">    item[<span class="string">'uuid'</span>] = md5(item[<span class="string">'href'</span>]).hexdigest()</div><div class="line"></div><div class="line">    <span class="keyword">print</span> item</div><div class="line">    <span class="keyword">yield</span> item</div></pre></td></tr></table></figure>
+<h1 id="四、写入数据库"><a href="#四、写入数据库" class="headerlink" title="四、写入数据库"></a>四、写入数据库</h1><p>解析完数据，接下来是要保存数据以便以后分析使用。</p>
+<p>自定义Pipeline，spider将item传递到pipeline，默认调用的是process_item()函数，我们可以在processs_item中根据item的类型进行差异化处理。</p>
+<p>需要先在setting.py中设置如下内容，scrapy才能走着这一步。</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Configure item pipelines</div><div class="line"># See http:<span class="comment">//scrapy.readthedocs.org/en/latest/topics/item-pipeline.html</span></div><div class="line">ITEM_PIPELINES = &#123;</div><div class="line">   #<span class="string">'wealth_tech.pipelines.DuplicatePipeline'</span>:<span class="number">200</span>,</div><div class="line">   <span class="string">'wealth_tech.pipelines.MySQLStorePipeline'</span>: <span class="number">300</span>,</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>MySQLStorePipeline定义了一个article_items集合用于存储spider爬到的item，当items数量达到1000时，批量写入数据库。如果接受到item就单条写入数据库，会比批量写入慢很对，爬虫的效率会慢一个数量级。<br>存入mysql之前，先查询数据库，若不存在则insert，存在则update。<br>数据库的host,port等信息一般存在setting.py中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> MySQLdb</div><div class="line"><span class="keyword">import</span> MySQLdb.cursors</div><div class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</div><div class="line"><span class="keyword">import</span> wealth_tech.settings <span class="keyword">as</span> settings</div><div class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine</div><div class="line">engine = create_engine(<span class="string">'mysql+mysqldb://%s:%s@%s:%d/%s'</span> % (settings.MYSQL_USER, settings.MYSQL_PASSWD, settings.MYSQL_HOST, <span class="number">3306</span>, settings.MYSQL_DBNAME), connect_args=&#123;<span class="string">'charset'</span>:<span class="string">'utf8'</span>&#125;)</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MySQLStorePipeline</span><span class="params">(object)</span>:</span></div><div class="line">    <span class="string">"""</span></div><div class="line">    写入mysql数据库</div><div class="line">    """</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></div><div class="line">        self.article_items = &#123;&#125;</div><div class="line"></div><div class="line">    <span class="comment"># pipeline默认调用</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_item</span><span class="params">(self, item, spider)</span>:</span></div><div class="line">        <span class="keyword">print</span> spider.name</div><div class="line">        <span class="keyword">if</span> type(item) <span class="keyword">is</span> ArticleItem:</div><div class="line">            self.process_article_item(item, spider) <span class="comment"># 文章</span></div><div class="line"></div><div class="line">        <span class="keyword">return</span> item</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_article_item</span><span class="params">(self, item, spider)</span>:</span></div><div class="line">        <span class="string">"""</span></div><div class="line">        保存文章</div><div class="line">        """</div><div class="line">        table = <span class="string">'article_guba_easymoney'</span></div><div class="line"></div><div class="line">        self.article_items.setdefault(spider.name, [])</div><div class="line">        self.article_items[spider.name].append(item)</div><div class="line"></div><div class="line">        <span class="keyword">if</span> len(self.article_items[spider.name]) &gt;= <span class="number">1000</span>: <span class="comment"># 积累到1000条就写入数据库</span></div><div class="line"></div><div class="line">            conn=MySQLdb.connect(host=settings.MYSQL_HOST,user=settings.MYSQL_USER,passwd= settings.MYSQL_PASSWD,db=settings.MYSQL_DBNAME,charset=<span class="string">"utf8"</span>)</div><div class="line">            cursor = conn.cursor()</div><div class="line"></div><div class="line">            df = pd.read_sql(<span class="string">'select uuid from &#123;&#125;'</span>.format(table), engine)</div><div class="line">            uuids = df[<span class="string">'uuid'</span>].get_values()</div><div class="line">            uuids = set(uuids)</div><div class="line"></div><div class="line">            <span class="keyword">for</span> item <span class="keyword">in</span> self.article_items[spider.name]:</div><div class="line">                <span class="keyword">try</span>:</div><div class="line">                    <span class="keyword">if</span> item[<span class="string">'uuid'</span>] <span class="keyword">not</span> <span class="keyword">in</span> uuids:</div><div class="line">                        <span class="comment"># 插入</span></div><div class="line">                        sql = <span class="string">'insert into &#123;&#125; values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'</span>.format(table)</div><div class="line">                        param = (item[<span class="string">'uuid'</span>],item[<span class="string">'user_id'</span>],item[<span class="string">'user_name'</span>],item[<span class="string">'title'</span>],item[<span class="string">'classify'</span>],item[<span class="string">'content'</span>],</div><div class="line">                                 item[<span class="string">'readed_count'</span>],item[<span class="string">'comment_count'</span>],item[<span class="string">'href'</span>],item[<span class="string">'source'</span>],item[<span class="string">'published_date'</span>],item[<span class="string">'scrapy_date'</span>])</div><div class="line">                        n = cursor.execute(sql,param)</div><div class="line">                        <span class="keyword">print</span> <span class="string">'insert '</span>,n, item[<span class="string">'uuid'</span>]</div><div class="line">                    <span class="keyword">else</span>:</div><div class="line">                        <span class="comment">#更新</span></div><div class="line">                        sql = <span class="string">"update &#123;&#125; set fans_count=%s, article_count=%s,visit_count=%s,comment_count=%s,scrapy_date=%s where user_id='&#123;&#125;'"</span>.format(table, item[<span class="string">'user_id'</span>])</div><div class="line">                        <span class="comment">#print sql</span></div><div class="line">                        param = (item[<span class="string">'fans_count'</span>],item[<span class="string">'article_count'</span>],item[<span class="string">'visit_count'</span>],item[<span class="string">'comment_count'</span>],item[<span class="string">'scrapy_date'</span>])</div><div class="line">                        n = cursor.execute(sql,param)</div><div class="line">                        <span class="keyword">print</span> <span class="string">'update'</span>, n,item[<span class="string">'uuid'</span>]</div><div class="line">                <span class="keyword">except</span> Exception,e:</div><div class="line">                    <span class="keyword">print</span> e</div><div class="line"></div><div class="line">             <span class="comment">#提交</span></div><div class="line">            conn.commit()</div><div class="line">            <span class="comment">#关闭</span></div><div class="line">            conn.close()</div><div class="line">            self.article_items[spider.name] = []</div></pre></td></tr></table></figure>
+<p>数据库呈现的结果：</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba3.png" alt=""></p>
+<h1 id="五、PyCharm-Debug调试scrapy"><a href="#五、PyCharm-Debug调试scrapy" class="headerlink" title="五、PyCharm Debug调试scrapy"></a>五、PyCharm Debug调试scrapy</h1><p>scrapy通常在命令行里运行，但仅通过log显示的信息来调试时非常费劲的，程序猿需要的是单步调试，step by step。</p>
+<p>在PyCharm中调试也是很容易的。</p>
+<p>在scrapy项目的根目录下（与scrapy.cfg同级）新建一个文件run.py，内容如下：</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/python</span></div><div class="line"></div><div class="line">from scrapy.cmdline import<span class="built_in"> execute</span></div><div class="line">execute()</div></pre></td></tr></table></figure>
+<p>新建一个Run/Debug Configurations，Script选择run.py，Script parameters输入crawl guba。其中guba是在GubaSpider中定义的name。这样启动Debug就能单步调试了。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-03-31/guba4.png" alt=""></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag">#Python</a>
+          
+            <a href="/tags/scrapy/" rel="tag">#scrapy</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/03/fund-qualification-examination/" rel="next" title="基金从业资格考试笔记">
+                <i class="fa fa-chevron-left"></i> 基金从业资格考试笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/23/pandas-anlysis-basic/" rel="prev" title="Pandas数据分析基础">
+                Pandas数据分析基础 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/03/31/scrapy-learn/"
+     data-title="Scrapy框架初探"
+     data-content=""
+     data-url="http://www.kekefund.com/2016/03/31/scrapy-learn/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/31/scrapy-learn/"
+           data-title="Scrapy框架初探" data-url="http://www.kekefund.com/2016/03/31/scrapy-learn/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、定义抓取Spider"><span class="nav-number">1.</span> <span class="nav-text">一、定义抓取Spider</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、定义数据字段"><span class="nav-number">2.</span> <span class="nav-text">二、定义数据字段</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、内容解析"><span class="nav-number">3.</span> <span class="nav-text">三、内容解析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、写入数据库"><span class="nav-number">4.</span> <span class="nav-text">四、写入数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、PyCharm-Debug调试scrapy"><span class="nav-number">5.</span> <span class="nav-text">五、PyCharm Debug调试scrapy</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

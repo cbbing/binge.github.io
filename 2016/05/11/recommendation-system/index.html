@@ -1,0 +1,990 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Python,机器学习,相似度评价," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="协同型过滤 ( Collaborative filtering)一个协作型过滤算法通常的做法是对一大群人进行搜索，并从中找出与我们品味相近的一小群人。算法会对这些人所偏爱的其他内容进行考查，并将它们组合起来构造出一个经过排名的推荐列表。 一、相似度评价方法0，数据集本文中的数据集都是以嵌套字典的形式出现，如下：字典的key为用户名，value为对各个物品的评价分数。 123456789101112">
+<meta name="keywords" content="Python,机器学习,相似度评价">
+<meta property="og:type" content="article">
+<meta property="og:title" content="构建推荐系统（一）">
+<meta property="og:url" content="http://www.kekefund.com/2016/05/11/recommendation-system/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="协同型过滤 ( Collaborative filtering)一个协作型过滤算法通常的做法是对一大群人进行搜索，并从中找出与我们品味相近的一小群人。算法会对这些人所偏爱的其他内容进行考查，并将它们组合起来构造出一个经过排名的推荐列表。 一、相似度评价方法0，数据集本文中的数据集都是以嵌套字典的形式出现，如下：字典的key为用户名，value为对各个物品的评价分数。 123456789101112">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?|x_{1} - x_{2}| + |y_{1} - y_{2}|">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?\sqrt{(x_{1} - x_{2})^2 + (y_{1} - y_{2})^2}">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-11/pearson.png?">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?r=\frac{\sum_{i=1}^{n}(x_{i}-\overline{x})(y_{i}-\overline{y})}{\sqrt{\sum_{i=1}^{n}(x_{i}-\overline{x})^2}\sqrt{\sum_{i=1}^{n}(y_{i}-\overline{y})^2}}">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-11/yuxian.png">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?\sqrt{\sum\displaystyle_{i=1}^{n}x_{i}^2}">
+<meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?x\cdot y = 4.75 * 4 + 4.5 * 3 + 5*5 + 4.25*2 + 4*1 = 70">
+<meta property="og:updated_time" content="2016-05-11T02:46:03.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="构建推荐系统（一）">
+<meta name="twitter:description" content="协同型过滤 ( Collaborative filtering)一个协作型过滤算法通常的做法是对一大群人进行搜索，并从中找出与我们品味相近的一小群人。算法会对这些人所偏爱的其他内容进行考查，并将它们组合起来构造出一个经过排名的推荐列表。 一、相似度评价方法0，数据集本文中的数据集都是以嵌套字典的形式出现，如下：字典的key为用户名，value为对各个物品的评价分数。 123456789101112">
+<meta name="twitter:image" content="http://www.forkosh.com/mathtex.cgi?|x_{1} - x_{2}| + |y_{1} - y_{2}|">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 构建推荐系统（一） | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                构建推荐系统（一）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-05-11T09:35:47+08:00" content="2016-05-11">
+              2016-05-11
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/11/recommendation-system/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/11/recommendation-system/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>协同型过滤 ( Collaborative filtering)<br>一个协作型过滤算法通常的做法是对一大群人进行搜索，并从中找出与我们品味相近的一小群人。算法会对这些人所偏爱的其他内容进行考查，并将它们组合起来构造出一个经过排名的推荐列表。</p>
+<h1 id="一、相似度评价方法"><a href="#一、相似度评价方法" class="headerlink" title="一、相似度评价方法"></a>一、相似度评价方法</h1><h2 id="0，数据集"><a href="#0，数据集" class="headerlink" title="0，数据集"></a>0，数据集</h2><p>本文中的数据集都是以嵌套字典的形式出现，如下：<br>字典的key为用户名，value为对各个物品的评价分数。</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">users=&#123;<span class="symbol">'Lisa</span> Rose': &#123;<span class="symbol">'Lady</span> <span class="keyword">in</span> the Water': <span class="number">2.5</span>, <span class="symbol">'Snakes</span> on a Plane': <span class="number">3.5</span>,</div><div class="line"> <span class="symbol">'Just</span> My Luck': <span class="number">3.0</span>, <span class="symbol">'Superman</span> Returns': <span class="number">3.5</span>, <span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree': <span class="number">2.5</span>,</div><div class="line"> <span class="symbol">'The</span> Night Listener': <span class="number">3.0</span>&#125;,</div><div class="line"><span class="symbol">'Gene</span> Seymour': &#123;<span class="symbol">'Lady</span> <span class="keyword">in</span> the Water': <span class="number">3.0</span>, <span class="symbol">'Snakes</span> on a Plane': <span class="number">3.5</span>,</div><div class="line"> <span class="symbol">'Just</span> My Luck': <span class="number">1.5</span>, <span class="symbol">'Superman</span> Returns': <span class="number">5.0</span>, <span class="symbol">'The</span> Night Listener': <span class="number">3.0</span>,</div><div class="line"> <span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree': <span class="number">3.5</span>&#125;,</div><div class="line"><span class="symbol">'Michael</span> Phillips': &#123;<span class="symbol">'Lady</span> <span class="keyword">in</span> the Water': <span class="number">2.5</span>, <span class="symbol">'Snakes</span> on a Plane': <span class="number">3.0</span>,</div><div class="line"> <span class="symbol">'Superman</span> Returns': <span class="number">3.5</span>, <span class="symbol">'The</span> Night Listener': <span class="number">4.0</span>&#125;,</div><div class="line"><span class="symbol">'Claudia</span> Puig': &#123;<span class="symbol">'Snakes</span> on a Plane': <span class="number">3.5</span>, <span class="symbol">'Just</span> My Luck': <span class="number">3.0</span>,</div><div class="line"> <span class="symbol">'The</span> Night Listener': <span class="number">4.5</span>, <span class="symbol">'Superman</span> Returns': <span class="number">4.0</span>,</div><div class="line"> <span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree': <span class="number">2.5</span>&#125;,</div><div class="line"><span class="symbol">'Mick</span> LaSalle': &#123;<span class="symbol">'Lady</span> <span class="keyword">in</span> the Water': <span class="number">3.0</span>, <span class="symbol">'Snakes</span> on a Plane': <span class="number">4.0</span>,</div><div class="line"> <span class="symbol">'Just</span> My Luck': <span class="number">2.0</span>, <span class="symbol">'Superman</span> Returns': <span class="number">3.0</span>, <span class="symbol">'The</span> Night Listener': <span class="number">3.0</span>,</div><div class="line"> <span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree': <span class="number">2.0</span>&#125;,</div><div class="line"><span class="symbol">'Jack</span> Matthews': &#123;<span class="symbol">'Lady</span> <span class="keyword">in</span> the Water': <span class="number">3.0</span>, <span class="symbol">'Snakes</span> on a Plane': <span class="number">4.0</span>,</div><div class="line"> <span class="symbol">'The</span> Night Listener': <span class="number">3.0</span>, <span class="symbol">'Superman</span> Returns': <span class="number">5.0</span>, <span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree': <span class="number">3.5</span>&#125;,</div><div class="line"><span class="symbol">'Toby</span>': &#123;<span class="symbol">'Snakes</span> on a Plane':<span class="number">4.5</span>,<span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree':<span class="number">1.0</span>,<span class="symbol">'Superman</span> Returns':<span class="number">4.0</span>&#125;&#125;</div><div class="line"></div><div class="line"></div><div class="line">critics=&#123;<span class="symbol">'Lisa</span> Rose': &#123;<span class="symbol">'Lady</span> <span class="keyword">in</span> the Water': <span class="number">2.5</span>, <span class="symbol">'Snakes</span> on a Plane': <span class="number">3.5</span>, </div><div class="line"><span class="symbol">'Just</span> My Luck': <span class="number">3.0</span>, <span class="symbol">'Superman</span> Returns': <span class="number">3.5</span>, <span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree': <span class="number">2.5</span>, <span class="symbol">'The</span> Night Listener': <span class="number">3.0</span>&#125;,</div><div class="line"><span class="symbol">'Gene</span> Seymour': &#123;<span class="symbol">'Lady</span> <span class="keyword">in</span> the Water': <span class="number">3.0</span>, <span class="symbol">'Snakes</span> on a Plane': <span class="number">3.5</span>, <span class="symbol">'Just</span> My Luck': <span class="number">1.5</span>, </div><div class="line"><span class="symbol">'Superman</span> Returns': <span class="number">5.0</span>, <span class="symbol">'The</span> Night Listener': <span class="number">3.0</span>, <span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree': <span class="number">3.5</span>&#125;,</div><div class="line"><span class="symbol">'Michael</span> Phillips': &#123;<span class="symbol">'Lady</span> <span class="keyword">in</span> the Water': <span class="number">2.5</span>, <span class="symbol">'Snakes</span> on a Plane': <span class="number">3.0</span>, </div><div class="line"><span class="symbol">'Superman</span> Returns': <span class="number">3.5</span>, <span class="symbol">'The</span> Night Listener': <span class="number">4.0</span>&#125;,</div><div class="line"><span class="symbol">'Claudia</span> Puig': &#123;<span class="symbol">'Snakes</span> on a Plane': <span class="number">3.5</span>, <span class="symbol">'Just</span> My Luck': <span class="number">3.0</span>, <span class="symbol">'The</span> Night Listener': <span class="number">4.5</span>, </div><div class="line"><span class="symbol">'Superman</span> Returns': <span class="number">4.0</span>, <span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree': <span class="number">2.5</span>&#125;,</div><div class="line"><span class="symbol">'Mick</span> LaSalle': &#123;<span class="symbol">'Lady</span> <span class="keyword">in</span> the Water': <span class="number">3.0</span>, <span class="symbol">'Snakes</span> on a Plane': <span class="number">4.0</span>, <span class="symbol">'Just</span> My Luck': <span class="number">2.0</span>, </div><div class="line"><span class="symbol">'Superman</span> Returns': <span class="number">3.0</span>, <span class="symbol">'The</span> Night Listener': <span class="number">3.0</span>, <span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree': <span class="number">2.0</span>&#125;,</div><div class="line"><span class="symbol">'Jack</span> Matthews': &#123;<span class="symbol">'Lady</span> <span class="keyword">in</span> the Water': <span class="number">3.0</span>, <span class="symbol">'Snakes</span> on a Plane': <span class="number">4.0</span>, <span class="symbol">'The</span> Night Listener': <span class="number">3.0</span>, </div><div class="line"><span class="symbol">'Superman</span> Returns': <span class="number">5.0</span>, <span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree': <span class="number">3.5</span>&#125;,</div><div class="line"><span class="symbol">'Toby</span>': &#123;<span class="symbol">'Snakes</span> on a Plane':<span class="number">4.5</span>,<span class="symbol">'You</span>, Me <span class="keyword">and</span> Dupree':<span class="number">1.0</span>,</div><div class="line"><span class="symbol">'Superman</span> Returns':<span class="number">4.0</span>&#125;&#125;</div></pre></td></tr></table></figure>
+<h2 id="1，曼哈顿距离"><a href="#1，曼哈顿距离" class="headerlink" title="1，曼哈顿距离"></a>1，曼哈顿距离</h2><p>最简单的距离计算方式是曼哈顿距离。在二维模型中，每个人都可以用(x, y)的点来表示，这里我用下标表示不同的人，(x1,y2)表示艾米，(x2,y2)表示神秘的X先生，那么他们之间的曼哈顿距离就是</p>
+<center><br><img src="http://www.forkosh.com/mathtex.cgi?|x_{1} - x_{2}| + |y_{1} - y_{2}|"><br></center>
+
+
+<a id="more"></a>
+<h3 id="Python实现："><a href="#Python实现：" class="headerlink" title="Python实现："></a>Python实现：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sim_manhattan</span><span class="params">(rating1, rating2)</span>:</span></div><div class="line"></div><div class="line">    <span class="string">"""</span></div><div class="line">    计算曼哈顿距离。</div><div class="line">    :param rating1: 形如&#123;'The Strokes': 3.0, 'Slightly Stoopid': 2.5&#125;</div><div class="line">    :param rating2: 形如&#123;'The Strokes': 3.0, 'Slightly Stoopid': 2.5&#125;</div><div class="line">    """</div><div class="line"></div><div class="line">    distance = <span class="number">0</span></div><div class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> rating1:</div><div class="line">        <span class="keyword">if</span> key <span class="keyword">in</span> rating2:</div><div class="line">            distance += abs(rating1[key] - rating2[key])</div><div class="line"></div><div class="line">    <span class="keyword">return</span> distance</div></pre></td></tr></table></figure>
+<h2 id="2，欧几里德距离"><a href="#2，欧几里德距离" class="headerlink" title="2，欧几里德距离"></a>2，欧几里德距离</h2><p>对于二维模型，计算的是两点之间的直线距离。</p>
+<center><br><img src="http://www.forkosh.com/mathtex.cgi?\sqrt{(x_{1} - x_{2})^2 + (y_{1} - y_{2})^2}"><br></center>
+
+<p>对于N维模型，如下表：</p>
+<table>
+<thead>
+<tr>
+<th>@</th>
+<th>Angelica</th>
+<th>Bill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Blues Traveler</td>
+<td>3.5</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Broken Bells</td>
+<td>2</td>
+<td>3.5</td>
+</tr>
+<tr>
+<td>Deadmau5</td>
+<td>-</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Norah Jones</td>
+<td>4.5</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Phoenix</td>
+<td>5</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Slightly Stoopid</td>
+<td>1.5</td>
+<td>3.5</td>
+</tr>
+<tr>
+<td>The Strokes</td>
+<td>2.5</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Vampire Weekend</td>
+<td>2</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>计算Angelica和Bill的欧几里得距离：</p>
+<p>$$ Euclidean = \sqrt{(3.5-2)^2 + (2-3.5)^2+(5-2)^2+(1.5-3.5)^2+(2-3)^2} = 4.3 $$</p>
+<h3 id="Python实现：-1"><a href="#Python实现：-1" class="headerlink" title="Python实现："></a>Python实现：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sim_euclidean</span><span class="params">(users, person1, person2)</span>:</span></div><div class="line">    <span class="string">"""</span></div><div class="line">    欧几里得距离</div><div class="line">    返回一个有关person1与person2的基于距离的相似度评价</div><div class="line">    :param users:&#123;'Lisa Rose': &#123; 'Snakes on a Plane': 3.5,...&#125;,'Gene Seymour': &#123;'Lady in the Water': 3.0, ...&#125;</div><div class="line">    :param person1: 形如'Lisa Rose'</div><div class="line">    :param person2: 形如'Lisa Rose'</div><div class="line">    :return:介于[0, 1]，值为1表明两个人对每一样物品均有着完全一致的评价</div><div class="line">    """</div><div class="line"></div><div class="line">    <span class="comment"># 得到shared_items的列表</span></div><div class="line">    shared_items = &#123;&#125;</div><div class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> users[person1]:</div><div class="line">        <span class="keyword">if</span> item <span class="keyword">in</span> users[person2]:</div><div class="line">            shared_items[item] = <span class="number">1</span></div><div class="line"></div><div class="line">    <span class="comment"># 如果两者没有共同之处，则返回0</span></div><div class="line">    <span class="keyword">if</span> len(shared_items) == <span class="number">0</span>:</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span></div><div class="line"></div><div class="line">    <span class="comment"># 计算所有差值的平方和</span></div><div class="line">    sum_of_squares = sum([pow(users[person1][item]-users[person2][item], <span class="number">2</span>)</div><div class="line">                          <span class="keyword">for</span> item <span class="keyword">in</span> users[person1] <span class="keyword">if</span> item <span class="keyword">in</span> users[person2]])</div><div class="line">    <span class="keyword">return</span> <span class="number">1</span>/(<span class="number">1</span>+sqrt(sum_of_squares))</div><div class="line">    </div><div class="line"></div><div class="line">dis = sim_euclidean(critics, <span class="string">'Lisa Rose'</span>, <span class="string">'Jack Matthews'</span>)</div><div class="line"><span class="keyword">print</span> dis</div></pre></td></tr></table></figure>
+<h2 id="3-皮尔逊相关度评价"><a href="#3-皮尔逊相关度评价" class="headerlink" title="3, 皮尔逊相关度评价"></a>3, 皮尔逊相关度评价</h2><h3 id="用户的问题"><a href="#用户的问题" class="headerlink" title="用户的问题"></a>用户的问题</h3><p>让我们仔细看看用户对乐队的评分，可以发现每个用户的打分标准非常不同：</p>
+<ul>
+<li><p>Bill没有打出极端的分数，都在2至4分之间；</p>
+</li>
+<li><p>Jordyn似乎喜欢所有的乐队，打分都在4至5之间；</p>
+</li>
+<li><p>Hailey是一个有趣的人，他的分数不是1就是4。</p>
+</li>
+</ul>
+<p>那么，如何比较这些用户呢？解决方法之一是使用皮尔逊相关系数。</p>
+<p>该计算系数是判断两组数据与某一直线拟合程度的一种度量。对应的公式比欧几里德距离评价的计算公式要复杂，但是它在数据不是很规范的时候（比如影评者对影片的评价总是相对于平均水平偏离很大时），会倾向于给出更好的结果。</p>
+<p>我们先看下面的数据：</p>
+<table>
+<thead>
+<tr>
+<th>@</th>
+<th>Blues Traveler</th>
+<th>Norah Jones</th>
+<th>Phoenix</th>
+<th>Strokes</th>
+<th>Weird AI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clara</td>
+<td>4.75</td>
+<td>4.5</td>
+<td>5</td>
+<td>4.25</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Robert</td>
+<td>4</td>
+<td>3</td>
+<td>5</td>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>这种现象在数据挖掘领域称为“分数膨胀”。Clara最低给了4分——她所有的打分都在4至5分之间。我们将它绘制成图表：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-11/pearson.png?" alt=""></p>
+<p>一条直线——完全吻合！！！</p>
+<p>直线即表示Clara和Robert的偏好完全一致。他们都认为Phoenix是最好的乐队，然后是Blues Traveler、Norah Jones。如果Clara和Robert的意见不一致，那么落在直线上的点就越少。</p>
+<p>皮尔逊相关系数的计算公式：</p>
+<center><br><img src="http://www.forkosh.com/mathtex.cgi?r=\frac{\sum_{i=1}^{n}(x_{i}-\overline{x})(y_{i}-\overline{y})}{\sqrt{\sum_{i=1}^{n}(x_{i}-\overline{x})^2}\sqrt{\sum_{i=1}^{n}(y_{i}-\overline{y})^2}}"><br></center>
+
+
+<h3 id="Python实现"><a href="#Python实现" class="headerlink" title="Python实现"></a>Python实现</h3><figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">def sim_pearson(users, person1, person2):</div><div class="line">    <span class="string">""</span><span class="string">"</span></div><div class="line">    返回p1和p2的皮尔逊相关系数</div><div class="line">    :param users:&#123;'Lisa Rose': &#123; 'Snakes on a Plane': 3.5,...&#125;,'Gene Seymour': &#123;'Lady in the Water': 3.0, ...&#125;</div><div class="line">    :param person1: 形如'Lisa Rose'</div><div class="line">    :param person2: 形如'Lisa Rose'</div><div class="line">    :return: 介于[-1, 1]，值为1表明两个人对每一样物品均有着完全一致的评价</div><div class="line">    "<span class="string">""</span></div><div class="line"></div><div class="line">    <span class="comment"># 得到双方都曾评价过的物品列表</span></div><div class="line">    shared_items = &#123;&#125;</div><div class="line">    <span class="keyword">for</span> <span class="built_in">item</span> <span class="keyword">in</span> users[person1]:</div><div class="line">        <span class="keyword">if</span> <span class="built_in">item</span> <span class="keyword">in</span> users[person2]:</div><div class="line">            shared_items[<span class="built_in">item</span>] = <span class="number">1</span></div><div class="line"></div><div class="line">    <span class="comment"># 得到列表元素的个数</span></div><div class="line">    n = len(shared_items)</div><div class="line"></div><div class="line">    <span class="comment"># 如果没有共同之处，则返回1</span></div><div class="line">    <span class="keyword">if</span> n == <span class="number">0</span>:</div><div class="line"><span class="built_in">        return</span> <span class="number">1</span></div><div class="line"></div><div class="line">    <span class="comment"># 对所有偏好求和</span></div><div class="line">    sum1 = sum([users[person1][<span class="built_in">item</span>] <span class="keyword">for</span> <span class="built_in">item</span> <span class="keyword">in</span> shared_items])</div><div class="line">    sum2 = sum([users[person2][<span class="built_in">item</span>] <span class="keyword">for</span> <span class="built_in">item</span> <span class="keyword">in</span> shared_items])</div><div class="line"></div><div class="line">    <span class="comment"># 求平方和</span></div><div class="line">    sum1_sq = sum([pow(users[person1][<span class="built_in">item</span>], <span class="number">2</span>) <span class="keyword">for</span> <span class="built_in">item</span> <span class="keyword">in</span> shared_items])</div><div class="line">    sum2_sq = sum([pow(users[person2][<span class="built_in">item</span>], <span class="number">2</span>) <span class="keyword">for</span> <span class="built_in">item</span> <span class="keyword">in</span> shared_items])</div><div class="line"></div><div class="line">    <span class="comment"># 求乘积之和</span></div><div class="line">    pSum = sum([users[person1][<span class="built_in">item</span>] * users[person2][<span class="built_in">item</span>] <span class="keyword">for</span> <span class="built_in">item</span> <span class="keyword">in</span> shared_items])</div><div class="line"></div><div class="line">    <span class="comment"># 计算皮尔逊评价值</span></div><div class="line">    num = pSum - (sum1*sum2/n)</div><div class="line">    den = sqrt((sum1_sq - pow(sum1, <span class="number">2</span>)/n) * (sum2_sq - pow(sum1, <span class="number">2</span>)/n))</div><div class="line">    <span class="keyword">if</span> den == <span class="number">0</span>:</div><div class="line"><span class="built_in">        return</span> <span class="number">0</span></div><div class="line"></div><div class="line">    r = num/den</div><div class="line"><span class="built_in"></span></div><div class="line">    return r</div><div class="line"></div><div class="line">dis = sim_pearson(critics, 'Lisa Rose', 'Jack Matthews')</div><div class="line">print dis</div></pre></td></tr></table></figure>
+<h2 id="4，余弦相似度"><a href="#4，余弦相似度" class="headerlink" title="4，余弦相似度"></a>4，余弦相似度</h2><p>它在文本挖掘中应用得较多，在协同过滤中也会使用到。这里记录了每个用户播放歌曲的次数，我们用这些数据进行推荐。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-05-11/yuxian.png" alt=""></p>
+<p>简单扫一眼上面的数据，我们可以发现Ann和Sally的偏好更为相似。</p>
+<p>可以看到，Moonlight Sonata这首歌我播放了25次，但很有可能你一次都没有听过。事实上，上面列出的这些歌曲可能你一手都没听过。此外，iTunes上有1500万首音乐，而我只听过4000首。所以说单个用户的数据是稀疏的，因为非零值较总体要少得多。当我们用1500万首歌曲来比较两个用户时，很有可能他们之间没有任何交集，这样一来就无从计算他们之间的距离了。</p>
+<p>余弦相似度的计算中会略过这些非零值。它的计算公式是：</p>
+<p>$$ cos(x, y) = \dfrac{x\cdot y}{||x||\times||y||} $$</p>
+<p>其中，“·”号表示数量积。“||x||”表示向量x的模，计算公式为:</p>
+<center><br><img src="http://www.forkosh.com/mathtex.cgi?\sqrt{\sum\displaystyle_{i=1}^{n}x_{i}^2}"><br></center>
+
+
+<p>对于下表：</p>
+<table>
+<thead>
+<tr>
+<th>@</th>
+<th>Blues Traveler</th>
+<th>Norah Jones</th>
+<th>Phoenix</th>
+<th>Strokes</th>
+<th>Weird AI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clara</td>
+<td>4.75</td>
+<td>4.5</td>
+<td>5</td>
+<td>4.25</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Robert</td>
+<td>4</td>
+<td>3</td>
+<td>5</td>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>有两个向量：</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">x = (<span class="number">4.75</span>, <span class="number">4.5</span>, <span class="number">5</span>, <span class="number">4.25</span>, <span class="number">4</span>)</div><div class="line">y = (<span class="number">4</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">1</span>)</div></pre></td></tr></table></figure>
+<p>它们的模是：</p>
+<p>$$ ||x|| = \sqrt{4.75^2 + 4.5^2 + 5^2 + 4.25^2 + 4^2} = 10.09 $$</p>
+<p>$$ ||y|| = \sqrt{4^2 + 3^2 + 5^2 + 2^2 + 1^2} = 7.416 $$</p>
+<p>数量积的计算：</p>
+<center><br><img src="http://www.forkosh.com/mathtex.cgi?x\cdot y = 4.75 * 4 + 4.5 * 3 + 5*5 + 4.25*2 + 4*1 = 70"><br></center>
+
+
+<p>因此余弦相似度是：<br>$$ cos(x, y) = \dfrac{70}{10.093\times7.416} = 0.935 $$</p>
+<h2 id="5，应该使用哪种相似度？"><a href="#5，应该使用哪种相似度？" class="headerlink" title="5，应该使用哪种相似度？"></a>5，应该使用哪种相似度？</h2><ul>
+<li><p>如果数据存在“分数膨胀”问题，就使用皮尔逊相关系数</p>
+</li>
+<li><p>如果数据比较“密集”，变量之间基本都存在公有值，且这些距离数据是非常重要的，那就使用欧几里德或曼哈顿距离。</p>
+</li>
+<li><p>如果数据是稀疏的，则使用余弦相似度。</p>
+</li>
+</ul>
+<h1 id="二、应用"><a href="#二、应用" class="headerlink" title="二、应用"></a>二、应用</h1><h2 id="1，推荐用户-——-K最邻近算法"><a href="#1，推荐用户-——-K最邻近算法" class="headerlink" title="1，推荐用户  —— K最邻近算法"></a>1，推荐用户  —— K最邻近算法</h2><p>使用K最邻近算法来找出K个最相似的用户。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">top_matches</span><span class="params">(users, person, k=<span class="number">5</span>, similarity=sim_pearson)</span>:</span></div><div class="line"></div><div class="line">    <span class="string">"""</span></div><div class="line">    从反映偏好的字典中返回最为匹配者</div><div class="line">    返回结果的个数和相似度函数均为可选参数</div><div class="line">    :param users:</div><div class="line">    :param person:</div><div class="line">    :param k:</div><div class="line">    :param similarity:</div><div class="line">    :return:</div><div class="line">    """</div><div class="line"></div><div class="line">    scores = [(similarity(users, person, other), other)</div><div class="line">              <span class="keyword">for</span> other <span class="keyword">in</span> users <span class="keyword">if</span> other != person]</div><div class="line"></div><div class="line">    <span class="comment"># 对列表进行排序，评价值最高者排载最前面</span></div><div class="line">    scores.sort()</div><div class="line">    scores.reverse()</div><div class="line">    <span class="keyword">return</span> scores[:k]</div><div class="line"></div><div class="line">scores = top_matches(critics, <span class="string">'Toby'</span>, k=<span class="number">3</span>)</div><div class="line"><span class="keyword">print</span> scores</div><div class="line"></div><div class="line"></div><div class="line">Output&gt;&gt;:[(<span class="number">0.9912407071619299</span>, <span class="string">'Lisa Rose'</span>), (<span class="number">0.9244734516419049</span>, <span class="string">'Mick LaSalle'</span>), (<span class="number">0.8934051474415647</span>, <span class="string">'Claudia Puig'</span>)]</div></pre></td></tr></table></figure>
+<h2 id="2，推荐物品"><a href="#2，推荐物品" class="headerlink" title="2，推荐物品"></a>2，推荐物品</h2><p>通过一个经过加权的评价值来为影片打分，评论者的评分结果因此形成了先后的排名。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">getRecommendations</span><span class="params">(users, person, similarity=sim_pearson)</span>:</span></div><div class="line">    <span class="string">"""</span></div><div class="line">    利用所有他人评价值的加权平均，为某人提供建议</div><div class="line">    :param users:</div><div class="line">    :param person:</div><div class="line">    :param similarity: 可指定相似度评价函数</div><div class="line">    :return:</div><div class="line">    """</div><div class="line"></div><div class="line">    totals = &#123;&#125;</div><div class="line">    simSums = &#123;&#125;</div><div class="line">    <span class="keyword">for</span> other <span class="keyword">in</span> users:</div><div class="line">        <span class="comment"># 不要和自己做比较</span></div><div class="line">        <span class="keyword">if</span> other == person:</div><div class="line">            <span class="keyword">continue</span></div><div class="line"></div><div class="line">        sim = similarity(users, person, other)</div><div class="line"></div><div class="line">        <span class="comment"># 忽略评价值为零或者小于零的情况</span></div><div class="line">        <span class="keyword">if</span> sim &lt;= <span class="number">0</span>:</div><div class="line">            <span class="keyword">continue</span></div><div class="line"></div><div class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> users[other]:</div><div class="line"></div><div class="line">            <span class="comment"># 只对自己还未曾看过的影片进行评价</span></div><div class="line">            <span class="keyword">if</span> item <span class="keyword">not</span> <span class="keyword">in</span> users[person] <span class="keyword">or</span> users[person][item] == <span class="number">0</span>:</div><div class="line"></div><div class="line">                <span class="comment"># 相似度 * 评价值</span></div><div class="line">                totals.setdefault(item, <span class="number">0</span>)</div><div class="line">                totals[item] += users[other][item] * sim</div><div class="line"></div><div class="line">                <span class="comment"># 相似度之和</span></div><div class="line">                simSums.setdefault(item, <span class="number">0</span>)</div><div class="line">                simSums[item] += sim</div><div class="line"></div><div class="line">    <span class="comment"># 建立一个归一化的列表</span></div><div class="line">    rankings = [(total/simSums[item], item) <span class="keyword">for</span> item, total <span class="keyword">in</span> totals.items()]</div><div class="line"></div><div class="line">    <span class="comment"># 返回经过排序的列表</span></div><div class="line">    rankings.sort()</div><div class="line">    rankings.reverse()</div><div class="line">    <span class="keyword">return</span> rankings</div><div class="line"></div><div class="line">rankings = getRecommendations(critics, <span class="string">'Toby'</span>)</div><div class="line"><span class="keyword">print</span> <span class="string">'pearson\n'</span>, rankings</div><div class="line"></div><div class="line">rankings = getRecommendations(critics, <span class="string">'Toby'</span>, similarity=sim_euclidean)</div><div class="line"><span class="keyword">print</span> <span class="string">'euclidean\n'</span>, rankings</div><div class="line"></div><div class="line"></div><div class="line">Output:</div><div class="line"></div><div class="line">pearson</div><div class="line">[(<span class="number">3.3477895267131013</span>, <span class="string">'The Night Listener'</span>), (<span class="number">2.8325499182641614</span>, <span class="string">'Lady in the Water'</span>), (<span class="number">2.5309807037655645</span>, <span class="string">'Just My Luck'</span>)]</div><div class="line"></div><div class="line">euclidean</div><div class="line">[(<span class="number">3.457128694491423</span>, <span class="string">'The Night Listener'</span>), (<span class="number">2.778584003814924</span>, <span class="string">'Lady in the Water'</span>), (<span class="number">2.4224820423619167</span>, <span class="string">'Just My Luck'</span>)]</div></pre></td></tr></table></figure>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag">#Python</a>
+          
+            <a href="/tags/机器学习/" rel="tag">#机器学习</a>
+          
+            <a href="/tags/相似度评价/" rel="tag">#相似度评价</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/18/recommendation-system2/" rel="next" title="构建推荐系统（二）">
+                <i class="fa fa-chevron-left"></i> 构建推荐系统（二）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/03/fund-qualification-examination/" rel="prev" title="基金从业资格考试笔记">
+                基金从业资格考试笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/05/11/recommendation-system/"
+     data-title="构建推荐系统（一）"
+     data-content=""
+     data-url="http://www.kekefund.com/2016/05/11/recommendation-system/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/05/11/recommendation-system/"
+           data-title="构建推荐系统（一）" data-url="http://www.kekefund.com/2016/05/11/recommendation-system/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、相似度评价方法"><span class="nav-number">1.</span> <span class="nav-text">一、相似度评价方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0，数据集"><span class="nav-number">1.1.</span> <span class="nav-text">0，数据集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1，曼哈顿距离"><span class="nav-number">1.2.</span> <span class="nav-text">1，曼哈顿距离</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Python实现："><span class="nav-number">1.2.1.</span> <span class="nav-text">Python实现：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，欧几里德距离"><span class="nav-number">1.3.</span> <span class="nav-text">2，欧几里德距离</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Python实现：-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">Python实现：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-皮尔逊相关度评价"><span class="nav-number">1.4.</span> <span class="nav-text">3, 皮尔逊相关度评价</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#用户的问题"><span class="nav-number">1.4.1.</span> <span class="nav-text">用户的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python实现"><span class="nav-number">1.4.2.</span> <span class="nav-text">Python实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4，余弦相似度"><span class="nav-number">1.5.</span> <span class="nav-text">4，余弦相似度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5，应该使用哪种相似度？"><span class="nav-number">1.6.</span> <span class="nav-text">5，应该使用哪种相似度？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、应用"><span class="nav-number">2.</span> <span class="nav-text">二、应用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，推荐用户-——-K最邻近算法"><span class="nav-number">2.1.</span> <span class="nav-text">1，推荐用户  —— K最邻近算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，推荐物品"><span class="nav-number">2.2.</span> <span class="nav-text">2，推荐物品</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

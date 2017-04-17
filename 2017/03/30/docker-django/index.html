@@ -1,0 +1,802 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Django,docker,Dockerfile," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="Django的运行是基于python的环境，加上django包。在docker中运行django，实现方式是从docker下载python镜像，然后安装django运行所依赖的包。 在https://store.docker.com/images/python?tab=description  中介绍pull镜像方式有一种叫python:onbuild。这种镜像创建方式根据项目中提供的requir">
+<meta name="keywords" content="Django,docker,Dockerfile">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker版Django">
+<meta property="og:url" content="http://www.kekefund.com/2017/03/30/docker-django/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="Django的运行是基于python的环境，加上django包。在docker中运行django，实现方式是从docker下载python镜像，然后安装django运行所依赖的包。 在https://store.docker.com/images/python?tab=description  中介绍pull镜像方式有一种叫python:onbuild。这种镜像创建方式根据项目中提供的requir">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-30/dd1.png">
+<meta property="og:updated_time" content="2017-04-07T06:00:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker版Django">
+<meta name="twitter:description" content="Django的运行是基于python的环境，加上django包。在docker中运行django，实现方式是从docker下载python镜像，然后安装django运行所依赖的包。 在https://store.docker.com/images/python?tab=description  中介绍pull镜像方式有一种叫python:onbuild。这种镜像创建方式根据项目中提供的requir">
+<meta name="twitter:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-30/dd1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> docker版Django | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                docker版Django
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2017-03-30T17:14:05+08:00" content="2017-03-30">
+              2017-03-30
+            </time>
+          </span>
+
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/03/30/docker-django/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/30/docker-django/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>Django的运行是基于python的环境，加上django包。在docker中运行django，实现方式是从docker下载python镜像，然后安装django运行所依赖的包。</p>
+<p>在<a href="https://store.docker.com/images/python?tab=description" target="_blank" rel="external">https://store.docker.com/images/python?tab=description</a>  中介绍pull镜像方式有一种叫python:onbuild。<br>这种镜像创建方式根据项目中提供的requirements.txt文件自动pip安装依赖包。大多数情况，通过python:onbuild能创建一个满足工程所需的独立镜像。</p>
+<h1 id="一、编写requirements-txt"><a href="#一、编写requirements-txt" class="headerlink" title="一、编写requirements.txt"></a>一、编写requirements.txt</h1><p>下述的目录结构是一个Django Rest Framework例子，其中项目名称为restful，app名称为api。<br><a id="more"></a><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-30/dd1.png" alt=""></p>
+<p>首先我们需要把项目所依赖的包放到requirements.txt中：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="attr">Django</span>==<span class="number">1.8</span></div><div class="line"><span class="attr">django-bootstrap-toolkit</span>==<span class="number">2.15</span>.<span class="number">0</span></div><div class="line"><span class="attr">django-filter</span>==<span class="number">1.0</span>.<span class="number">1</span></div><div class="line"><span class="attr">djangorestframework</span>==<span class="number">3.5</span>.<span class="number">4</span></div><div class="line"><span class="attr">djangorestframework-jwt</span>==<span class="number">1.10</span>.<span class="number">0</span></div><div class="line"><span class="attr">pandas</span>==<span class="number">0.19</span>.<span class="number">2</span></div><div class="line"><span class="attr">SQLAlchemy</span>==<span class="number">1.1</span>.<span class="number">4</span></div><div class="line"><span class="attr">MySQL-python</span>==<span class="number">1.2</span>.<span class="number">5</span></div></pre></td></tr></table></figure></p>
+<h1 id="二、编写Dockerfile"><a href="#二、编写Dockerfile" class="headerlink" title="二、编写Dockerfile"></a>二、编写Dockerfile</h1><p>本文是基于python2.7制作的，Dockerfile文件如下：<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">FROM</span> python:<span class="number">2</span>-<span class="keyword">onbuild</span></div><div class="line"><span class="keyword">CMD</span><span class="bash"> [ <span class="string">"python"</span>, <span class="string">"./manage.py"</span>, <span class="string">"runserver"</span>, <span class="string">"0.0.0.0:8000"</span>]</span></div></pre></td></tr></table></figure></p>
+<p>CMD命令执行Django启动程序，0.0.0.0是对所有IP开放，监听端口8000。<br>需要说明的是CMD中的每个参数得单独分开，像这样”runserver 0.0.0.0:8000”是运行不成功的。</p>
+<h1 id="三、构建镜像"><a href="#三、构建镜像" class="headerlink" title="三、构建镜像"></a>三、构建镜像</h1><ul>
+<li>$ docker build -t my-python-app .<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">[cbb@number_api]$ docker build -t number_api_django:<span class="number">0.3</span> .</div><div class="line">Sending build context <span class="keyword">to</span> Docker daemon <span class="number">655.9</span> kB</div><div class="line">Step <span class="number">1</span>/<span class="number">2</span> : FROM <span class="keyword">python</span>:<span class="number">2</span>-onbuild</div><div class="line"># Executing <span class="number">3</span> build triggers...</div><div class="line">Step <span class="number">1</span>/<span class="number">1</span> : COPY requirements.txt /usr/src/app/</div><div class="line">Step <span class="number">1</span>/<span class="number">1</span> : RUN pip install --<span class="keyword">no</span>-cache-dir -r requirements.txt</div><div class="line"> ---&gt; Running in <span class="number">4711187</span>b3011</div><div class="line">Collecting Django==<span class="number">1.8</span> (from -r requirements.txt (<span class="built_in">line</span> <span class="number">2</span>))</div><div class="line">  Downloading Django-<span class="number">1.8</span>-py2.<span class="keyword">py3</span>-none-any.whl (<span class="number">6.2</span>MB)</div><div class="line">Collecting django-bootstrap-toolkit==<span class="number">2.15</span>.<span class="number">0</span> (from -r requirements.txt (<span class="built_in">line</span> <span class="number">3</span>))</div><div class="line">  Downloading django-bootstrap-toolkit-<span class="number">2.15</span>.<span class="number">0</span>.tar.gz</div><div class="line">Collecting django-<span class="built_in">filter</span>==<span class="number">1.0</span>.<span class="number">1</span> (from -r requirements.txt (<span class="built_in">line</span> <span class="number">4</span>))</div><div class="line">  Downloading django_filter-<span class="number">1.0</span>.<span class="number">1</span>-py2.<span class="keyword">py3</span>-none-any.whl (<span class="number">54</span>kB)</div><div class="line">Collecting djangorestframework==<span class="number">3.5</span>.<span class="number">4</span> (from -r requirements.txt (<span class="built_in">line</span> <span class="number">5</span>))</div><div class="line">  Downloading djangorestframework-<span class="number">3.5</span>.<span class="number">4</span>-py2.<span class="keyword">py3</span>-none-any.whl (<span class="number">709</span>kB)</div><div class="line">Collecting djangorestframework-jwt==<span class="number">1.10</span>.<span class="number">0</span> (from -r requirements.txt (<span class="built_in">line</span> <span class="number">6</span>))</div><div class="line">  Downloading djangorestframework_jwt-<span class="number">1.10</span>.<span class="number">0</span>-py2.<span class="keyword">py3</span>-none-any.whl</div><div class="line">Collecting pandas==<span class="number">0.19</span>.<span class="number">2</span> (from -r requirements.txt (<span class="built_in">line</span> <span class="number">7</span>))</div><div class="line">  Downloading pandas-<span class="number">0.19</span>.<span class="number">2</span>-cp27-cp27mu-manylinux1_x86_64.whl (<span class="number">17.2</span>MB)</div><div class="line">Collecting SQLAlchemy==<span class="number">1.1</span>.<span class="number">4</span> (from -r requirements.txt (<span class="built_in">line</span> <span class="number">8</span>))</div><div class="line">  Downloading SQLAlchemy-<span class="number">1.1</span>.<span class="number">4</span>.tar.gz (<span class="number">5.1</span>MB)</div><div class="line">Collecting MySQL-<span class="keyword">python</span>==<span class="number">1.2</span>.<span class="number">5</span> (from -r requirements.txt (<span class="built_in">line</span> <span class="number">9</span>))</div><div class="line">  Downloading MySQL-<span class="keyword">python</span>-<span class="number">1.2</span>.<span class="number">5</span>.zip (<span class="number">108</span>kB)</div><div class="line">Collecting PyJWT&lt;<span class="number">2.0</span>.<span class="number">0</span>,&gt;=<span class="number">1.4</span>.<span class="number">0</span> (from djangorestframework-jwt==<span class="number">1.10</span>.<span class="number">0</span>-&gt;-r requirements.txt (<span class="built_in">line</span> <span class="number">6</span>))</div><div class="line">  Downloading PyJWT-<span class="number">1.4</span>.<span class="number">2</span>-py2.<span class="keyword">py3</span>-none-any.whl</div><div class="line">Collecting pytz&gt;=<span class="number">2011</span><span class="keyword">k</span> (from pandas==<span class="number">0.19</span>.<span class="number">2</span>-&gt;-r requirements.txt (<span class="built_in">line</span> <span class="number">7</span>))</div><div class="line">  Downloading pytz-<span class="number">2016.10</span>-py2.<span class="keyword">py3</span>-none-any.whl (<span class="number">483</span>kB)</div><div class="line">Collecting numpy&gt;=<span class="number">1.7</span>.<span class="number">0</span> (from pandas==<span class="number">0.19</span>.<span class="number">2</span>-&gt;-r requirements.txt (<span class="built_in">line</span> <span class="number">7</span>))</div><div class="line">  Downloading numpy-<span class="number">1.12</span>.<span class="number">1</span>-cp27-cp27mu-manylinux1_x86_64.whl (<span class="number">16.5</span>MB)</div><div class="line">Collecting <span class="keyword">python</span>-dateutil (from pandas==<span class="number">0.19</span>.<span class="number">2</span>-&gt;-r requirements.txt (<span class="built_in">line</span> <span class="number">7</span>))</div><div class="line">  Downloading python_dateutil-<span class="number">2.6</span>.<span class="number">0</span>-py2.<span class="keyword">py3</span>-none-any.whl (<span class="number">194</span>kB)</div><div class="line">Requirement already satisfied: six&gt;=<span class="number">1.5</span> in /usr/local/lib/python2.<span class="number">7</span>/site-packages (from <span class="keyword">python</span>-dateutil-&gt;pandas==<span class="number">0.19</span>.<span class="number">2</span>-&gt;-r requirements.txt (<span class="built_in">line</span> <span class="number">7</span>))</div><div class="line">Installing collected package<span class="variable">s:</span> Django, django-bootstrap-toolkit, django-<span class="built_in">filter</span>, djangorestframework, PyJWT, djangorestframework-jwt, pytz, numpy, <span class="keyword">python</span>-dateutil, pandas, SQLAlchemy, MySQL-<span class="keyword">python</span></div><div class="line">  Running setup.<span class="keyword">py</span> install <span class="keyword">for</span> django-bootstrap-toolki<span class="variable">t:</span> started</div><div class="line">    Running setup.<span class="keyword">py</span> install <span class="keyword">for</span> django-bootstrap-toolki<span class="variable">t:</span> finished with status <span class="string">'done'</span></div><div class="line">  Running setup.<span class="keyword">py</span> install <span class="keyword">for</span> SQLAlchemy: started</div><div class="line">    Running setup.<span class="keyword">py</span> install <span class="keyword">for</span> SQLAlchemy: finished with status <span class="string">'done'</span></div><div class="line">  Running setup.<span class="keyword">py</span> install <span class="keyword">for</span> MySQL-<span class="keyword">python</span>: started</div><div class="line">    Running setup.<span class="keyword">py</span> install <span class="keyword">for</span> MySQL-<span class="keyword">python</span>: finished with status <span class="string">'done'</span></div><div class="line">Successfully installed Django-<span class="number">1.8</span> MySQL-<span class="keyword">python</span>-<span class="number">1.2</span>.<span class="number">5</span> PyJWT-<span class="number">1.4</span>.<span class="number">2</span> SQLAlchemy-<span class="number">1.1</span>.<span class="number">4</span> django-bootstrap-toolkit-<span class="number">2.15</span>.<span class="number">0</span> django-<span class="built_in">filter</span>-<span class="number">1.0</span>.<span class="number">1</span> djangorestframework-<span class="number">3.5</span>.<span class="number">4</span> djangorestframework-jwt-<span class="number">1.10</span>.<span class="number">0</span> numpy-<span class="number">1.12</span>.<span class="number">1</span> pandas-<span class="number">0.19</span>.<span class="number">2</span> <span class="keyword">python</span>-dateutil-<span class="number">2.6</span>.<span class="number">0</span> pytz-<span class="number">2016.10</span></div><div class="line">Step <span class="number">1</span>/<span class="number">1</span> : COPY . /usr/src/app</div><div class="line"> ---&gt; <span class="number">712</span>a54b6b923</div><div class="line">Removing intermediate container df33c056f7c0</div><div class="line">Removing intermediate container <span class="number">4711187</span>b3011</div><div class="line">Removing intermediate container <span class="number">6220</span>af43bf96</div><div class="line">Step <span class="number">2</span>/<span class="number">2</span> : CMD <span class="keyword">python</span> ./manage.<span class="keyword">py</span> runserver <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">8000</span></div><div class="line"> ---&gt; Running in <span class="number">53</span>c0cf32d840</div><div class="line"> ---&gt; <span class="number">17</span>c97bc704d9</div><div class="line">Removing intermediate container <span class="number">53</span>c0cf32d840</div><div class="line">Successfully built <span class="number">17</span>c97bc704d9</div><div class="line"></div><div class="line">[cbb@number_api]$ docker images</div><div class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</div><div class="line">number_api_django   <span class="number">0.3</span>                 <span class="number">17</span>c97bc704d9        <span class="number">23</span> seconds ago      <span class="number">868</span> MB</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这样就成功创建了镜像number_api_django:0.3</p>
+<h1 id="四、运行容器"><a href="#四、运行容器" class="headerlink" title="四、运行容器"></a>四、运行容器</h1><ul>
+<li>docker run<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">[cbb@number_api]$ docker run -it <span class="comment">--rm -p 8080:8000 --name api1 number_api_django:0.3</span></div><div class="line">Performing system checks...</div><div class="line"></div><div class="line">System <span class="keyword">check</span> <span class="keyword">identified</span> <span class="keyword">no</span> issues (<span class="number">0</span> silenced).</div><div class="line">March <span class="number">30</span>, <span class="number">2017</span> - <span class="number">07</span>:<span class="number">34</span>:<span class="number">03</span></div><div class="line">Django <span class="keyword">version</span> <span class="number">1.8</span>, <span class="keyword">using</span> <span class="keyword">settings</span> <span class="string">'restful.settings'</span></div><div class="line"><span class="keyword">Starting</span> development <span class="keyword">server</span> <span class="keyword">at</span> <span class="keyword">http</span>://<span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="number">8000</span>/</div><div class="line">Quit the <span class="keyword">server</span> <span class="keyword">with</span> CONTROL-C.</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这样就启动了django程序。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Django/" rel="tag">#Django</a>
+          
+            <a href="/tags/docker/" rel="tag">#docker</a>
+          
+            <a href="/tags/Dockerfile/" rel="tag">#Dockerfile</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/30/django-rest-framework-jwt/" rel="prev" title="Django Rest Framework 通过token访问">
+                Django Rest Framework 通过token访问 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2017/03/30/docker-django/"
+     data-title="docker版Django"
+     data-content=""
+     data-url="http://www.kekefund.com/2017/03/30/docker-django/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/03/30/docker-django/"
+           data-title="docker版Django" data-url="http://www.kekefund.com/2017/03/30/docker-django/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、编写requirements-txt"><span class="nav-number">1.</span> <span class="nav-text">一、编写requirements.txt</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、编写Dockerfile"><span class="nav-number">2.</span> <span class="nav-text">二、编写Dockerfile</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、构建镜像"><span class="nav-number">3.</span> <span class="nav-text">三、构建镜像</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、运行容器"><span class="nav-number">4.</span> <span class="nav-text">四、运行容器</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

@@ -1,0 +1,867 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="docker,centos,tomcat," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="1，系统准备CentOS 具体要求如下：  必须是 64 位操作系统 建议内核在 3.8 以上  通过以下命令查看您的 CentOS 内核：12[root@VM_200_249_centos ~]# uname -r3.10.0-327.36.3.el7.x86_64 对于 CentOS 6.5 而言，内核版本默认是 2.6。首先，可通过以下命令安装最新内核：123rpm --import htt">
+<meta name="keywords" content="docker,centos,tomcat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="centos + docker部署web java项目">
+<meta property="og:url" content="http://www.kekefund.com/2017/03/01/centos-docker-deploy/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="1，系统准备CentOS 具体要求如下：  必须是 64 位操作系统 建议内核在 3.8 以上  通过以下命令查看您的 CentOS 内核：12[root@VM_200_249_centos ~]# uname -r3.10.0-327.36.3.el7.x86_64 对于 CentOS 6.5 而言，内核版本默认是 2.6。首先，可通过以下命令安装最新内核：123rpm --import htt">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-01/dockermirror.png">
+<meta property="og:updated_time" content="2017-04-07T06:00:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="centos + docker部署web java项目">
+<meta name="twitter:description" content="1，系统准备CentOS 具体要求如下：  必须是 64 位操作系统 建议内核在 3.8 以上  通过以下命令查看您的 CentOS 内核：12[root@VM_200_249_centos ~]# uname -r3.10.0-327.36.3.el7.x86_64 对于 CentOS 6.5 而言，内核版本默认是 2.6。首先，可通过以下命令安装最新内核：123rpm --import htt">
+<meta name="twitter:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-01/dockermirror.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> centos + docker部署web java项目 | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                centos + docker部署web java项目
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2017-03-01T00:01:59+08:00" content="2017-03-01">
+              2017-03-01
+            </time>
+          </span>
+
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/03/01/centos-docker-deploy/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/01/centos-docker-deploy/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h1 id="1，系统准备"><a href="#1，系统准备" class="headerlink" title="1，系统准备"></a>1，系统准备</h1><p>CentOS 具体要求如下：</p>
+<ul>
+<li>必须是 64 位操作系统</li>
+<li>建议内核在 3.8 以上</li>
+</ul>
+<p>通过以下命令查看您的 CentOS 内核：<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-attr">[root@VM_200_249_centos ~]</span># <span class="selector-tag">uname</span> <span class="selector-tag">-r</span></div><div class="line">3<span class="selector-class">.10</span><span class="selector-class">.0-327</span><span class="selector-class">.36</span><span class="selector-class">.3</span><span class="selector-class">.el7</span><span class="selector-class">.x86_64</span></div></pre></td></tr></table></figure></p>
+<p>对于 CentOS 6.5 而言，内核版本默认是 2.6。首先，可通过以下命令安装最新内核：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">rpm --<span class="keyword">import</span> <span class="string">https:</span><span class="comment">//www.elrepo.org/RPM-GPG-KEY-elrepo.org</span></div><div class="line">rpm -ivh <span class="string">http:</span><span class="comment">//www.elrepo.org/elrepo-release-6-5.el6.elrepo.noarch.rpm</span></div><div class="line">yum -y --enablerepo=elrepo-kernel install kernel-lt</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>随后，编辑以下配置文件：<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">vi</span> /etc/grub.<span class="keyword">conf</span></div></pre></td></tr></table></figure></p>
+<p>将default=1修改为default=0。<br>最后，通过reboot或shutdown now命令重启操作系统。<br>重启后如果不出意外的话，再次查看内核，您的 CentOS 内核将会显示为 3.10。</p>
+<h1 id="2，安装Docker"><a href="#2，安装Docker" class="headerlink" title="2，安装Docker"></a>2，安装Docker</h1><p>只需通过以下命令即可安装 Docker 软件：<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rpm -Uvh <span class="symbol">http:</span>/<span class="regexp">/download.fedoraproject.org/pub</span><span class="regexp">/epel/</span><span class="number">6</span>/i386/epel-release-<span class="number">6</span>-<span class="number">8</span>.noarch.rpm</div><div class="line">yum -y install docker-io</div></pre></td></tr></table></figure></p>
+<p>可通过以下命令启动 Docker 服务：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">service docker start</div><div class="line">chkconfig docker <span class="keyword">on</span> <span class="comment"># 设置开机启动</span></div></pre></td></tr></table></figure>
+<p>可使用以下命令，查看 Docker 是否安装成功：<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="string">[root@VM_200_249_centos</span> <span class="string">~]#</span> <span class="string">docker</span> <span class="string">version</span></div><div class="line"><span class="attr">Client:</span></div><div class="line"><span class="attr"> Version:</span>      <span class="number">1.12</span><span class="number">.3</span></div><div class="line"> <span class="string">API</span> <span class="attr">version:</span>  <span class="number">1.24</span></div><div class="line"> <span class="string">Go</span> <span class="attr">version:</span>   <span class="string">go1.6.3</span></div><div class="line"> <span class="string">Git</span> <span class="attr">commit:</span>   <span class="number">6</span><span class="string">b644ec</span></div><div class="line"><span class="attr"> Built:</span></div><div class="line"> <span class="string">OS/Arch:</span>      <span class="string">linux/amd64</span></div><div class="line"></div><div class="line"><span class="attr">Server:</span></div><div class="line"><span class="attr"> Version:</span>      <span class="number">1.12</span><span class="number">.3</span></div><div class="line"> <span class="string">API</span> <span class="attr">version:</span>  <span class="number">1.24</span></div><div class="line"> <span class="string">Go</span> <span class="attr">version:</span>   <span class="string">go1.6.3</span></div><div class="line"> <span class="string">Git</span> <span class="attr">commit:</span>   <span class="number">6</span><span class="string">b644ec</span></div><div class="line"><span class="attr"> Built:</span></div><div class="line"> <span class="string">OS/Arch:</span>      <span class="string">linux/amd64</span></div></pre></td></tr></table></figure></p>
+<p>若输出了 Docker 的版本号，则说明安装成功，我们下面就可以开始使用 Docker 了。</p>
+<h1 id="3，-安装镜像"><a href="#3，-安装镜像" class="headerlink" title="3， 安装镜像"></a>3， 安装镜像</h1><p><a href="https://www.docker.com/" target="_blank" rel="external">Docker 官网</a> 提供了所有的镜像<a href="https://registry.hub.docker.com/search?q=library" target="_blank" rel="external">下载地址</a>。（需要VPN翻墙）<br>直接pull下来(<a href="https://hub.docker.com/r/nimmis/java-centos/" target="_blank" rel="external">https://hub.docker.com/r/nimmis/java-centos/</a>)<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">docker</span> pull nimmis/java-centos</div></pre></td></tr></table></figure></p>
+<p>可以通过对应的标签选择不同的jdk版本，例如”docker pull nimmis/java-centos:openjdk-7-jdk”</p>
+<ul>
+<li>latest - currently Oracle Java version 8 JRE</li>
+<li>openjdk-7-jdk - OpenJDK Java version 7 JDK</li>
+<li>openjdk-7-jre - OpenJDK Java version 7 JRE</li>
+<li>openjdk-7-jre-headless - OpenJDK Java version 7 JRE headless</li>
+<li>openjdk-8-jdk - OpenJDK Java version 8 JDK</li>
+<li>openjdk-8-jre - OpenJDK Java version 8 JRE</li>
+<li>openjdk-8-jre-headless - OpenJDK Java version 8 JRE headless</li>
+<li>oracle-7-jre - Oracle Java version 7 JRE</li>
+<li>oracle-7-jdk - Oracle Java version 7 JDK</li>
+<li>oracle-8-jre - Oracle Java version 8 JRE</li>
+<li>oracle-8-jdk - Oracle Java version 8 JDK</li>
+</ul>
+<h2 id="镜像加速器"><a href="#镜像加速器" class="headerlink" title="镜像加速器"></a>镜像加速器</h2><p>docker官网的镜像下载非常慢，国内提供了Docker镜像的下载点，如阿里、网易和DaoCloud。以阿里云为例：<br>需要先注册阿里云账号，进到<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">https</span>://<span class="literal">cr</span>.console.aliyun.com/<span class="comment">#/accelerator</span></div></pre></td></tr></table></figure></p>
+<p>选择左侧“加速器”，找到你的专属加速器地址<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-01/dockermirror.png" alt=""><br>在centos下修改/etc/docker/daemon.json文件，添加：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    <span class="attr">"registry-mirrors"</span>: [<span class="string">"https://yxz1pr3x.mirror.aliyuncs.com"</span>]</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>设置后能获得每秒1兆的下载速度。</p>
+<p>最后，使用以下命令查看本地所有的镜像：<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[root@VM_200_249_centos ~]# docker images</div><div class="line">REPOSITORY                   TAG                 IMAGE ID            CREATED             SIZE</div><div class="line">dockerxman/docker-centos     latest              <span class="number">4</span>c89ecb22b17        <span class="number">2</span> minutes ago       <span class="number">395.6</span> MB</div><div class="line">daocloud.io/library/centos   latest              <span class="number">67591570</span>dd29        <span class="number">10</span> weeks ago        <span class="number">191.8</span> MB</div></pre></td></tr></table></figure></p>
+<p>可以看到，系统中有2个docker镜像，“dockerxman/docker-centos”，也可以<br>称其为仓库（Repository），镜像的标签（Tag）为lastest，此外还有镜像ID（IMAGE ID），大小有395兆。</p>
+<h1 id="4，启动容器"><a href="#4，启动容器" class="headerlink" title="4，启动容器"></a>4，启动容器</h1><p>容器在镜像的基础上运行，一旦容器启动了，我们就可以登录到容器中，安装自己所需的软件或应用程序。<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -i -t -v <span class="regexp">/mydata/</span><span class="string">data:</span><span class="regexp">/mnt/</span>software --restart=always <span class="number">67591570</span>dd29 <span class="regexp">/bin/</span>bash</div></pre></td></tr></table></figure></p>
+<h2 id="命令解释："><a href="#命令解释：" class="headerlink" title="命令解释："></a>命令解释：</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run <span class="tag">&lt;<span class="name">相关参数</span>&gt;</span> <span class="tag">&lt;<span class="name">镜像</span> <span class="attr">ID</span>&gt;</span> <span class="tag">&lt;<span class="name">初始命令</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>其中，相关参数包括：</p>
+<ul>
+<li>-i：表示以“交互模式”运行容器</li>
+<li>-t：表示容器启动后会进入其命令行</li>
+<li>-v：表示需要将本地哪个目录挂载到容器中，格式：-v &lt;宿主机目录&gt;:&lt;容器目录&gt;</li>
+</ul>
+<p>初始命令表示一旦容器启动，需要运行的命令，此时使用“/bin/bash”，表示什么也不做，只需进入命令行即可。<br>需要说明的是，不一定要使用“镜像 ID”，也可以使用“仓库名:标签名”，例如：dockerxman/docker-centos:latest。</p>
+<h2 id="查看所有创建的容器"><a href="#查看所有创建的容器" class="headerlink" title="查看所有创建的容器"></a>查看所有创建的容器</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker ps <span class="_">-a</span></div></pre></td></tr></table></figure>
+<h2 id="查看正在运行的容器"><a href="#查看正在运行的容器" class="headerlink" title="查看正在运行的容器"></a>查看正在运行的容器</h2><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root<span class="variable">@VM_200_249_centos</span> ~]<span class="comment"># docker ps</span></div><div class="line">CONTAINER ID        IMAGE                COMMAND             CREATED             STATUS              PORTS                     NAMES</div><div class="line">a197e23e0ddb        <span class="symbol">asy:</span><span class="number">0</span>.<span class="number">1</span>   <span class="string">"/root/run.sh"</span>      <span class="number">24</span> hours ago        Up <span class="number">24</span> hours         <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span><span class="symbol">:</span><span class="number">58080</span>-&gt;<span class="number">8080</span>/tcp   javaweb</div></pre></td></tr></table></figure>
+<h2 id="启动容器"><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker <span class="keyword">start</span> &lt;<span class="keyword">CONTAINER</span> <span class="keyword">ID</span>&gt;</div></pre></td></tr></table></figure>
+<h2 id="停止容器"><a href="#停止容器" class="headerlink" title="停止容器"></a>停止容器</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker <span class="keyword">stop</span> &lt;<span class="keyword">CONTAINER</span> <span class="keyword">ID</span>&gt;</div></pre></td></tr></table></figure>
+<h2 id="重新进入已创建的容器"><a href="#重新进入已创建的容器" class="headerlink" title="重新进入已创建的容器"></a>重新进入已创建的容器</h2><figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker <span class="built_in">attach</span> &lt;CONTAINER ID&gt;</div></pre></td></tr></table></figure>
+<p>或<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker exec -it <span class="params">&lt;CONTAINER ID&gt;</span> <span class="meta-keyword">/bin/</span>bash</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p><a href="http://blog.csdn.net/u010397369/article/details/41045251" target="_blank" rel="external">http://blog.csdn.net/u010397369/article/details/41045251</a></p>
+</blockquote>
+<h2 id="删除容器"><a href="#删除容器" class="headerlink" title="删除容器"></a>删除容器</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker rm <span class="tag">&lt;<span class="name">CONTAINER</span> <span class="attr">ID</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="删除镜像"><a href="#删除镜像" class="headerlink" title="删除镜像"></a>删除镜像</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker rmi <span class="tag">&lt;<span class="name">IMAGE</span> <span class="attr">ID</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>注：需要先把镜像生成的容器全部删除才能删掉镜像。</p>
+<h1 id="5，安装软件"><a href="#5，安装软件" class="headerlink" title="5，安装软件"></a>5，安装软件</h1><p>由于我们选择的镜像是包含JDK的，所以我们只需要安装tomcat。<br>tomcat我放在服务器上，用wget下载到容器中。<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget http:<span class="regexp">//</span>kekefund.com<span class="regexp">/soft/</span>apache-tomcat-<span class="number">7.0</span>.<span class="number">63</span>.tar.gz</div></pre></td></tr></table></figure></p>
+<p>将tomcat放到/opt目录下，先移到到/opt目录，然后解压<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /opt</div><div class="line">tar -zxf /mnt/software/apache-tomcat-<span class="number">7.0</span>.<span class="number">63</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span> -C .</div></pre></td></tr></table></figure></p>
+<p>重命名<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mv apache-tomcat<span class="number">-7.0</span><span class="number">.63</span>/ tomcat/</div></pre></td></tr></table></figure></p>
+<h1 id="6，运行脚本"><a href="#6，运行脚本" class="headerlink" title="6，运行脚本"></a>6，运行脚本</h1><p>创建运行脚本：vi /root/run.sh<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="built_in">source</span> ~/.bashrc</div><div class="line">sh /opt/tomcat/bin/catalina.sh run</div></pre></td></tr></table></figure></p>
+<p>为运行脚本添加执行权限<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chmod u+x /root/<span class="keyword">run</span>.<span class="bash">sh</span></div></pre></td></tr></table></figure></p>
+<h1 id="7-创建-Java-Web-镜像"><a href="#7-创建-Java-Web-镜像" class="headerlink" title="7, 创建 Java Web 镜像"></a>7, 创建 Java Web 镜像</h1><p>使用以下命令，根据某个“容器 ID”来创建一个新的“镜像”：<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker commit d<span class="number">50f5048e212</span> chenbb/javaweb:<span class="number">0</span>.<span class="number">1</span></div></pre></td></tr></table></figure></p>
+<p>该容器的 ID 是“ d50f5048e212”，所创建的镜像名是“ chenbb/javaweb:0.1”，随后可使用镜像来启动 Java Web 容器。</p>
+<h1 id="8-启动-Java-Web-容器"><a href="#8-启动-Java-Web-容器" class="headerlink" title="8, 启动 Java Web 容器"></a>8, 启动 Java Web 容器</h1><p>通过docker images查看所有镜像<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[root@VM_200_249_centos ~]# docker images</div><div class="line">REPOSITORY                   TAG                 IMAGE ID            CREATED             SIZE</div><div class="line">chenbb/javaweb               <span class="number">0.1</span>                 <span class="number">99e35759</span>d5ed        <span class="number">24</span> hours ago        <span class="number">700</span> MB</div><div class="line">dockerxman/docker-centos     latest              <span class="number">4</span>c89ecb22b17        <span class="number">26</span> hours ago        <span class="number">395.6</span> MB</div><div class="line">daocloud.io/library/centos   latest              <span class="number">67591570</span>dd29        <span class="number">10</span> weeks ago        <span class="number">191.8</span> MB</div></pre></td></tr></table></figure></p>
+<p>可见，此时已经看到了最新创建的镜像“ chenbb/javaweb:0.1”，其镜像 ID 是“ 99e35759d5ed”。正如上面所描述的那样，我们可以通过“镜像名”或“镜像 ID”来启动容器，与上次启动容器不同的是，我们现在不再进入容器的命令行，而是直接启动容器内部的 Tomcat 服务。此时，需要使用以下命令：<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker <span class="keyword">run</span><span class="bash"> <span class="_">-d</span> -p 58080:8080 --name javaweb --restart=always chenbb/javaweb:0.1 /root/run.sh</span></div></pre></td></tr></table></figure></p>
+<p>参数介绍：</p>
+<ul>
+<li>-d：表示以“守护模式”执行/root/run.sh脚本，此时 Tomcat 控制台不会出现在输出终端上。</li>
+<li>-p：表示宿主机与容器的端口映射，此时将容器内部的 8080 端口映射为宿主机的 58080 端口，这样就向外界暴露了 58080 端口，可通过 Docker 网桥来访问容器内部的 8080 端口了。</li>
+<li>–name：表示容器名称，用一个有意义的名称命名即可。</li>
+</ul>
+<h1 id="9，浏览器查看"><a href="#9，浏览器查看" class="headerlink" title="9，浏览器查看"></a>9，浏览器查看</h1><p>在浏览器中，输入以下地址，即可访问 Tomcat 首页：<br><a href="http://192.168.1.124:58080/" target="_blank" rel="external">http://192.168.1.124:58080/</a></p>
+<h1 id="10，镜像打包"><a href="#10，镜像打包" class="headerlink" title="10，镜像打包"></a>10，镜像打包</h1><p>打包后就可以移植到其他主机上运行了。<br>打包：<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker save chenbb<span class="regexp">/fofeasy:0.1 &gt; /my</span>data<span class="regexp">/data/</span>fofeasy0.<span class="number">1</span>.tar</div></pre></td></tr></table></figure></p>
+<h1 id="11，在另外的主机上导入镜像"><a href="#11，在另外的主机上导入镜像" class="headerlink" title="11，在另外的主机上导入镜像"></a>11，在另外的主机上导入镜像</h1><figure class="highlight gauss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">docker <span class="keyword">load</span> &lt; fofeasy0<span class="number">.1</span>.tar   <span class="meta">#导入镜像</span></div><div class="line">docker images   <span class="meta">#查看存在的镜像</span></div></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
+<p>1，<a href="http://www.jianshu.com/p/26f15063de7d" target="_blank" rel="external">迈出使用Docker的第一步，学习第一个Docker容器</a><br> 2，<a href="https://my.oschina.net/huangyong/blog/372491" target="_blank" rel="external">使用 Docker 搭建 Java Web 运行环境</a><br>3，<a href="http://docs.daocloud.io/java-docker/docker-tomcat-war-java" target="_blank" rel="external">使用 Docker 运行 Tomcat ＋ WAR 包 Java 应用</a><br>4，<a href="http://bbs.csdn.net/topics/390844669" target="_blank" rel="external">docker的安装以及jdk和tomcat的环境配置</a><br>5，<a href="http://yangrong.blog.51cto.com/6945369/1551327" target="_blank" rel="external">运维人员的解放—-Docker快速部署</a></p>
+</blockquote>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/docker/" rel="tag">#docker</a>
+          
+            <a href="/tags/centos/" rel="tag">#centos</a>
+          
+            <a href="/tags/tomcat/" rel="tag">#tomcat</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/06/docker-dockerfile-generated/" rel="next" title="docker 自动构建，基于Dockerfile文件">
+                <i class="fa fa-chevron-left"></i> docker 自动构建，基于Dockerfile文件
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/15/ireport-gen-pdf/" rel="prev" title="iReport一键生成PDF报告指南">
+                iReport一键生成PDF报告指南 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2017/03/01/centos-docker-deploy/"
+     data-title="centos + docker部署web java项目"
+     data-content=""
+     data-url="http://www.kekefund.com/2017/03/01/centos-docker-deploy/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/03/01/centos-docker-deploy/"
+           data-title="centos + docker部署web java项目" data-url="http://www.kekefund.com/2017/03/01/centos-docker-deploy/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1，系统准备"><span class="nav-number">1.</span> <span class="nav-text">1，系统准备</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2，安装Docker"><span class="nav-number">2.</span> <span class="nav-text">2，安装Docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3，-安装镜像"><span class="nav-number">3.</span> <span class="nav-text">3， 安装镜像</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#镜像加速器"><span class="nav-number">3.1.</span> <span class="nav-text">镜像加速器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4，启动容器"><span class="nav-number">4.</span> <span class="nav-text">4，启动容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#命令解释："><span class="nav-number">4.1.</span> <span class="nav-text">命令解释：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看所有创建的容器"><span class="nav-number">4.2.</span> <span class="nav-text">查看所有创建的容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看正在运行的容器"><span class="nav-number">4.3.</span> <span class="nav-text">查看正在运行的容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动容器"><span class="nav-number">4.4.</span> <span class="nav-text">启动容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#停止容器"><span class="nav-number">4.5.</span> <span class="nav-text">停止容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重新进入已创建的容器"><span class="nav-number">4.6.</span> <span class="nav-text">重新进入已创建的容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除容器"><span class="nav-number">4.7.</span> <span class="nav-text">删除容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除镜像"><span class="nav-number">4.8.</span> <span class="nav-text">删除镜像</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5，安装软件"><span class="nav-number">5.</span> <span class="nav-text">5，安装软件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6，运行脚本"><span class="nav-number">6.</span> <span class="nav-text">6，运行脚本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-创建-Java-Web-镜像"><span class="nav-number">7.</span> <span class="nav-text">7, 创建 Java Web 镜像</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-启动-Java-Web-容器"><span class="nav-number">8.</span> <span class="nav-text">8, 启动 Java Web 容器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#9，浏览器查看"><span class="nav-number">9.</span> <span class="nav-text">9，浏览器查看</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10，镜像打包"><span class="nav-number">10.</span> <span class="nav-text">10，镜像打包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#11，在另外的主机上导入镜像"><span class="nav-number">11.</span> <span class="nav-text">11，在另外的主机上导入镜像</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">12.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

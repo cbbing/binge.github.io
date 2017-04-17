@@ -1,0 +1,821 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Python,pandas,groupby,g2,bokeh,绘图," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="制作分布图类似密度图，在python中利用pandas来提取分布数据是比较方便的。主要用到pandas的cut和groupby等函数。 第一步，从数据库中提取数据1234567891011121314151617import pandasfrom sqlalchemy import create_enginehost_mysql_test = &apos;127.0.0.1&apos;port_mysql_test">
+<meta name="keywords" content="Python,pandas,groupby,g2,bokeh,绘图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python制作分布图">
+<meta property="og:url" content="http://www.kekefund.com/2016/11/02/distribution-map/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="制作分布图类似密度图，在python中利用pandas来提取分布数据是比较方便的。主要用到pandas的cut和groupby等函数。 第一步，从数据库中提取数据1234567891011121314151617import pandasfrom sqlalchemy import create_enginehost_mysql_test = &apos;127.0.0.1&apos;port_mysql_test">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-11-02/dist1.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-11-02/dist2.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-11-02/dist3.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-11-02/dist4.png">
+<meta property="og:updated_time" content="2017-04-07T06:00:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python制作分布图">
+<meta name="twitter:description" content="制作分布图类似密度图，在python中利用pandas来提取分布数据是比较方便的。主要用到pandas的cut和groupby等函数。 第一步，从数据库中提取数据1234567891011121314151617import pandasfrom sqlalchemy import create_enginehost_mysql_test = &apos;127.0.0.1&apos;port_mysql_test">
+<meta name="twitter:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-11-02/dist1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> python制作分布图 | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                python制作分布图
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-11-02T15:44:43+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/02/distribution-map/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/02/distribution-map/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>制作分布图类似密度图，在python中利用pandas来提取分布数据是比较方便的。主要用到pandas的cut和groupby等函数。</p>
+<h1 id="第一步，从数据库中提取数据"><a href="#第一步，从数据库中提取数据" class="headerlink" title="第一步，从数据库中提取数据"></a>第一步，从数据库中提取数据</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> pandas</div><div class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine</div><div class="line">host_mysql_test = <span class="string">'127.0.0.1'</span></div><div class="line">port_mysql_test = <span class="number">3306</span></div><div class="line">user_mysql_test = <span class="string">'admin'</span></div><div class="line">pwd_mysql_test = <span class="string">'1234'</span></div><div class="line">db_name_mysql_test = <span class="string">'mydb'</span></div><div class="line">engine_hq = create_engine(<span class="string">'mysql+mysqldb://%s:%s@%s:%d/%s'</span> % (user_mysql_test,</div><div class="line">                                                              pwd_mysql_test,</div><div class="line">                                                              host_mysql_test,</div><div class="line">                                                              port_mysql_test,</div><div class="line">                                                              <span class="string">'hq_db'</span>), connect_args=&#123;<span class="string">'charset'</span>: <span class="string">'utf8'</span>&#125;)</div><div class="line"></div><div class="line">sql = <span class="string">"SELECT * FROM fund_data where quarter&gt;=8 order by yanzhi desc"</span></div><div class="line">df = pd.read_sql(sql, engine)</div><div class="line"><span class="comment">#将yanzhi数据转换为百分比</span></div><div class="line">df[<span class="string">'yanzhi'</span>] = df[<span class="string">'yanzhi'</span>].apply(<span class="keyword">lambda</span> x: x * <span class="number">100</span>)</div></pre></td></tr></table></figure>
+<h1 id="第二步，面元划分"><a href="#第二步，面元划分" class="headerlink" title="第二步，面元划分"></a>第二步，面元划分</h1><a id="more"></a>
+<ul>
+<li>cut函数：<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pandas.cut(x, bins, <span class="attr">right=True,</span> <span class="attr">labels=None,</span> <span class="attr">retbins=False,</span> <span class="attr">precision=3,</span> <span class="attr">include_lowest=False)</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><a href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.cut.html" target="_blank" rel="external">官方文档链接</a></p>
+<p>主要参数为x和bins。<br>x为数据源，数组格式的都支持，list，numpy.narray, pandas.Series。<br>bins可以为int，也可以为序列。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">bins = [<span class="number">0</span>, <span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">50</span>, <span class="number">60</span>, <span class="number">70</span>, <span class="number">80</span>, <span class="number">90</span>, <span class="number">100</span>]</div><div class="line">cats = pd.cut(df['yanzhi'], bins)</div></pre></td></tr></table></figure></p>
+<p>我们定义bins为一个序列，默认的为左开右闭的区间：<br><figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">In</span><span class="selector-attr">[]</span><span class="selector-pseudo">:print</span> <span class="selector-tag">cats</span></div><div class="line"><span class="selector-tag">Out</span><span class="selector-attr">[]</span>:</div><div class="line"><span class="selector-tag">0</span>      (<span class="number">90</span>, <span class="number">100</span>]</div><div class="line"><span class="number">1</span>      (<span class="number">90</span>, <span class="number">100</span>]</div><div class="line"><span class="number">2</span>      (<span class="number">90</span>, <span class="number">100</span>]</div><div class="line"><span class="number">3</span>       (<span class="number">80</span>, <span class="number">90</span>]</div><div class="line"><span class="number">4</span>       (<span class="number">80</span>, <span class="number">90</span>]</div><div class="line">         ...    </div><div class="line"><span class="number">970</span>     (<span class="number">10</span>, <span class="number">20</span>]</div><div class="line"><span class="number">971</span>     (<span class="number">10</span>, <span class="number">20</span>]</div><div class="line"><span class="number">972</span>     (<span class="number">10</span>, <span class="number">20</span>]</div><div class="line"><span class="number">973</span>     (<span class="number">10</span>, <span class="number">20</span>]</div><div class="line"><span class="number">974</span>     (<span class="number">10</span>, <span class="number">20</span>]</div><div class="line"><span class="attribute">Name</span>: yanzhi, <span class="attribute">dtype</span>: category</div><div class="line">Categories (<span class="number">10</span>, object): [(<span class="number">0</span>, <span class="number">10</span>], (<span class="number">10</span>, <span class="number">20</span>], (<span class="number">20</span>, <span class="number">30</span>], (<span class="number">30</span>, <span class="number">40</span>], ..., (<span class="number">60</span>, <span class="number">70</span>], (<span class="number">70</span>, <span class="number">80</span>], (<span class="number">80</span>, <span class="number">90</span>]</div><div class="line">                         , (<span class="number">90</span>, <span class="number">100</span>]]</div></pre></td></tr></table></figure></p>
+<h1 id="第三步，groupby"><a href="#第三步，groupby" class="headerlink" title="第三步，groupby"></a>第三步，groupby</h1><p>对言值列按cats做groupby，然后调用get_stats统计函数，再用unstack函数将层次化的行索引“展开”为列。<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">def</span> get_stats(<span class="keyword">group</span>):</div><div class="line">    <span class="keyword">return</span> &#123;<span class="string">'count'</span>: <span class="keyword">group</span>.<span class="keyword">count</span>()&#125;</div><div class="line"></div><div class="line">grouped = df[<span class="string">'yanzhi'</span>].groupby(cats)</div><div class="line">bin_counts = grouped.apply(get_stats).unstack()</div><div class="line"></div><div class="line"><span class="keyword">print</span> bin_counts</div><div class="line"></div><div class="line">           <span class="keyword">count</span></div><div class="line">yanzhi          </div><div class="line">(<span class="number">0</span>, <span class="number">10</span>]        <span class="number">0</span></div><div class="line">(<span class="number">10</span>, <span class="number">20</span>]       <span class="number">5</span></div><div class="line">(<span class="number">20</span>, <span class="number">30</span>]      <span class="number">22</span></div><div class="line">(<span class="number">30</span>, <span class="number">40</span>]      <span class="number">92</span></div><div class="line">(<span class="number">40</span>, <span class="number">50</span>]     <span class="number">258</span></div><div class="line">(<span class="number">50</span>, <span class="number">60</span>]     <span class="number">357</span></div><div class="line">(<span class="number">60</span>, <span class="number">70</span>]     <span class="number">178</span></div><div class="line">(<span class="number">70</span>, <span class="number">80</span>]      <span class="number">51</span></div><div class="line">(<span class="number">80</span>, <span class="number">90</span>]       <span class="number">9</span></div><div class="line">(<span class="number">90</span>, <span class="number">100</span>]      <span class="number">3</span></div></pre></td></tr></table></figure></p>
+<h1 id="第四步，重命名索引，pandas绘图"><a href="#第四步，重命名索引，pandas绘图" class="headerlink" title="第四步，重命名索引，pandas绘图"></a>第四步，重命名索引，pandas绘图</h1><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">bin_counts.index = ['<span class="number">0</span>~<span class="number">10</span>', '<span class="number">10</span>~<span class="number">20</span>', '<span class="number">20</span>~<span class="number">30</span>', '<span class="number">30</span>~<span class="number">40</span>', '<span class="number">40</span>~<span class="number">50</span>', '<span class="number">50</span>~<span class="number">60</span>', '<span class="number">60</span>~<span class="number">70</span>',</div><div class="line">                    '<span class="number">70</span>~<span class="number">80</span>', '<span class="number">80</span>~<span class="number">90</span>', '<span class="number">90</span>~<span class="number">100</span>']</div><div class="line">bin_counts.index.name = 'yanzhi'</div><div class="line">bin_counts.plot(kind='bar', alpha=<span class="number">0.5</span>, rot=<span class="number">0</span>)</div></pre></td></tr></table></figure>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-11-02/dist1.png" alt=""></p>
+<h1 id="扩展：其它工具绘制"><a href="#扩展：其它工具绘制" class="headerlink" title="扩展：其它工具绘制"></a>扩展：其它工具绘制</h1><h2 id="一，用G2绘制"><a href="#一，用G2绘制" class="headerlink" title="一，用G2绘制"></a>一，用G2绘制</h2><p>G2在之前的文章中有介绍，文章<a href="http://kekefund.com/2016/08/05/pandas-and-g2/" target="_blank" rel="external">《python结合G2绘制精美图形》</a>。</p>
+<h3 id="1，生成json数据"><a href="#1，生成json数据" class="headerlink" title="1，生成json数据"></a>1，生成json数据</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">datas = []</div><div class="line"><span class="keyword">for</span> ix, row <span class="keyword">in</span> bin_counts.iterrows():</div><div class="line">    # <span class="keyword">if</span> row[<span class="string">'机构数量'</span>] &gt; <span class="number">0</span>:</div><div class="line">    sss = &#123;<span class="string">'name'</span>: ix, <span class="string">'count'</span>: row[<span class="string">'count'</span>]&#125;</div><div class="line">    datas.append(sss)</div><div class="line">encodejson = json.dumps(datas, ensure_ascii=False)</div><div class="line">f = <span class="built_in">open</span>(<span class="string">'yanzhi.json'</span>, <span class="string">'w'</span>)</div><div class="line">f.<span class="built_in">write</span>(encodejson)</div><div class="line">f.<span class="built_in">close</span>()</div></pre></td></tr></table></figure>
+<h3 id="2，配置html文件"><a href="#2，配置html文件" class="headerlink" title="2，配置html文件"></a>2，配置html文件</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>分布图<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"https://as.alipayobjects.com/g/datavis/g2-static/0.0.8/doc.css"</span> /&gt;</span></div><div class="line">    <span class="comment">&lt;!--如果不需要jquery ajax 则可以不引入--&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://a.alipayobjects.com/jquery/jquery/1.11.1/jquery.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://a.alipayobjects.com/alipay-request/3.0.3/index.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- 引入 G2 脚本 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://as.alipayobjects.com/g/datavis/g2/1.2.2/index.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"c1"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- G2 code start --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></div><div class="line">        $.getJSON(<span class="string">'yanzhi.json'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</div><div class="line"></div><div class="line">      <span class="keyword">var</span> Frame = G2.Frame;</div><div class="line">      <span class="keyword">var</span> frame = <span class="keyword">new</span> Frame(data);</div><div class="line">      frame = Frame.combinColumns(frame, [<span class="string">'count'</span>],<span class="string">'count'</span>,<span class="string">'type'</span>,[<span class="string">'name'</span>, <span class="string">'count'</span>]);</div><div class="line">      <span class="keyword">var</span> chart = <span class="keyword">new</span> G2.Chart(&#123;</div><div class="line">        <span class="attr">id</span>: <span class="string">'c1'</span>,</div><div class="line">        <span class="attr">width</span>: <span class="number">600</span>,</div><div class="line">        <span class="attr">height</span>: <span class="number">400</span></div><div class="line">      &#125;);</div><div class="line">      chart.source(frame, &#123;</div><div class="line">        <span class="string">'count'</span>: &#123;<span class="attr">alias</span>: <span class="string">'数量'</span>, <span class="attr">min</span>: <span class="number">0</span>&#125;,</div><div class="line">        <span class="string">'name'</span>: &#123;<span class="attr">alias</span>: <span class="string">'言值分布'</span>, <span class="attr">min</span>: <span class="number">0</span>&#125; </div><div class="line">      &#125;);</div><div class="line">      <span class="comment">// 去除 X 轴标题</span></div><div class="line"><span class="comment">//      chart.axis('name', &#123;</span></div><div class="line"><span class="comment">//        title: null</span></div><div class="line"><span class="comment">//      &#125;);</span></div><div class="line">      chart.legend(<span class="literal">false</span>);<span class="comment">// 不显示图例</span></div><div class="line">      chart.intervalStack().position(<span class="string">'name*count'</span>).color(<span class="string">'type'</span>, [<span class="string">'#348cd1'</span>, <span class="string">'#43b5d8'</span>]); <span class="comment">// 绘制层叠柱状图</span></div><div class="line">      chart.line().position(<span class="string">'name*count'</span>).color(<span class="string">'#5ed470'</span>).size(<span class="number">2</span>).shape(<span class="string">'smooth'</span>); <span class="comment">// 绘制曲线图</span></div><div class="line">      chart.point().position(<span class="string">'name*count'</span>).color(<span class="string">'#5ed470'</span>); <span class="comment">// 绘制点图</span></div><div class="line">      chart.render();</div><div class="line">        &#125;);</div><div class="line"></div><div class="line">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- G2 code end --&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="3，显示结果"><a href="#3，显示结果" class="headerlink" title="3，显示结果"></a>3，显示结果</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-11-02/dist2.png" alt=""></p>
+<h2 id="二、DataFrame密度图"><a href="#二、DataFrame密度图" class="headerlink" title="二、DataFrame密度图"></a>二、DataFrame密度图</h2><p>一句话绘制出来，但具体的区间段难以区分出来。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">df[<span class="string">"yanzhi"</span>].hist(bins=<span class="number">20</span>, alpha=<span class="number">0.5</span>)</div></pre></td></tr></table></figure></p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-11-02/dist3.png" alt=""></p>
+<h2 id="三、bokeh绘图"><a href="#三、bokeh绘图" class="headerlink" title="三、bokeh绘图"></a>三、bokeh绘图</h2><p>bokeh是python的一个优秀的绘图工具包，与pandas结合的比较好。<a href="http://bokeh.pydata.org/en/latest/docs/gallery/histograms_chart.html" target="_blank" rel="external">bokeh文档</a></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">from bokeh<span class="selector-class">.charts</span> import Histogram, output_file,show</div><div class="line"></div><div class="line">hist=Histogram(df, values=<span class="string">'yanzhi'</span>,bins=<span class="number">30</span>, title=<span class="string">'分布图'</span>, legend=<span class="string">'top_right'</span>)</div><div class="line"><span class="function"><span class="title">output_file</span><span class="params">(<span class="string">'hist.html'</span>, title=<span class="string">'hist example'</span>)</span></span></div><div class="line"><span class="function"><span class="title">show</span><span class="params">(hist)</span></span></div></pre></td></tr></table></figure>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-11-02/dist4.png" alt=""></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag">#Python</a>
+          
+            <a href="/tags/pandas/" rel="tag">#pandas</a>
+          
+            <a href="/tags/groupby/" rel="tag">#groupby</a>
+          
+            <a href="/tags/g2/" rel="tag">#g2</a>
+          
+            <a href="/tags/bokeh/" rel="tag">#bokeh</a>
+          
+            <a href="/tags/绘图/" rel="tag">#绘图</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/10/mac-eclipse-debug/" rel="next" title="mac版 eclipse 只能run不能debug的解决方案">
+                <i class="fa fa-chevron-left"></i> mac版 eclipse 只能run不能debug的解决方案
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/10/scrapyd-deploy/" rel="prev" title="Scrapyd部署">
+                Scrapyd部署 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/11/02/distribution-map/"
+     data-title="python制作分布图"
+     data-content=""
+     data-url="http://www.kekefund.com/2016/11/02/distribution-map/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/02/distribution-map/"
+           data-title="python制作分布图" data-url="http://www.kekefund.com/2016/11/02/distribution-map/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一步，从数据库中提取数据"><span class="nav-number">1.</span> <span class="nav-text">第一步，从数据库中提取数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二步，面元划分"><span class="nav-number">2.</span> <span class="nav-text">第二步，面元划分</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三步，groupby"><span class="nav-number">3.</span> <span class="nav-text">第三步，groupby</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四步，重命名索引，pandas绘图"><span class="nav-number">4.</span> <span class="nav-text">第四步，重命名索引，pandas绘图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#扩展：其它工具绘制"><span class="nav-number">5.</span> <span class="nav-text">扩展：其它工具绘制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一，用G2绘制"><span class="nav-number">5.1.</span> <span class="nav-text">一，用G2绘制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1，生成json数据"><span class="nav-number">5.1.1.</span> <span class="nav-text">1，生成json数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2，配置html文件"><span class="nav-number">5.1.2.</span> <span class="nav-text">2，配置html文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3，显示结果"><span class="nav-number">5.1.3.</span> <span class="nav-text">3，显示结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、DataFrame密度图"><span class="nav-number">5.2.</span> <span class="nav-text">二、DataFrame密度图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、bokeh绘图"><span class="nav-number">5.3.</span> <span class="nav-text">三、bokeh绘图</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

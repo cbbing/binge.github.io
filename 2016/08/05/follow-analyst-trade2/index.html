@@ -1,0 +1,1132 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="股票,大数据," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="在系列第一篇《跟着分析师炒股系列（一）》里，信谁大数据科学团队以分析师研报推荐的股票池，建立了一套股票组合轮动的交易策略，发掘出累积收益最高的一票分析师，其中最牛的招商证券分析师刘荣的累积收益竟达80倍！ 不过，累积收益还可能包含运气成分，比如大牛市下推荐股票都大涨，还不能算真英雄。这一次我们来看看相对收益，看能不能找出穿越牛熊的分析师，尤其是最近一年熊市震荡下他们的表现如何。 延续上一篇的交易策">
+<meta name="keywords" content="股票,大数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="跟着分析师炒股系列（二）">
+<meta property="og:url" content="http://www.kekefund.com/2016/08/05/follow-analyst-trade2/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="在系列第一篇《跟着分析师炒股系列（一）》里，信谁大数据科学团队以分析师研报推荐的股票池，建立了一套股票组合轮动的交易策略，发掘出累积收益最高的一票分析师，其中最牛的招商证券分析师刘荣的累积收益竟达80倍！ 不过，累积收益还可能包含运气成分，比如大牛市下推荐股票都大涨，还不能算真英雄。这一次我们来看看相对收益，看能不能找出穿越牛熊的分析师，尤其是最近一年熊市震荡下他们的表现如何。 延续上一篇的交易策">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-05/trade2_1.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-05/trade2_2.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-05/trade2_3.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-05/trade2_4.png">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-05/trade2_5.png">
+<meta property="og:updated_time" content="2017-04-07T06:00:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="跟着分析师炒股系列（二）">
+<meta name="twitter:description" content="在系列第一篇《跟着分析师炒股系列（一）》里，信谁大数据科学团队以分析师研报推荐的股票池，建立了一套股票组合轮动的交易策略，发掘出累积收益最高的一票分析师，其中最牛的招商证券分析师刘荣的累积收益竟达80倍！ 不过，累积收益还可能包含运气成分，比如大牛市下推荐股票都大涨，还不能算真英雄。这一次我们来看看相对收益，看能不能找出穿越牛熊的分析师，尤其是最近一年熊市震荡下他们的表现如何。 延续上一篇的交易策">
+<meta name="twitter:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-05/trade2_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 跟着分析师炒股系列（二） | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                跟着分析师炒股系列（二）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-08-05T09:10:42+08:00" content="2016-08-05">
+              2016-08-05
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Stock/" itemprop="url" rel="index">
+                    <span itemprop="name">Stock</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/05/follow-analyst-trade2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/05/follow-analyst-trade2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>在系列第一篇《<a href="http://kekefund.com/2016/07/25/follow-analyst-trade/" target="_blank" rel="external">跟着分析师炒股系列（一）</a>》里，信谁大数据科学团队以分析师研报推荐的股票池，建立了一套股票组合轮动的交易策略，发掘出累积收益最高的一票分析师，其中最牛的招商证券分析师刘荣的累积收益竟达80倍！</p>
+<p>不过，累积收益还可能包含运气成分，比如大牛市下推荐股票都大涨，还不能算真英雄。这一次我们来看看相对收益，看能不能找出穿越牛熊的分析师，尤其是最近一年熊市震荡下他们的表现如何。</p>
+<p>延续上一篇的交易策略，筛选分析师评级为买入和增持的股票，形成股票池。<br>调仓周期为3个月。<br>选取分析师评级为“买入、增持”的股票。实现3个月一轮换。<br>具体在每三个月的月末，选取最近发表三篇研报推荐的股票：</p>
+<ul>
+<li>若三只股票与前三个月推荐的完全一样，则继续持有；</li>
+<li>若三只股票都不一样，则卖掉所有持仓，买入新推荐的三只股票；</li>
+<li>若三只股票有一到两只不同，则卖掉收益率最高的持仓股票，买入新推荐的一到两只股票。</li>
+</ul>
+<hr>
+<h1 id="一，年化相对收益率排名TOP10"><a href="#一，年化相对收益率排名TOP10" class="headerlink" title="一，年化相对收益率排名TOP10"></a>一，年化相对收益率排名TOP10</h1><p>我们挑选最近活跃的分析师（在1年内有发表研报），并且其交易周期≥1年。共747名分析师，先看结果：</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-05/trade2_1.png" alt=""></p>
+<a id="more"></a>
+<blockquote>
+<p>注：相对收益率对比基准是上证指数</p>
+</blockquote>
+<p>相对收益率看的是真本事，不论牛熊，能真正跑赢大盘的才是真正的王者。其中，招商证券电气设备新能源行业分析师胡毅取得第一名，相对年收益率为125.7%。这与他主攻研究储能与新能源电池产业，也有很大关系，从热门板块中发掘优质个股。</p>
+<h1 id="二，最近热门分析师相对收益率"><a href="#二，最近热门分析师相对收益率" class="headerlink" title="二，最近热门分析师相对收益率"></a>二，最近热门分析师相对收益率</h1><p>眼下，相信大家最关心的就是震荡市选股问题，如何在大势不好的情况下选出黑马股跑赢大盘。来看看2015年6月15日股灾过后，分析师们的表现如何？在这近1年的震荡中有没有战胜大势的分析师？<br>挑选标准：</p>
+<ul>
+<li>最近1年研报数量&gt;=10</li>
+<li>最后一次发表研报在近6个月</li>
+</ul>
+<p>按此标准，共筛选出符合要求的分析师693名。</p>
+<h2 id="近一年最高年化相对收益率排名："><a href="#近一年最高年化相对收益率排名：" class="headerlink" title="近一年最高年化相对收益率排名："></a>近一年最高年化相对收益率排名：</h2><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-05/trade2_2.png" alt=""></p>
+<blockquote>
+<p>注：最大相对收益率越大越好，最大回撤率越低越好。</p>
+</blockquote>
+<p>最近一直是震荡行情，能在震荡行情实现较高的相对收益率，这样的分析师具备较高的选股能力。排名第一的是广发证券巨国贤分析师，年化相对收益率达到来 202.8%！<br>但他在信谁平台上的“言值”并不高，言值为58。这是为什么呢？<br>翻看巨国贤的履历，他从2007年转型进入证券行业，并在13年、14年拿到有色金属行业新财富最佳分析师，还被业界称为“大气晚成型”。言值低，就因为之前的荐股错误较多。对于这样历史表现不佳，而最近崛起的“黑马”分析师，我们可以格外关注。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-05/trade2_3.png" alt=""></p>
+<p>来看看他的调仓记录：（初始资金设置为100万）</p>
+<h2 id="第1次调仓"><a href="#第1次调仓" class="headerlink" title="第1次调仓"></a>第1次调仓</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">交易日期</th>
+<th style="text-align:center">股票代码</th>
+<th style="text-align:center">操作</th>
+<th style="text-align:center">成交数量</th>
+<th style="text-align:center">成交价格</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">2015-07-30</td>
+<td style="text-align:center">赤峰黄金(600988)</td>
+<td style="text-align:center">买入</td>
+<td style="text-align:center">25500</td>
+<td style="text-align:center">13.06</td>
+</tr>
+<tr>
+<td style="text-align:center">2015-07-30</td>
+<td style="text-align:center">众和股份(002070)</td>
+<td style="text-align:center">买入</td>
+<td style="text-align:center">34300</td>
+<td style="text-align:center">9.70</td>
+</tr>
+</tbody>
+</table>
+<p>当前市值：100000， 盈亏比例：0%</p>
+<h2 id="第2次调仓"><a href="#第2次调仓" class="headerlink" title="第2次调仓"></a>第2次调仓</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">交易日期</th>
+<th style="text-align:center">股票代码</th>
+<th style="text-align:center">操作</th>
+<th style="text-align:center">成交数量</th>
+<th style="text-align:center">成交价格</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">2015-10-30</td>
+<td style="text-align:center">赤峰黄金(600988)</td>
+<td style="text-align:center">卖出</td>
+<td style="text-align:center">25500</td>
+<td style="text-align:center">12.73</td>
+</tr>
+<tr>
+<td style="text-align:center">2015-10-30</td>
+<td style="text-align:center">众和股份(002070)</td>
+<td style="text-align:center">卖出</td>
+<td style="text-align:center">34300</td>
+<td style="text-align:center">17.6</td>
+</tr>
+<tr>
+<td style="text-align:center">2015-10-30</td>
+<td style="text-align:center">宝钛股份(600456)</td>
+<td style="text-align:center">买入</td>
+<td style="text-align:center">18600</td>
+<td style="text-align:center">17.9</td>
+</tr>
+<tr>
+<td style="text-align:center">2015-10-30</td>
+<td style="text-align:center">赣锋锂业(002460)</td>
+<td style="text-align:center">买入</td>
+<td style="text-align:center">19200</td>
+<td style="text-align:center">16.99</td>
+</tr>
+<tr>
+<td style="text-align:center">2015-10-30</td>
+<td style="text-align:center">融捷股份(002192)</td>
+<td style="text-align:center">买入</td>
+<td style="text-align:center">29100</td>
+<td style="text-align:center">20.73</td>
+</tr>
+</tbody>
+</table>
+<p>当前市值：1262555， 盈亏比例：26..3%</p>
+<blockquote>
+<p>注：002070由于停牌无法卖出，推迟到2015-12-07交易。</p>
+</blockquote>
+<h2 id="第3次调仓"><a href="#第3次调仓" class="headerlink" title="第3次调仓"></a>第3次调仓</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">交易日期</th>
+<th style="text-align:center">股票代码</th>
+<th style="text-align:center">操作</th>
+<th style="text-align:center">成交数量</th>
+<th style="text-align:center">成交价格</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">2016-01-28</td>
+<td style="text-align:center">赣锋锂业(002460)</td>
+<td style="text-align:center">卖出</td>
+<td style="text-align:center">19200</td>
+<td style="text-align:center">16.68</td>
+</tr>
+<tr>
+<td style="text-align:center">2016-01-28</td>
+<td style="text-align:center">融捷股份(002192)</td>
+<td style="text-align:center">卖出</td>
+<td style="text-align:center">16200</td>
+<td style="text-align:center">24.8</td>
+</tr>
+<tr>
+<td style="text-align:center">2016-01-28</td>
+<td style="text-align:center">豫光金铅(600531)</td>
+<td style="text-align:center">买入</td>
+<td style="text-align:center">165500</td>
+<td style="text-align:center">4.36</td>
+</tr>
+</tbody>
+</table>
+<p>当前市值：1313868， 盈亏比例：31.4%</p>
+<h2 id="第4次调仓"><a href="#第4次调仓" class="headerlink" title="第4次调仓"></a>第4次调仓</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">交易日期</th>
+<th style="text-align:center">股票代码</th>
+<th style="text-align:center">操作</th>
+<th style="text-align:center">成交数量</th>
+<th style="text-align:center">成交价格</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">2016-04-28</td>
+<td style="text-align:center">宝钛股份(600456)</td>
+<td style="text-align:center">卖出</td>
+<td style="text-align:center">18600</td>
+<td style="text-align:center">16.3</td>
+</tr>
+<tr>
+<td style="text-align:center">2016-04-28</td>
+<td style="text-align:center">融捷股份(002192)</td>
+<td style="text-align:center">卖出</td>
+<td style="text-align:center">12900</td>
+<td style="text-align:center">42.12</td>
+</tr>
+<tr>
+<td style="text-align:center">2016-04-28</td>
+<td style="text-align:center">豫光金铅(600531)</td>
+<td style="text-align:center">卖出</td>
+<td style="text-align:center">165500</td>
+<td style="text-align:center">8.41</td>
+</tr>
+<tr>
+<td style="text-align:center">2016-04-28</td>
+<td style="text-align:center">正海磁材(300224)</td>
+<td style="text-align:center">买入</td>
+<td style="text-align:center">15700</td>
+<td style="text-align:center">19.29</td>
+</tr>
+<tr>
+<td style="text-align:center">2016-04-28</td>
+<td style="text-align:center">云海金属(002182)</td>
+<td style="text-align:center">买入</td>
+<td style="text-align:center">90700</td>
+<td style="text-align:center">15.35</td>
+</tr>
+<tr>
+<td style="text-align:center">2016-04-28</td>
+<td style="text-align:center">天齐锂业(002466)</td>
+<td style="text-align:center">买入</td>
+<td style="text-align:center">12700</td>
+<td style="text-align:center">42.69</td>
+</tr>
+</tbody>
+</table>
+<p>当前市值：2238983， 盈亏比例：123.9%</p>
+<h2 id="第5次调仓"><a href="#第5次调仓" class="headerlink" title="第5次调仓"></a>第5次调仓</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">交易日期</th>
+<th style="text-align:center">股票代码</th>
+<th style="text-align:center">操作</th>
+<th style="text-align:center">成交数量</th>
+<th style="text-align:center">成交价格</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">2016-07-27</td>
+<td style="text-align:center">正海磁材(300224)</td>
+<td style="text-align:center">卖出</td>
+<td style="text-align:center">15700</td>
+<td style="text-align:center">20.58</td>
+</tr>
+<tr>
+<td style="text-align:center">2016-07-27</td>
+<td style="text-align:center">云海金属(002182)</td>
+<td style="text-align:center">卖出</td>
+<td style="text-align:center">90700</td>
+<td style="text-align:center">22.0</td>
+</tr>
+<tr>
+<td style="text-align:center">2016-07-27</td>
+<td style="text-align:center">天齐锂业(002466)</td>
+<td style="text-align:center">卖出</td>
+<td style="text-align:center">12700</td>
+<td style="text-align:center">39.15</td>
+</tr>
+</tbody>
+</table>
+<p>当前市值：2817433， 盈亏比例：181.7%</p>
+<p>期间大盘跌了19%，其相对年化收益率为202.8%。</p>
+<h2 id="高言值分析师与低言值分析师收益率对比："><a href="#高言值分析师与低言值分析师收益率对比：" class="headerlink" title="高言值分析师与低言值分析师收益率对比："></a>高言值分析师与低言值分析师收益率对比：</h2><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-05/trade2_4.png" alt=""></p>
+<blockquote>
+<p>注：最大相对收益率越大越好，最大回撤率越低越好。</p>
+</blockquote>
+<p>从上面的散点图可以看出，高言值的分析师策略取得正收益的概率比低言值的高，但是收益率越高，风险越大（最大回撤率越大）。</p>
+<h1 id="三，分析师神推荐股票"><a href="#三，分析师神推荐股票" class="headerlink" title="三，分析师神推荐股票"></a>三，分析师神推荐股票</h1><h2 id="2016年分析师推荐股票次数排名TOP10"><a href="#2016年分析师推荐股票次数排名TOP10" class="headerlink" title="2016年分析师推荐股票次数排名TOP10"></a>2016年分析师推荐股票次数排名TOP10</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">股票名称</th>
+<th style="text-align:center">股票代码</th>
+<th style="text-align:center">推荐次数</th>
+<th style="text-align:center">涨幅（%）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">隆基股份</td>
+<td style="text-align:center">601012</td>
+<td style="text-align:center">104</td>
+<td style="text-align:center">19.3</td>
+</tr>
+<tr>
+<td style="text-align:center">美的集团</td>
+<td style="text-align:center">000333</td>
+<td style="text-align:center">102</td>
+<td style="text-align:center">47.9</td>
+</tr>
+<tr>
+<td style="text-align:center">贵州茅台</td>
+<td style="text-align:center">600519</td>
+<td style="text-align:center">85</td>
+<td style="text-align:center">49.1</td>
+</tr>
+<tr>
+<td style="text-align:center">阳光电源</td>
+<td style="text-align:center">300274</td>
+<td style="text-align:center">84</td>
+<td style="text-align:center">-7.8</td>
+</tr>
+<tr>
+<td style="text-align:center">国轩高科</td>
+<td style="text-align:center">002074</td>
+<td style="text-align:center">83</td>
+<td style="text-align:center">10.6</td>
+</tr>
+<tr>
+<td style="text-align:center">华策影视</td>
+<td style="text-align:center">300133</td>
+<td style="text-align:center">83</td>
+<td style="text-align:center">-15.1</td>
+</tr>
+<tr>
+<td style="text-align:center">网宿科技</td>
+<td style="text-align:center">300017</td>
+<td style="text-align:center">81</td>
+<td style="text-align:center">38.2</td>
+</tr>
+<tr>
+<td style="text-align:center">沧州明珠</td>
+<td style="text-align:center">002108</td>
+<td style="text-align:center">78</td>
+<td style="text-align:center">51.3</td>
+</tr>
+<tr>
+<td style="text-align:center">老板电器</td>
+<td style="text-align:center">002508</td>
+<td style="text-align:center">76</td>
+<td style="text-align:center">46.4</td>
+</tr>
+<tr>
+<td style="text-align:center">宋城演艺</td>
+<td style="text-align:center">300144</td>
+<td style="text-align:center">74</td>
+<td style="text-align:center">-12.0</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>注：收益率计算截止到7月31日</p>
+</blockquote>
+<p>可见，推荐次数排名前十的股票，有7只上涨，3只下跌；上涨的平均收益为37.5%，下跌的平均亏损为-11.6%。</p>
+<p>按最简单的均分法，将资金等额购买这10只股票，就能取得22.8%的收益率！而大盘今年截止目前跌幅是9.61%。</p>
+<p>看样子，对于“懒人”投资者，直接跟着这个统计规律买卖的话也能战胜大盘！这背后其实是专业分析的力量，当分析师一致看好的时候，黑马股的概率更大。</p>
+<h1 id="四、分析师研报特点"><a href="#四、分析师研报特点" class="headerlink" title="四、分析师研报特点"></a>四、分析师研报特点</h1><p>对券商分析师研报分析，发现分析师最爱的评级是增持和买入，占到83.65%。<br>远大于评级为“卖出”和“减持”的数量。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-08-05/trade2_5.png" alt=""></p>
+<p>你懂的，这就是卖方分析师的命脉，在A股现有投资氛围下唱多更容易受机构和投资者待见。</p>
+<p>喜欢唱多不要紧，问题是真的符合评级的有多少，这就是信谁分析师言值评价的作用。</p>
+<p>就像业内的传说：</p>
+<blockquote>
+<p>据前辈口口相传，在那遥远的地方，有一群苦逼的策略分析师，日出而作，月落不息，苦练 《葵花宝典》和《屠龙刀法》，希望有朝一日能够在‘新财富’杯华山论剑中一举发威、技惊四座。能入行的，没有笨人。能入门的，没有懒人。想拿奖？唯有能拼命的猛人。</p>
+</blockquote>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/股票/" rel="tag">#股票</a>
+          
+            <a href="/tags/大数据/" rel="tag">#大数据</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/05/pandas-and-g2/" rel="next" title="python结合G2绘制精美图形">
+                <i class="fa fa-chevron-left"></i> python结合G2绘制精美图形
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/25/follow-analyst-trade/" rel="prev" title="跟着分析师炒股系列（一）">
+                跟着分析师炒股系列（一） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/08/05/follow-analyst-trade2/"
+     data-title="跟着分析师炒股系列（二）"
+     data-content=""
+     data-url="http://www.kekefund.com/2016/08/05/follow-analyst-trade2/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/05/follow-analyst-trade2/"
+           data-title="跟着分析师炒股系列（二）" data-url="http://www.kekefund.com/2016/08/05/follow-analyst-trade2/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一，年化相对收益率排名TOP10"><span class="nav-number">1.</span> <span class="nav-text">一，年化相对收益率排名TOP10</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二，最近热门分析师相对收益率"><span class="nav-number">2.</span> <span class="nav-text">二，最近热门分析师相对收益率</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#近一年最高年化相对收益率排名："><span class="nav-number">2.1.</span> <span class="nav-text">近一年最高年化相对收益率排名：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第1次调仓"><span class="nav-number">2.2.</span> <span class="nav-text">第1次调仓</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第2次调仓"><span class="nav-number">2.3.</span> <span class="nav-text">第2次调仓</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第3次调仓"><span class="nav-number">2.4.</span> <span class="nav-text">第3次调仓</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第4次调仓"><span class="nav-number">2.5.</span> <span class="nav-text">第4次调仓</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第5次调仓"><span class="nav-number">2.6.</span> <span class="nav-text">第5次调仓</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高言值分析师与低言值分析师收益率对比："><span class="nav-number">2.7.</span> <span class="nav-text">高言值分析师与低言值分析师收益率对比：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三，分析师神推荐股票"><span class="nav-number">3.</span> <span class="nav-text">三，分析师神推荐股票</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2016年分析师推荐股票次数排名TOP10"><span class="nav-number">3.1.</span> <span class="nav-text">2016年分析师推荐股票次数排名TOP10</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、分析师研报特点"><span class="nav-number">4.</span> <span class="nav-text">四、分析师研报特点</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

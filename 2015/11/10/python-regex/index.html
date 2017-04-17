@@ -1,0 +1,956 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Python,re,正则表达式,模式匹配," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。 下表为正则表达式基本元字符，其中包括通配符、范围和闭包">
+<meta name="keywords" content="Python,re,正则表达式,模式匹配">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python正则表达式">
+<meta property="og:url" content="http://www.kekefund.com/2015/11/10/python-regex/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。 下表为正则表达式基本元字符，其中包括通配符、范围和闭包">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png">
+<meta property="og:updated_time" content="2016-01-21T01:17:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python正则表达式">
+<meta name="twitter:description" content="许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。 下表为正则表达式基本元字符，其中包括通配符、范围和闭包">
+<meta name="twitter:image" content="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> Python正则表达式 | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Python正则表达式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-11-10T15:09:20+08:00" content="2015-11-10">
+              2015-11-10
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/11/10/python-regex/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/10/python-regex/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>许多语言处理任务都涉及模式匹配。例如,可以使用endswith(‘ed’)找出以“ed”结尾的词。正则表达式提出了一个更加强大和灵活的方法描述感兴趣的字符模式。在Python中使用正则表达式，需要使用import re导入re函数库。</p>
+<p><strong>下表为正则表达式基本元字符，其中包括通配符、范围和闭包</strong><br><a id="more"></a><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/regex1.png" alt="正则模式"></p>
+<h2 id="贪婪模式与非贪婪模式"><a href="#贪婪模式与非贪婪模式" class="headerlink" title="贪婪模式与非贪婪模式"></a>贪婪模式与非贪婪模式</h2><p>Python里数量词默认是贪婪的（在少数语言里也可能是默认非贪婪），总是尝试匹配尽可能多的字符；非贪婪的则相反，总是尝试匹配尽可能少的字符。<br>例如：正则表达式 “ab<em>”，如果用于查找“abbbc”，将找到“abbb”。而如果使用非贪婪的数量词“ab\</em>?“，将找到”a“</p>
+<ol>
+<li><p>*? 是一个固定的搭配，.和*代表可以匹配任意无限多个字符，加上？表示使用非贪婪模式进行匹配，也就是我们会尽可能短地做匹配。</p>
+</li>
+<li><p>(.*?)代表一个分组，在这个正则表达式中我们匹配了五个分组，在后面的遍历item中，item[0]就代表第一个(.*?)所指代的内容，item[1]就代表第二个(.*?)所指代的内容，以此类推。</p>
+</li>
+<li><p>re.S 标志代表在匹配时为点任意匹配模式，点 . 也可以代表换行符。</p>
+</li>
+</ol>
+<h2 id="re模块"><a href="#re模块" class="headerlink" title="re模块"></a>re模块</h2><h3 id="一、re-search"><a href="#一、re-search" class="headerlink" title="一、re.search()"></a>一、re.search()</h3><p>使用正则表达式&lt;<ed$>&gt;查找以ed结尾的词汇。使用函数re.search(p, s) 检查字符串s中是否有模式p。</ed$></p>
+<pre><code>import re
+import nltk
+In[12]: wsj = sorted(set(nltk.corpus.treebank.word()))
+In[13]: ws = [w for w in wsj if re.search(&apos;ed$&apos;, w)]
+
+In[15]: ws[:10]
+Out[15]: 
+[u&apos;62%-owned&apos;,u&apos;Absorbed&apos;,u&apos;Advanced&apos;,u&apos;Alfred&apos;, u&apos;Allied&apos;, u&apos;Annualized&apos;, u&apos;Arbitrage-related&apos;,
+ u&apos;Asked&apos;,u&apos;Atlanta-based&apos;, u&apos;Bermuda-based&apos;]
+</code></pre><p>通配符“.”可以用来匹配任何单个字符。假设有一个8个字母组成的字谜，j是第三个字母，t是第六个字母。每个空白单元格用句点隔开。</p>
+<pre><code>In[16]: ws = [w for w in wsj if re.search(&apos;^..j..t..$&apos;, w)]
+In[18]: ws
+Out[18]: [u&apos;adjusted&apos;, u&apos;rejected&apos;]
+</code></pre><p>匹配除元音字母之外的所有字母</p>
+<pre><code>[^aeiouAEIOU]
+</code></pre><p><strong>?:</strong><br>如果要使用括号来指定连接的范围，又不想选择要输出字符串，必须添加“?:”。</p>
+<pre><code>In[20]: re.findall(r&apos;^.*(?:ing|ly|ed|ies)$&apos;, &apos;processing&apos;)
+Out[20]: [&apos;processing&apos;]
+</code></pre><p>演示如何使用符号：\，{}，() 和 |</p>
+<pre><code>In[20]: ws = [w for w in wsj if re.search(&apos;^[0-9]+\.[0-9]+$&apos;, w)]
+In[21]: ws[:5]
+Out[21]: [u&apos;0.0085&apos;, u&apos;0.05&apos;, u&apos;0.1&apos;, u&apos;0.16&apos;, u&apos;0.2&apos;]
+
+In[22]: ws = [w for w in wsj if re.search(&apos;^[A-Z]+\$$&apos;, w)]
+In[23]: ws
+Out[23]: [u&apos;C$&apos;, u&apos;US$&apos;]
+
+In[24]: ws = [w for w in wsj if re.search(&apos;^[0-9]{4}$&apos;, w)]
+In[26]: ws[:5]
+Out[26]: [u&apos;1614&apos;, u&apos;1637&apos;, u&apos;1787&apos;, u&apos;1901&apos;, u&apos;1903&apos;]
+
+In[27]: ws = [w for w in wsj if re.search(&apos;(ed|ing)$&apos;, w)]
+In[28]: ws[:5]
+Out[28]: [u&apos;62%-owned&apos;, u&apos;Absorbed&apos;, u&apos;According&apos;, u&apos;Adopting&apos;, u&apos;Advanced&apos;]
+</code></pre><h3 id="二、re-split"><a href="#二、re-split" class="headerlink" title="二、re.split()"></a>二、re.split()</h3><p>按照能够匹配的子串将string分割后返回列表。</p>
+<h4 id="re-split-pattern-string-maxsplit"><a href="#re-split-pattern-string-maxsplit" class="headerlink" title="re.split(pattern, string[,maxsplit])"></a>re.split(pattern, string[,maxsplit])</h4><pre><code>In[13]: raw = &quot;&quot;&quot;&apos;When I&apos;M a Duchess,&apos; she said to herself, (not in a very hopeful tone
+... though), &apos;I won&apos;t have any pepper in my kitchen AT ALL. Soup does very
+... well without--Maybe it&apos;s always pepper that makes people
+... hot-tempered,&apos;...&quot;&quot;&quot;
+In[16]: re.split(r&apos; &apos;, raw)
+Out[16]: 
+[&quot;&apos;When&quot;,
+ &quot;I&apos;M&quot;,
+ &apos;a&apos;,
+ &quot;Duchess,&apos;&quot;,...]
+In[17]: re.split(&apos;[ \t\n]&apos;, raw)
+Out[17]: 
+[&quot;&apos;When&quot;,
+ &quot;I&apos;M&quot;,
+ &apos;a&apos;,
+ &quot;Duchess,&apos;&quot;,...]
+</code></pre><h4 id="split-string-maxsplit"><a href="#split-string-maxsplit" class="headerlink" title="split(string[, maxsplit])"></a>split(string[, maxsplit])</h4><pre><code>In [1]: import re
+
+In [2]: p = re.compile(r&apos;\d+&apos;)
+
+In [3]: p.split(&apos;one1two2three3four4&apos;)
+Out[3]: [&apos;one&apos;, &apos;two&apos;, &apos;three&apos;, &apos;four&apos;, &apos;&apos;]
+</code></pre><h4 id="切分字符串"><a href="#切分字符串" class="headerlink" title="切分字符串"></a>切分字符串</h4><p>Python自带的字符分割函数</p>
+<pre><code>&apos;a b   c&apos;.split(&apos; &apos;)
+[&apos;a&apos;, &apos;b&apos;, &apos;&apos;, &apos;&apos;, &apos;c&apos;]
+</code></pre><p>嗯，无法识别连续的空格</p>
+<pre><code>import re
+&gt;&gt;&gt; re.split(r&apos;\s+&apos;, &apos;a b    c&apos;)
+[&apos;a&apos;, &apos;b&apos;, &apos;c&apos;]
+</code></pre><p>使用re，无论多少个空格都可正常分割</p>
+<h3 id="三、findall"><a href="#三、findall" class="headerlink" title="三、findall()"></a>三、findall()</h3><p>findall函数返回的总是正则表达式在字符串中所有匹配结果的列表。</p>
+<pre><code>In [2]: p = re.compile(r&apos;\d+&apos;)
+
+In [4]: p.findall(&apos;one1two2three3four4&apos;)
+Out[4]: [&apos;1&apos;, &apos;2&apos;, &apos;3&apos;, &apos;4&apos;]
+
+In [5]: ss = &quot;adfad asdfasdf asdfas asdfawef asd adsfas &quot;
+
+In [6]: p = re.compile(&apos;((\w+)\s+\w+)&apos;)
+
+In [7]: p.findall(ss)
+Out[7]:
+[(&apos;adfad asdfasdf&apos;, &apos;adfad&apos;),
+ (&apos;asdfas asdfawef&apos;, &apos;asdfas&apos;),
+ (&apos;asd adsfas&apos;, &apos;asd&apos;)]
+
+In [8]: p = re.compile(&apos;(\w+)\s+\w+&apos;)
+
+In [9]: p.findall(ss)
+Out[9]: [&apos;adfad&apos;, &apos;asdfas&apos;, &apos;asd&apos;]
+</code></pre><ol>
+<li><p>当给出的正则表达式中不带括号时，列表的元素为字符串，此字符串为整个正则表达式匹配的内容。 </p>
+</li>
+<li><p>当正则表达式中带有多个括号时，列表的元素为多个字符串组成的tuple，tuple中字符串个数与括号对数相同，字符串内容与每个括号内的正则表达式相对应，并且排放顺序是按括号出现的顺序。</p>
+</li>
+<li><p>当给出的正则表达式中带有一个括号时，列表的元素为字符串，此字符串的内容与括号中的正则表达式相对应。</p>
+</li>
+</ol>
+<h3 id="四、re-search"><a href="#四、re-search" class="headerlink" title="四、re.search()"></a>四、re.search()</h3><p>re.search函数会在字符串内查找模式匹配，只要找到第一个匹配就返回，如果字符串没有匹配，则返回None。</p>
+<pre><code>In [15]: text = &quot;JGood is a handsome boy, he is cool, clever, and so on...&quot;
+
+In [16]: m = re.search(r&apos;(\w+)ome&apos;, text)
+
+In [20]: if m:
+   ....: print m.group(0), m.group(1)
+   ....: else:
+   ....: print &apos;not search&apos;
+</code></pre><p>其中 group(0）或group()匹配的是整个字符串，group(1)匹配的是第一个括号中内容。   </p>
+<h3 id="五、re-match"><a href="#五、re-match" class="headerlink" title="五、re.match()"></a>五、re.match()</h3><p>re.match()和re.search()的区别：re.match只匹配字符串的开始，如果字符串开始不符合正则表达式，则匹配失败，函数返回None；而re.search匹配整个字符串，直到找到一个匹配。</p>
+<pre><code>In [30]: s1 = &quot;helloworld, i am 30!&quot;
+
+In [31]: w1 = &apos;world&apos;
+
+In [32]: m1 = re.match(w1, s1)
+
+In [33]: if m1:
+   ....:     print m1.group()
+   ....: else:
+   ....:     print &quot;not find&quot;
+   ....:
+not find
+</code></pre><h3 id="六、re-sub"><a href="#六、re-sub" class="headerlink" title="六、re.sub()"></a>六、re.sub()</h3><p>re.sub用于替换字符串中的匹配项。<br>下面的例子将字符串中的空格’ ‘替换成’-‘</p>
+<pre><code>In [2]: text = &quot;JGood is a handsome boy, he is cool, clever, and so on...&quot;
+
+In [3]: re.sub(r&apos;\s+&apos;, &apos;-&apos;, text)
+Out[3]: &apos;JGood-is-a-handsome-boy,-he-is-cool,-clever,-and-so-on...&apos;
+</code></pre><p><strong>re.sub的函数原型为：re.sub(pattern, repl, string, count)</strong></p>
+<pre><code>其中第二个参数时替换后的字符串；
+第四个参数为替换个数。默认为0，表示每个匹配项都替换。
+</code></pre><p>re.sub还允许使用函数对匹配项的替换进行复杂的处理。如：</p>
+<pre><code>re.sub(r&apos;\s&apos;, lambda m : &apos;[&apos; + m.group(0) + &apos;]&apos;, text, 0)
+</code></pre><p>将字符串中的空格’‘替换为’[]’。</p>
+<h3 id="七、re-compile"><a href="#七、re-compile" class="headerlink" title="七、re.compile()"></a>七、re.compile()</h3><p>可以把正则表达式编译成一个正则表达式对象。对于经常要用的正则表达式，可以提高一定的效率。</p>
+<pre><code>In [4]: text = &quot;JGood is a handsome boy, he is cool, clever, and so on...&quot;
+
+In [6]: regex = re.compile(r&apos;\w*oo\w*&apos;)
+
+In [7]: regex.findall(text) #查找所有包含’oo‘的单词
+Out[7]: [&apos;JGood&apos;, &apos;cool&apos;]
+
+In [8]: regex.sub(lambda m : &apos;[&apos; + m.group(0) + &apos;]&apos;, text) # 将字符串中含有’oo‘的单词用[]括起来
+Out[8]: &apos;[JGood] is a handsome boy, he is [cool], clever, and so on...&apos;
+</code></pre></span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag">#Python</a>
+          
+            <a href="/tags/re/" rel="tag">#re</a>
+          
+            <a href="/tags/正则表达式/" rel="tag">#正则表达式</a>
+          
+            <a href="/tags/模式匹配/" rel="tag">#模式匹配</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/11/17/pytho-ip-proxy/" rel="next" title="IP代理池的Python实现">
+                <i class="fa fa-chevron-left"></i> IP代理池的Python实现
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/11/06/fengyunlu-md/" rel="prev" title="期货大作手风云录 读书笔记">
+                期货大作手风云录 读书笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2015/11/10/python-regex/"
+     data-title="Python正则表达式"
+     data-content=""
+     data-url="http://www.kekefund.com/2015/11/10/python-regex/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2015/11/10/python-regex/"
+           data-title="Python正则表达式" data-url="http://www.kekefund.com/2015/11/10/python-regex/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#贪婪模式与非贪婪模式"><span class="nav-number">1.</span> <span class="nav-text">贪婪模式与非贪婪模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#re模块"><span class="nav-number">2.</span> <span class="nav-text">re模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、re-search"><span class="nav-number">2.1.</span> <span class="nav-text">一、re.search()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、re-split"><span class="nav-number">2.2.</span> <span class="nav-text">二、re.split()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#re-split-pattern-string-maxsplit"><span class="nav-number">2.2.1.</span> <span class="nav-text">re.split(pattern, string[,maxsplit])</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#split-string-maxsplit"><span class="nav-number">2.2.2.</span> <span class="nav-text">split(string[, maxsplit])</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#切分字符串"><span class="nav-number">2.2.3.</span> <span class="nav-text">切分字符串</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、findall"><span class="nav-number">2.3.</span> <span class="nav-text">三、findall()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、re-search"><span class="nav-number">2.4.</span> <span class="nav-text">四、re.search()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、re-match"><span class="nav-number">2.5.</span> <span class="nav-text">五、re.match()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#六、re-sub"><span class="nav-number">2.6.</span> <span class="nav-text">六、re.sub()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#七、re-compile"><span class="nav-number">2.7.</span> <span class="nav-text">七、re.compile()</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

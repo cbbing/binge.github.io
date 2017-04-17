@@ -1,0 +1,925 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Python,pandas,groupby,分组," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="一、GroupBy技术GroupBy技术是Hadley Wickham（热门R语言包作者）创造的，用于表示分组运算，“split-apply-combine”（拆分 - 应用 - 合并）。  二、分组键分组键可以有多种形式，且类型不必相同  列表或数组，其长度与待分组的轴一样。  表示DataFrame某个列名的值。  字典或Series，给出带分组轴上的值与分组名之间的对应关系。  函数，用于处">
+<meta name="keywords" content="Python,pandas,groupby,分组">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pandas GroupBy使用">
+<meta property="og:url" content="http://www.kekefund.com/2016/06/17/pandas-groupby/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="一、GroupBy技术GroupBy技术是Hadley Wickham（热门R语言包作者）创造的，用于表示分组运算，“split-apply-combine”（拆分 - 应用 - 合并）。  二、分组键分组键可以有多种形式，且类型不必相同  列表或数组，其长度与待分组的轴一样。  表示DataFrame某个列名的值。  字典或Series，给出带分组轴上的值与分组名之间的对应关系。  函数，用于处">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-17/groupby.png">
+<meta property="og:updated_time" content="2017-04-07T06:00:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pandas GroupBy使用">
+<meta name="twitter:description" content="一、GroupBy技术GroupBy技术是Hadley Wickham（热门R语言包作者）创造的，用于表示分组运算，“split-apply-combine”（拆分 - 应用 - 合并）。  二、分组键分组键可以有多种形式，且类型不必相同  列表或数组，其长度与待分组的轴一样。  表示DataFrame某个列名的值。  字典或Series，给出带分组轴上的值与分组名之间的对应关系。  函数，用于处">
+<meta name="twitter:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-17/groupby.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> pandas GroupBy使用 | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                pandas GroupBy使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-06-17T18:12:02+08:00" content="2016-06-17">
+              2016-06-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/06/17/pandas-groupby/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/17/pandas-groupby/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h1 id="一、GroupBy技术"><a href="#一、GroupBy技术" class="headerlink" title="一、GroupBy技术"></a>一、GroupBy技术</h1><p>GroupBy技术是Hadley Wickham（热门R语言包作者）创造的，用于表示分组运算，“split-apply-combine”（拆分 - 应用 - 合并）。</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-17/groupby.png" alt=""></p>
+<h1 id="二、分组键"><a href="#二、分组键" class="headerlink" title="二、分组键"></a>二、分组键</h1><p>分组键可以有多种形式，且类型不必相同</p>
+<ul>
+<li><p>列表或数组，其长度与待分组的轴一样。</p>
+</li>
+<li><p>表示DataFrame某个列名的值。</p>
+</li>
+<li><p>字典或Series，给出带分组轴上的值与分组名之间的对应关系。</p>
+</li>
+<li><p>函数，用于处理轴索引或索引中的各个标签。</p>
+</li>
+</ul>
+<a id="more"></a>
+<h1 id="三、分组"><a href="#三、分组" class="headerlink" title="三、分组"></a>三、分组</h1><p>对于数据:<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">df = DataFrame(&#123;<span class="string">'key1'</span>:[<span class="string">'a'</span>,<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'b'</span>,<span class="string">'a'</span>],<span class="string">'key2'</span>:[<span class="string">'one'</span>,<span class="string">'two'</span>,<span class="string">'one'</span>,<span class="string">'two'</span>,<span class="string">'one'</span>],<span class="string">'data1'</span>:np<span class="selector-class">.random</span><span class="selector-class">.randn</span>(<span class="number">5</span>),<span class="string">'data2'</span>:np<span class="selector-class">.random</span><span class="selector-class">.randn</span>(<span class="number">5</span>)&#125;)</div><div class="line"></div><div class="line">df</div><div class="line"></div><div class="line">Out[<span class="number">7</span>]: </div><div class="line"></div><div class="line">      data1     data2 key1 key2</div><div class="line"><span class="number">0</span>  <span class="number">0.585600</span>  <span class="number">0.670239</span>    <span class="selector-tag">a</span>  one</div><div class="line"><span class="number">1</span>  <span class="number">1.993652</span>  <span class="number">1.081585</span>    <span class="selector-tag">a</span>  two</div><div class="line"><span class="number">2</span> -<span class="number">0.188506</span> -<span class="number">1.506499</span>    <span class="selector-tag">b</span>  one</div><div class="line"><span class="number">3</span>  <span class="number">1.016836</span> -<span class="number">0.084283</span>    <span class="selector-tag">b</span>  two</div><div class="line"><span class="number">4</span> -<span class="number">1.428577</span> -<span class="number">0.464163</span>    <span class="selector-tag">a</span>  one</div></pre></td></tr></table></figure></p>
+<h2 id="1，Series为分组键"><a href="#1，Series为分组键" class="headerlink" title="1，Series为分组键"></a>1，Series为分组键</h2><p>按key1分组，计算data1的平均值：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">grouped = df[<span class="string">'data1'</span>].groupby(df[<span class="string">'key1'</span>])</div><div class="line"></div><div class="line">grouped.mean()</div><div class="line"></div><div class="line">Out[<span class="number">9</span>]: </div><div class="line"></div><div class="line">key1</div><div class="line"></div><div class="line"><span class="selector-tag">a</span>    <span class="number">0.383558</span></div><div class="line"><span class="selector-tag">b</span>    <span class="number">0.414165</span></div><div class="line"></div><div class="line">Name: data1, dtype: float64</div></pre></td></tr></table></figure>
+<p>其索引为key1列中的唯一值。</p>
+<p>如果我们一次传入多个数组，就会得到不同的结果。</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">means = df[<span class="string">'data1'</span>].groupby([df[<span class="string">'key1'</span>], df[<span class="string">'key2'</span>]]).mean()</div><div class="line"></div><div class="line">means</div><div class="line"></div><div class="line">Out[<span class="number">13</span>]: </div><div class="line"></div><div class="line">key1  key2</div><div class="line"><span class="keyword">a</span>     <span class="literal">one</span>    <span class="number">-0.421489</span></div><div class="line">      <span class="literal">two</span>     <span class="number">1.993652</span></div><div class="line">b     <span class="literal">one</span>    <span class="number">-0.188506</span></div><div class="line">      <span class="literal">two</span>     <span class="number">1.016836</span></div><div class="line">Name: data1, dtype: float64</div></pre></td></tr></table></figure>
+<p>通过两个键对数组进行分组，得到的Series具有一个层次化索引。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">means</span><span class="selector-class">.unstack</span>()</div><div class="line"></div><div class="line"><span class="selector-tag">Out</span><span class="selector-attr">[14]</span>: </div><div class="line"></div><div class="line"><span class="selector-tag">key2</span>       <span class="selector-tag">one</span>       <span class="selector-tag">two</span></div><div class="line"><span class="selector-tag">key1</span>                    </div><div class="line"><span class="selector-tag">a</span>    <span class="selector-tag">-0</span><span class="selector-class">.421489</span>  1<span class="selector-class">.993652</span></div><div class="line"><span class="selector-tag">b</span>    <span class="selector-tag">-0</span><span class="selector-class">.188506</span>  1<span class="selector-class">.016836</span></div></pre></td></tr></table></figure>
+<h2 id="2，数组为分组键"><a href="#2，数组为分组键" class="headerlink" title="2，数组为分组键"></a>2，数组为分组键</h2><p>分组键可以是任何长度适当的数组。</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">states = np.array([<span class="string">'Ohio'</span>, <span class="string">'Clifornia'</span>, <span class="string">'California'</span>, <span class="string">'Ohio'</span>, <span class="string">'Ohio'</span>])</div><div class="line"></div><div class="line">years = np.array([<span class="number">2005</span>, <span class="number">2005</span>, <span class="number">2006</span>, <span class="number">2005</span>, <span class="number">2006</span>])</div><div class="line"></div><div class="line">df[<span class="string">'data1'</span>].groupby([states, years]).mean()</div><div class="line"></div><div class="line"><span class="symbol">Out</span>[<span class="number">19</span>]: </div><div class="line"></div><div class="line"><span class="symbol">California</span>  <span class="number">2006</span>   <span class="number">-0.188506</span></div><div class="line"><span class="symbol">Clifornia</span>   <span class="number">2005</span>    <span class="number">1.993652</span></div><div class="line"><span class="symbol">Ohio</span>        <span class="number">2005</span>    <span class="number">0.801218</span></div><div class="line">            <span class="number">2006</span>   <span class="number">-1.428577</span></div><div class="line"><span class="symbol">Name</span>: data1, dtype: float64</div></pre></td></tr></table></figure>
+<h2 id="3，列名为分组键"><a href="#3，列名为分组键" class="headerlink" title="3，列名为分组键"></a>3，列名为分组键</h2><p>可以是字符串、数字或其他Python对象。</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">df.groupby('key1').mean()</div><div class="line"></div><div class="line">Out[<span class="number">21</span>]: </div><div class="line">         data1     data2</div><div class="line">key1                    </div><div class="line">a     <span class="number">0.383558</span>  <span class="number">0.429221</span></div><div class="line">b     <span class="number">0.414165</span> -<span class="number">0.795391</span></div><div class="line"></div><div class="line">df.groupby(['key1','key2']).mean()</div><div class="line"></div><div class="line">Out[<span class="number">22</span>]: </div><div class="line"></div><div class="line">              data1     data2</div><div class="line">key1 key2                    </div><div class="line">a    one  -<span class="number">0.421489</span>  <span class="number">0.103038</span></div><div class="line">     two   <span class="number">1.993652</span>  <span class="number">1.081585</span></div><div class="line">b    one  -<span class="number">0.188506</span> -<span class="number">1.506499</span></div><div class="line">     two   <span class="number">1.016836</span> -<span class="number">0.084283</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>只能对为数字的列求平均值</p>
+</blockquote>
+<h2 id="4，字典或Series为分组键"><a href="#4，字典或Series为分组键" class="headerlink" title="4，字典或Series为分组键"></a>4，字典或Series为分组键</h2><p>对于数据：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">people = DataFrame(np<span class="selector-class">.random</span><span class="selector-class">.randn</span>(<span class="number">5</span>,<span class="number">5</span>), <span class="attribute">columns</span>=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>],index=[<span class="string">'Joe'</span>,<span class="string">'Steve'</span>,<span class="string">'Wes'</span>,<span class="string">'Jim'</span>,<span class="string">'Travis'</span>])</div><div class="line"></div><div class="line">people<span class="selector-class">.ix</span>[<span class="number">2</span>:<span class="number">3</span>,[<span class="string">'b'</span>,<span class="string">'c'</span>]] = np<span class="selector-class">.nan</span></div><div class="line"></div><div class="line">people</div><div class="line"></div><div class="line">Out[<span class="number">56</span>]: </div><div class="line"></div><div class="line">               <span class="selector-tag">a</span>         <span class="selector-tag">b</span>         c         d         e</div><div class="line">Joe     <span class="number">0.561986</span> -<span class="number">0.473072</span>  <span class="number">0.195847</span> -<span class="number">0.939898</span> -<span class="number">0.031220</span></div><div class="line">Steve  -<span class="number">1.113971</span>  <span class="number">1.043835</span> -<span class="number">0.759549</span> -<span class="number">0.426541</span> -<span class="number">0.175329</span></div><div class="line">Wes     <span class="number">0.933713</span>       NaN       NaN  <span class="number">0.134446</span>  <span class="number">0.001153</span></div><div class="line">Jim     <span class="number">0.262178</span> -<span class="number">1.242311</span> -<span class="number">1.482147</span> -<span class="number">0.206859</span>  <span class="number">0.928791</span></div><div class="line">Travis  <span class="number">0.714951</span>  <span class="number">0.760905</span> -<span class="number">1.027728</span>  <span class="number">1.124935</span>  <span class="number">0.213150</span></div></pre></td></tr></table></figure>
+<p>假设已知列的分组关系，并希望根据分组计算列的总计：</p>
+<figure class="highlight ceylon"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">mapping = &#123;<span class="string">'a'</span>:<span class="string">'red'</span>, <span class="string">'b'</span>:<span class="string">'red'</span>, <span class="string">'c'</span>:<span class="string">'blue'</span>,<span class="string">'d'</span>:<span class="string">'blue'</span>,<span class="string">'e'</span>:<span class="string">'red'</span>,<span class="string">'f'</span>:<span class="string">'orange'</span>&#125;</div><div class="line"></div><div class="line"><span class="meta">by</span><span class="number">_</span>col = people.groupby(mapping, axis=<span class="number">1</span>)</div><div class="line"></div><div class="line"><span class="meta">by</span><span class="number">_</span>col.count()</div><div class="line"></div><div class="line">Out[<span class="number">61</span>]: </div><div class="line"></div><div class="line">        blue  red</div><div class="line">Joe        <span class="number">2</span>    <span class="number">3</span></div><div class="line">Steve      <span class="number">2</span>    <span class="number">3</span></div><div class="line">Wes        <span class="number">1</span>    <span class="number">2</span></div><div class="line">Jim        <span class="number">2</span>    <span class="number">3</span></div><div class="line">Travis     <span class="number">2</span>    <span class="number">3</span></div></pre></td></tr></table></figure>
+<p>Series也具有同样的功能，它可以被看做一个固定大小的映射。</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">map_series = Series(mapping)</div><div class="line"></div><div class="line"></div><div class="line">map_series</div><div class="line"></div><div class="line">Out[<span class="number">64</span>]: </div><div class="line"></div><div class="line">a       red</div><div class="line"><span class="keyword">b </span>      red</div><div class="line">c      <span class="keyword">blue</span></div><div class="line">d      <span class="keyword">blue</span></div><div class="line">e       red</div><div class="line">f    <span class="keyword">orange</span></div><div class="line"><span class="symbol"></span></div><div class="line">dtype: object</div><div class="line"></div><div class="line"></div><div class="line">people.groupby(map_series, axis=<span class="number">1</span>).count()</div><div class="line"></div><div class="line">Out[<span class="number">65</span>]: </div><div class="line"></div><div class="line">        <span class="keyword">blue </span> red</div><div class="line"><span class="keyword">Joe </span>       <span class="number">2</span>    <span class="number">3</span></div><div class="line">Steve      <span class="number">2</span>    <span class="number">3</span></div><div class="line">Wes        <span class="number">1</span>    <span class="number">2</span></div><div class="line"><span class="keyword">Jim </span>       <span class="number">2</span>    <span class="number">3</span></div><div class="line">Travis     <span class="number">2</span>    <span class="number">3</span></div></pre></td></tr></table></figure>
+<h2 id="5，函数为分组键"><a href="#5，函数为分组键" class="headerlink" title="5，函数为分组键"></a>5，函数为分组键</h2><p>任何被当做分组键的函数都会在各个索引值上被调用一次，其返回值就会被用作分组名称。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">people</span><span class="selector-class">.groupby</span>(<span class="selector-tag">len</span>)<span class="selector-class">.sum</span>()</div><div class="line"></div><div class="line"><span class="selector-tag">Out</span><span class="selector-attr">[66]</span>: </div><div class="line"></div><div class="line">          <span class="selector-tag">a</span>         <span class="selector-tag">b</span>         <span class="selector-tag">c</span>         <span class="selector-tag">d</span>         <span class="selector-tag">e</span></div><div class="line">3  1<span class="selector-class">.757877</span> <span class="selector-tag">-1</span><span class="selector-class">.715382</span> <span class="selector-tag">-1</span><span class="selector-class">.286300</span> <span class="selector-tag">-1</span><span class="selector-class">.012311</span>  0<span class="selector-class">.898724</span></div><div class="line">5 <span class="selector-tag">-1</span><span class="selector-class">.113971</span>  1<span class="selector-class">.043835</span> <span class="selector-tag">-0</span><span class="selector-class">.759549</span> <span class="selector-tag">-0</span><span class="selector-class">.426541</span> <span class="selector-tag">-0</span><span class="selector-class">.175329</span></div><div class="line">6  0<span class="selector-class">.714951</span>  0<span class="selector-class">.760905</span> <span class="selector-tag">-1</span><span class="selector-class">.027728</span>  1<span class="selector-class">.124935</span>  0<span class="selector-class">.213150</span></div></pre></td></tr></table></figure>
+<p>将函数跟数组、列表、字典、Series混合使用也不是问题，因为任何东西最终都会被转换成数组：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">key_list = ['one']*<span class="number">3</span> + ['two']*<span class="number">2</span></div><div class="line"></div><div class="line">people.groupby([len,key_list]).min()</div><div class="line"></div><div class="line">Out[<span class="number">71</span>]: </div><div class="line">              a         b         c         d         e</div><div class="line"><span class="number">3</span> one  <span class="number">0.561986</span> -<span class="number">0.473072</span>  <span class="number">0.195847</span> -<span class="number">0.939898</span> -<span class="number">0.031220</span></div><div class="line">  two  <span class="number">0.262178</span> -<span class="number">1.242311</span> -<span class="number">1.482147</span> -<span class="number">0.206859</span>  <span class="number">0.928791</span></div><div class="line"><span class="number">5</span> one -<span class="number">1.113971</span>  <span class="number">1.043835</span> -<span class="number">0.759549</span> -<span class="number">0.426541</span> -<span class="number">0.175329</span></div><div class="line"><span class="number">6</span> two  <span class="number">0.714951</span>  <span class="number">0.760905</span> -<span class="number">1.027728</span>  <span class="number">1.124935</span>  <span class="number">0.213150</span></div></pre></td></tr></table></figure>
+<h2 id="6，根据索引级别分组"><a href="#6，根据索引级别分组" class="headerlink" title="6，根据索引级别分组"></a>6，根据索引级别分组</h2><figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">columns = pd.MultiIndex.from_arrays([['US','US', 'US', 'JP','JP'],[<span class="number">1,3,5,1</span>,<span class="number">3</span>]],names=['cty','tenor'])</div><div class="line"></div><div class="line">hier_df = DataFrame(np.random.randn(<span class="number">4</span>,<span class="number">5</span>), columns=columns)</div><div class="line"></div><div class="line">hier_df</div><div class="line"></div><div class="line">Out[<span class="number">74</span>]: </div><div class="line"></div><div class="line">cty          US                            JP          </div><div class="line">tenor         <span class="number">1</span>         <span class="number">3</span>         <span class="number">5</span>         <span class="number">1</span>         <span class="number">3</span></div><div class="line"><span class="number">0</span>     -<span class="number">1.187599</span>  <span class="number">0.232050</span>  <span class="number">0.977682</span>  <span class="number">2.480848</span>  <span class="number">0.007677</span></div><div class="line"><span class="number">1</span>     -<span class="number">0.876277</span>  <span class="number">0.028064</span>  <span class="number">0.504568</span>  <span class="number">0.229450</span> -<span class="number">0.650978</span></div><div class="line"><span class="number">2</span>      <span class="number">2.320974</span>  <span class="number">0.211266</span>  <span class="number">0.649322</span>  <span class="number">0.222107</span>  <span class="number">1.658805</span></div><div class="line"><span class="number">3</span>     -<span class="number">0.744610</span>  <span class="number">0.779133</span>  <span class="number">0.919815</span>  <span class="number">0.333189</span>  <span class="number">0.081555</span></div><div class="line"></div><div class="line"></div><div class="line">hier_df.groupby(level='cty', axis=<span class="number">1</span>).count()</div><div class="line"></div><div class="line">Out[<span class="number">75</span>]: </div><div class="line"></div><div class="line">cty  JP  US</div><div class="line"><span class="number">0</span>     <span class="number">2</span>   <span class="number">3</span></div><div class="line"><span class="number">1</span>     <span class="number">2</span>   <span class="number">3</span></div><div class="line"><span class="number">2</span>     <span class="number">2</span>   <span class="number">3</span></div><div class="line"><span class="number">3</span>     <span class="number">2</span>   <span class="number">3</span></div></pre></td></tr></table></figure>
+<h2 id="7，对分组进行迭代"><a href="#7，对分组进行迭代" class="headerlink" title="7，对分组进行迭代"></a>7，对分组进行迭代</h2><p>GroupBy对象支持迭代，可以产生一组二元元组。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> name, group <span class="keyword">in</span> df.groupby(<span class="string">'key1'</span>):</div><div class="line">    print name</div><div class="line">    print group</div><div class="line"></div><div class="line">    </div><div class="line"></div><div class="line"><span class="selector-tag">a</span></div><div class="line">      data1     data2 key1 key2</div><div class="line"><span class="number">0</span>  <span class="number">0.585600</span>  <span class="number">0.670239</span>    <span class="selector-tag">a</span>  one</div><div class="line"><span class="number">1</span>  <span class="number">1.993652</span>  <span class="number">1.081585</span>    <span class="selector-tag">a</span>  two</div><div class="line"><span class="number">4</span> -<span class="number">1.428577</span> -<span class="number">0.464163</span>    <span class="selector-tag">a</span>  one</div><div class="line"></div><div class="line"><span class="selector-tag">b</span></div><div class="line">      data1     data2 key1 key2</div><div class="line"><span class="number">2</span> -<span class="number">0.188506</span> -<span class="number">1.506499</span>    <span class="selector-tag">b</span>  one</div><div class="line"><span class="number">3</span>  <span class="number">1.016836</span> -<span class="number">0.084283</span>    <span class="selector-tag">b</span>  two</div></pre></td></tr></table></figure>
+<p>对于多重键的情况，元组的第一个元素将会是由键值组成的元组：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> name, group <span class="keyword">in</span> df.groupby([<span class="string">'key1'</span>,<span class="string">'key2'</span>]):</div><div class="line">    print name</div><div class="line">    print group</div><div class="line">   </div><div class="line">(<span class="string">'a'</span>, <span class="string">'one'</span>)</div><div class="line">      data1     data2 key1 key2</div><div class="line"><span class="number">0</span>  <span class="number">0.585600</span>  <span class="number">0.670239</span>    <span class="selector-tag">a</span>  one</div><div class="line"><span class="number">4</span> -<span class="number">1.428577</span> -<span class="number">0.464163</span>    <span class="selector-tag">a</span>  one</div><div class="line"></div><div class="line">(<span class="string">'a'</span>, <span class="string">'two'</span>)</div><div class="line">      data1     data2 key1 key2</div><div class="line"><span class="number">1</span>  <span class="number">1.993652</span>  <span class="number">1.081585</span>    <span class="selector-tag">a</span>  two</div><div class="line"></div><div class="line">(<span class="string">'b'</span>, <span class="string">'one'</span>)</div><div class="line">      data1     data2 key1 key2</div><div class="line"><span class="number">2</span> -<span class="number">0.188506</span> -<span class="number">1.506499</span>    <span class="selector-tag">b</span>  one</div><div class="line"></div><div class="line">(<span class="string">'b'</span>, <span class="string">'two'</span>)</div><div class="line">      data1     data2 key1 key2</div><div class="line"><span class="number">3</span>  <span class="number">1.016836</span> -<span class="number">0.084283</span>    <span class="selector-tag">b</span>  two</div></pre></td></tr></table></figure>
+<p>还可将数组片段做出一个字典</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">pieces = dict(list(df.groupby(<span class="string">'key1'</span>)))</div><div class="line"></div><div class="line">pieces[<span class="string">'b'</span>]</div><div class="line"></div><div class="line">Out[<span class="number">43</span>]: </div><div class="line"></div><div class="line">      data1     data2 key1 key2</div><div class="line"><span class="number">2</span> -<span class="number">0.188506</span> -<span class="number">1.506499</span>    <span class="selector-tag">b</span>  one</div><div class="line"><span class="number">3</span>  <span class="number">1.016836</span> -<span class="number">0.084283</span>    <span class="selector-tag">b</span>  two</div></pre></td></tr></table></figure>
+<h2 id="8，按列分组"><a href="#8，按列分组" class="headerlink" title="8，按列分组"></a>8，按列分组</h2><p>groupby默认是在axis=0上进行分组，通过设置也可以在其他任何轴上进行分组。例如，可以根据dtype对列进行分组：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">df<span class="selector-class">.dtypes</span></div><div class="line"></div><div class="line">Out[<span class="number">47</span>]: </div><div class="line"></div><div class="line">data1    float64</div><div class="line">data2    float64</div><div class="line">key1      <span class="selector-tag">object</span></div><div class="line">key2      <span class="selector-tag">object</span></div><div class="line"></div><div class="line">dtype: <span class="selector-tag">object</span></div><div class="line"></div><div class="line"></div><div class="line">grouped = df.groupby(df<span class="selector-class">.dtypes</span>, axis=<span class="number">1</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="title">dict</span><span class="params">(list(grouped)</span></span>)</div><div class="line"></div><div class="line">Out[<span class="number">49</span>]: </div><div class="line"></div><div class="line">&#123;dtype(<span class="string">'float64'</span>):       data1     data2</div><div class="line"> <span class="number">0</span>  <span class="number">0.585600</span>  <span class="number">0.670239</span></div><div class="line"> <span class="number">1</span>  <span class="number">1.993652</span>  <span class="number">1.081585</span></div><div class="line"> <span class="number">2</span> -<span class="number">0.188506</span> -<span class="number">1.506499</span></div><div class="line"> <span class="number">3</span>  <span class="number">1.016836</span> -<span class="number">0.084283</span></div><div class="line"> <span class="number">4</span> -<span class="number">1.428577</span> -<span class="number">0.464163</span>, dtype(<span class="string">'O'</span>):   key1 key2</div><div class="line"> <span class="number">0</span>    <span class="selector-tag">a</span>  one</div><div class="line"> <span class="number">1</span>    <span class="selector-tag">a</span>  two</div><div class="line"> <span class="number">2</span>    <span class="selector-tag">b</span>  one</div><div class="line"> <span class="number">3</span>    <span class="selector-tag">b</span>  two</div><div class="line"> <span class="number">4</span>    <span class="selector-tag">a</span>  one&#125;</div></pre></td></tr></table></figure>
+<h1 id="四、数据聚合"><a href="#四、数据聚合" class="headerlink" title="四、数据聚合"></a>四、数据聚合</h1><p>如果要使用自己的聚合函数，只需将其传入aggreate或agg方法即可：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">df = DataFrame(&#123;<span class="string">'key1'</span><span class="symbol">:</span>[<span class="string">'a'</span>,<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'b'</span>,<span class="string">'a'</span>],<span class="string">'key2'</span><span class="symbol">:</span>[<span class="string">'one'</span>,<span class="string">'two'</span>,<span class="string">'one'</span>,<span class="string">'two'</span>,<span class="string">'one'</span>],<span class="string">'data1'</span><span class="symbol">:np</span>.random.randn(<span class="number">5</span>),<span class="string">'data2'</span><span class="symbol">:np</span>.random.randn(<span class="number">5</span>)&#125;)</div><div class="line"></div><div class="line">grouped = df[[<span class="string">'data1'</span>,<span class="string">'data2'</span>]].groupby(df[<span class="string">'key1'</span>])</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">peak_to_peak</span><span class="params">(arr)</span></span>:</div><div class="line">    <span class="keyword">return</span> arr.max() - arr.min()</div><div class="line"></div><div class="line">grouped.agg(peak_to_peak)</div><div class="line"></div><div class="line">Out[<span class="number">82</span>]: </div><div class="line"></div><div class="line">         data1     data2</div><div class="line">key1                    </div><div class="line">a     <span class="number">0</span>.<span class="number">650906</span>  <span class="number">1.229130</span></div><div class="line">b     <span class="number">0</span>.<span class="number">813135</span>  <span class="number">1.789667</span></div></pre></td></tr></table></figure>
+<p>表：经过优化的groupby方法</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">函数名</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">count</td>
+<td style="text-align:left">分组中非NA值得数量</td>
+</tr>
+<tr>
+<td style="text-align:left">sum</td>
+<td style="text-align:left">非NA值得和</td>
+</tr>
+<tr>
+<td style="text-align:left">mean</td>
+<td style="text-align:left">非NA值得平均值</td>
+</tr>
+<tr>
+<td style="text-align:left">median</td>
+<td style="text-align:left">非NA值得算术中位数</td>
+</tr>
+<tr>
+<td style="text-align:left">std、var</td>
+<td style="text-align:left">无偏（分母为n-1）标准差和方差</td>
+</tr>
+<tr>
+<td style="text-align:left">min、max</td>
+<td style="text-align:left">非NA值得最小值和最大值</td>
+</tr>
+<tr>
+<td style="text-align:left">prod</td>
+<td style="text-align:left">非NA值的积</td>
+</tr>
+<tr>
+<td style="text-align:left">first、last</td>
+<td style="text-align:left">第一个和最后一个非NA值</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1，面向列的多函数应用"><a href="#1，面向列的多函数应用" class="headerlink" title="1，面向列的多函数应用"></a>1，面向列的多函数应用</h2><p>可以对不同列使用不同的聚合函数，或一次应用多个函数。<br>数据源：<a href="https://raw.githubusercontent.com/wesm/pydata-book/master/ch08/tips.csv" target="_blank" rel="external">tips.csv</a></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="string">tips</span> <span class="string">=</span> <span class="string">pd.read_csv('https://raw.githubusercontent.com/wesm/pydata-book/master/ch08/tips.csv')</span></div><div class="line"></div><div class="line"><span class="string">tips['tip_pct']</span> <span class="string">=</span> <span class="string">tips['tip']/tips['total_bill']</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="string">tips.head()</span></div><div class="line"></div><div class="line"><span class="string">Out[89]:</span> </div><div class="line"></div><div class="line">   <span class="string">total_bill</span>   <span class="string">tip</span>     <span class="string">sex</span> <span class="string">smoker</span>  <span class="string">day</span>    <span class="string">time</span>  <span class="string">size</span>   <span class="string">tip_pct</span></div><div class="line"><span class="number">0</span>       <span class="number">16.99</span>  <span class="number">1.01</span>  <span class="string">Female</span>     <span class="literal">No</span>  <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">2</span>  <span class="number">0.059447</span></div><div class="line"><span class="number">1</span>       <span class="number">10.34</span>  <span class="number">1.66</span>    <span class="string">Male</span>     <span class="literal">No</span>  <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">3</span>  <span class="number">0.160542</span></div><div class="line"><span class="number">2</span>       <span class="number">21.01</span>  <span class="number">3.50</span>    <span class="string">Male</span>     <span class="literal">No</span>  <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">3</span>  <span class="number">0.166587</span></div><div class="line"><span class="number">3</span>       <span class="number">23.68</span>  <span class="number">3.31</span>    <span class="string">Male</span>     <span class="literal">No</span>  <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">2</span>  <span class="number">0.139780</span></div><div class="line"><span class="number">4</span>       <span class="number">24.59</span>  <span class="number">3.61</span>  <span class="string">Female</span>     <span class="literal">No</span>  <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">4</span>  <span class="number">0.146808</span></div></pre></td></tr></table></figure>
+<p>根据sex和smoker对tips进行分组：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="string">grouped</span> <span class="string">=</span> <span class="string">tips.groupby(['sex','smoker'])</span></div><div class="line"></div><div class="line"><span class="string">group_pct</span> <span class="string">=</span> <span class="string">grouped['tip_pct']</span></div><div class="line"><span class="string">group_pct.agg('mean')</span></div><div class="line"></div><div class="line"><span class="string">Out[92]:</span> </div><div class="line"></div><div class="line"><span class="string">sex</span>     <span class="string">smoker</span></div><div class="line"><span class="string">Female</span>  <span class="literal">No</span>        <span class="number">0.156921</span></div><div class="line">        <span class="literal">Yes</span>       <span class="number">0.182150</span></div><div class="line"><span class="string">Male</span>    <span class="literal">No</span>        <span class="number">0.160669</span></div><div class="line">        <span class="literal">Yes</span>       <span class="number">0.152771</span></div><div class="line"></div><div class="line"><span class="attr">Name:</span> <span class="string">tip_pct,</span> <span class="attr">dtype:</span> <span class="string">float64</span></div></pre></td></tr></table></figure>
+<p>如果传入一组函数或函数名，得到一个DataFrame（列名默认为函数名）：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">group_pct</span><span class="selector-class">.agg</span>(<span class="selector-attr">['mean','std',peak_to_peak]</span>)</div><div class="line"></div><div class="line"><span class="selector-tag">Out</span><span class="selector-attr">[93]</span>: </div><div class="line">                   <span class="selector-tag">mean</span>       <span class="selector-tag">std</span>  <span class="selector-tag">peak_to_peak</span></div><div class="line"><span class="selector-tag">sex</span>    <span class="selector-tag">smoker</span>                                  </div><div class="line"><span class="selector-tag">Female</span> <span class="selector-tag">No</span>      0<span class="selector-class">.156921</span>  0<span class="selector-class">.036421</span>      0<span class="selector-class">.195876</span></div><div class="line">       <span class="selector-tag">Yes</span>     0<span class="selector-class">.182150</span>  0<span class="selector-class">.071595</span>      0<span class="selector-class">.360233</span></div><div class="line"><span class="selector-tag">Male</span>   <span class="selector-tag">No</span>      0<span class="selector-class">.160669</span>  0<span class="selector-class">.041849</span>      0<span class="selector-class">.220186</span></div><div class="line">       <span class="selector-tag">Yes</span>     0<span class="selector-class">.152771</span>  0<span class="selector-class">.090588</span>      0<span class="selector-class">.674707</span></div></pre></td></tr></table></figure>
+<p>可以传入由 (name, function)元组组成的列表，指定DataFrame的列名：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">group_pct</span><span class="selector-class">.agg</span>(<span class="selector-attr">[('foo','mean'),('bar',np.std)]</span>)</div><div class="line"></div><div class="line"><span class="selector-tag">Out</span><span class="selector-attr">[94]</span>: </div><div class="line">                    <span class="selector-tag">foo</span>       <span class="selector-tag">bar</span></div><div class="line"><span class="selector-tag">sex</span>    <span class="selector-tag">smoker</span>                    </div><div class="line"><span class="selector-tag">Female</span> <span class="selector-tag">No</span>      0<span class="selector-class">.156921</span>  0<span class="selector-class">.036421</span></div><div class="line">       <span class="selector-tag">Yes</span>     0<span class="selector-class">.182150</span>  0<span class="selector-class">.071595</span></div><div class="line"><span class="selector-tag">Male</span>   <span class="selector-tag">No</span>      0<span class="selector-class">.160669</span>  0<span class="selector-class">.041849</span></div><div class="line">       <span class="selector-tag">Yes</span>     0<span class="selector-class">.152771</span>  0<span class="selector-class">.090588</span></div></pre></td></tr></table></figure>
+<p>直接传入列名到函数的字典：</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">grouped.agg(&#123;<span class="string">'tip'</span>:np.<span class="built-in">max</span>, <span class="string">'size'</span>:<span class="string">'sum'</span>&#125;)</div><div class="line"></div><div class="line">Out[<span class="number">95</span>]: </div><div class="line"></div><div class="line">                tip  size</div><div class="line">sex    smoker            </div><div class="line">Female <span class="keyword">No</span>       <span class="number">5.2</span>   <span class="number">140</span></div><div class="line">       <span class="keyword">Yes</span>      <span class="number">6.5</span>    <span class="number">74</span></div><div class="line">Male   <span class="keyword">No</span>       <span class="number">9.0</span>   <span class="number">263</span></div><div class="line">       <span class="keyword">Yes</span>     <span class="number">10.0</span>   <span class="number">150</span></div></pre></td></tr></table></figure>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">grouped.agg(&#123;'tip_pct':['min','max','mean','std'], 'size':'sum'&#125;)</div><div class="line"></div><div class="line">Out[<span class="number">96</span>]: </div><div class="line"></div><div class="line">                tip_pct                               size</div><div class="line">                    min       max      mean       std  sum</div><div class="line">sex    smoker                                             </div><div class="line">Female No      <span class="number">0.056797</span>  <span class="number">0.252672</span>  <span class="number">0.156921</span>  <span class="number">0.036421</span>  <span class="number">140</span></div><div class="line">       Yes     <span class="number">0.056433</span>  <span class="number">0.416667</span>  <span class="number">0.182150</span>  <span class="number">0.071595</span>   <span class="number">74</span></div><div class="line">Male   No      <span class="number">0.071804</span>  <span class="number">0.291990</span>  <span class="number">0.160669</span>  <span class="number">0.041849</span>  <span class="number">263</span></div><div class="line">       Yes     <span class="number">0.035638</span>  <span class="number">0.710345</span>  <span class="number">0.152771</span>  <span class="number">0.090588</span>  <span class="number">150</span></div></pre></td></tr></table></figure>
+<h2 id="2，apply：一般性的“拆分-应用-合并”"><a href="#2，apply：一般性的“拆分-应用-合并”" class="headerlink" title="2，apply：一般性的“拆分 - 应用 - 合并”"></a>2，apply：一般性的“拆分 - 应用 - 合并”</h2><p>定义函数，分组选出最高的5个tip_pct值。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="string">def</span> <span class="string">top(df,</span> <span class="string">n=5,</span> <span class="string">column='tip_pct'):</span></div><div class="line">    <span class="string">return</span> <span class="string">df.sort_index(by=column)[-n:]</span></div><div class="line"></div><div class="line"><span class="string">top(tips,</span> <span class="string">n=6)</span></div><div class="line"></div><div class="line"><span class="string">Out[98]:</span> </div><div class="line"></div><div class="line">     <span class="string">total_bill</span>   <span class="string">tip</span>     <span class="string">sex</span> <span class="string">smoker</span>  <span class="string">day</span>    <span class="string">time</span>  <span class="string">size</span>   <span class="string">tip_pct</span></div><div class="line"><span class="number">109</span>       <span class="number">14.31</span>  <span class="number">4.00</span>  <span class="string">Female</span>    <span class="literal">Yes</span>  <span class="string">Sat</span>  <span class="string">Dinner</span>     <span class="number">2</span>  <span class="number">0.279525</span></div><div class="line"><span class="number">183</span>       <span class="number">23.17</span>  <span class="number">6.50</span>    <span class="string">Male</span>    <span class="literal">Yes</span>  <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">4</span>  <span class="number">0.280535</span></div><div class="line"><span class="number">232</span>       <span class="number">11.61</span>  <span class="number">3.39</span>    <span class="string">Male</span>     <span class="literal">No</span>  <span class="string">Sat</span>  <span class="string">Dinner</span>     <span class="number">2</span>  <span class="number">0.291990</span></div><div class="line"><span class="number">67</span>         <span class="number">3.07</span>  <span class="number">1.00</span>  <span class="string">Female</span>    <span class="literal">Yes</span>  <span class="string">Sat</span>  <span class="string">Dinner</span>     <span class="number">1</span>  <span class="number">0.325733</span></div><div class="line"><span class="number">178</span>        <span class="number">9.60</span>  <span class="number">4.00</span>  <span class="string">Female</span>    <span class="literal">Yes</span>  <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">2</span>  <span class="number">0.416667</span></div><div class="line"><span class="number">172</span>        <span class="number">7.25</span>  <span class="number">5.15</span>    <span class="string">Male</span>    <span class="literal">Yes</span>  <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">2</span>  <span class="number">0.710345</span></div></pre></td></tr></table></figure>
+<p>如果对smoker分组并用该函数调用apply，就会得到：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="string">tips.groupby('smoker').apply(top)</span></div><div class="line"></div><div class="line"><span class="string">Out[99]:</span> </div><div class="line"></div><div class="line">            <span class="string">total_bill</span>   <span class="string">tip</span>     <span class="string">sex</span> <span class="string">smoker</span>   <span class="string">day</span>    <span class="string">time</span>  <span class="string">size</span>   <span class="string">tip_pct</span></div><div class="line"><span class="string">smoker</span>                                                                   </div><div class="line"><span class="literal">No</span>     <span class="number">88</span>        <span class="number">24.71</span>  <span class="number">5.85</span>    <span class="string">Male</span>     <span class="literal">No</span>  <span class="string">Thur</span>   <span class="string">Lunch</span>     <span class="number">2</span>  <span class="number">0.236746</span></div><div class="line">       <span class="number">185</span>       <span class="number">20.69</span>  <span class="number">5.00</span>    <span class="string">Male</span>     <span class="literal">No</span>   <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">5</span>  <span class="number">0.241663</span></div><div class="line">       <span class="number">51</span>        <span class="number">10.29</span>  <span class="number">2.60</span>  <span class="string">Female</span>     <span class="literal">No</span>   <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">2</span>  <span class="number">0.252672</span></div><div class="line">       <span class="number">149</span>        <span class="number">7.51</span>  <span class="number">2.00</span>    <span class="string">Male</span>     <span class="literal">No</span>  <span class="string">Thur</span>   <span class="string">Lunch</span>     <span class="number">2</span>  <span class="number">0.266312</span></div><div class="line">       <span class="number">232</span>       <span class="number">11.61</span>  <span class="number">3.39</span>    <span class="string">Male</span>     <span class="literal">No</span>   <span class="string">Sat</span>  <span class="string">Dinner</span>     <span class="number">2</span>  <span class="number">0.291990</span></div><div class="line"><span class="literal">Yes</span>    <span class="number">109</span>       <span class="number">14.31</span>  <span class="number">4.00</span>  <span class="string">Female</span>    <span class="literal">Yes</span>   <span class="string">Sat</span>  <span class="string">Dinner</span>     <span class="number">2</span>  <span class="number">0.279525</span></div><div class="line">       <span class="number">183</span>       <span class="number">23.17</span>  <span class="number">6.50</span>    <span class="string">Male</span>    <span class="literal">Yes</span>   <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">4</span>  <span class="number">0.280535</span></div><div class="line">       <span class="number">67</span>         <span class="number">3.07</span>  <span class="number">1.00</span>  <span class="string">Female</span>    <span class="literal">Yes</span>   <span class="string">Sat</span>  <span class="string">Dinner</span>     <span class="number">1</span>  <span class="number">0.325733</span></div><div class="line">       <span class="number">178</span>        <span class="number">9.60</span>  <span class="number">4.00</span>  <span class="string">Female</span>    <span class="literal">Yes</span>   <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">2</span>  <span class="number">0.416667</span></div><div class="line">       <span class="number">172</span>        <span class="number">7.25</span>  <span class="number">5.15</span>    <span class="string">Male</span>    <span class="literal">Yes</span>   <span class="string">Sun</span>  <span class="string">Dinner</span>     <span class="number">2</span>  <span class="number">0.710345</span></div></pre></td></tr></table></figure>
+<p>如果传给apply的函数能够接受其他参数或关键字，则可以将这些内容放在函数名的后面一并传入：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="string">tips.groupby('smoker').apply(top,</span> <span class="string">n=1,</span> <span class="string">column='total_bill')</span></div><div class="line"></div><div class="line"><span class="string">Out[101]:</span> </div><div class="line"></div><div class="line">            <span class="string">total_bill</span>  <span class="string">tip</span>   <span class="string">sex</span> <span class="string">smoker</span>  <span class="string">day</span>    <span class="string">time</span>  <span class="string">size</span>   <span class="string">tip_pct</span></div><div class="line"><span class="string">smoker</span>                                                               </div><div class="line"><span class="literal">No</span>     <span class="number">212</span>       <span class="number">48.33</span>    <span class="number">9</span>  <span class="string">Male</span>     <span class="literal">No</span>  <span class="string">Sat</span>  <span class="string">Dinner</span>     <span class="number">4</span>  <span class="number">0.186220</span></div><div class="line"><span class="literal">Yes</span>    <span class="number">170</span>       <span class="number">50.81</span>   <span class="number">10</span>  <span class="string">Male</span>    <span class="literal">Yes</span>  <span class="string">Sat</span>  <span class="string">Dinner</span>     <span class="number">3</span>  <span class="number">0.196812</span></div></pre></td></tr></table></figure>
+<h2 id="3，用特定于分组的值填充缺失值"><a href="#3，用特定于分组的值填充缺失值" class="headerlink" title="3，用特定于分组的值填充缺失值"></a>3，用特定于分组的值填充缺失值</h2><p>对于缺失数据的清理工作，有时你会用dropna将其滤除，而有时则可能会希望用一个固定值或由数据集本身所衍生出来的值去填充NA值。这时就得用fillna工具了。</p>
+<h3 id="示例：用平均值填充NA值"><a href="#示例：用平均值填充NA值" class="headerlink" title="示例：用平均值填充NA值"></a>示例：用平均值填充NA值</h3><figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">s = Series(np.random.randn(<span class="number">6</span>))</div><div class="line">s[<span class="number">::2</span>] = np.nan</div><div class="line"></div><div class="line">s</div><div class="line"></div><div class="line">Out[<span class="number">104</span>]: </div><div class="line"></div><div class="line"><span class="number">0</span>         NaN</div><div class="line"><span class="number">1</span>    <span class="number">0.596070</span></div><div class="line"><span class="number">2</span>         NaN</div><div class="line"><span class="number">3</span>    <span class="number">0.011086</span></div><div class="line"><span class="number">4</span>         NaN</div><div class="line"><span class="number">5</span>    <span class="number">0.166135</span></div><div class="line"></div><div class="line">dtype: float64</div><div class="line"></div><div class="line"></div><div class="line">s.fillna(s.mean())</div><div class="line"></div><div class="line">Out[<span class="number">105</span>]: </div><div class="line"></div><div class="line"><span class="number">0</span>    <span class="number">0.257764</span></div><div class="line"><span class="number">1</span>    <span class="number">0.596070</span></div><div class="line"><span class="number">2</span>    <span class="number">0.257764</span></div><div class="line"><span class="number">3</span>    <span class="number">0.011086</span></div><div class="line"><span class="number">4</span>    <span class="number">0.257764</span></div><div class="line"><span class="number">5</span>    <span class="number">0.166135</span></div><div class="line">dtype: float64</div></pre></td></tr></table></figure>
+<h3 id="对不同的分组填充不同的值"><a href="#对不同的分组填充不同的值" class="headerlink" title="对不同的分组填充不同的值"></a>对不同的分组填充不同的值</h3><p>对以下数据：</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">states = [<span class="string">'Ohio'</span>, <span class="string">'New York'</span>, <span class="string">'Vermont'</span>, <span class="string">'Florida'</span>, <span class="string">'Oregon'</span>, <span class="string">'Nevada'</span>,<span class="string">'California'</span>, <span class="string">'Idaho'</span>]</div><div class="line"></div><div class="line">group_key = [<span class="string">'East'</span>]*<span class="number">4</span> + [<span class="string">'West'</span>]*<span class="number">4</span></div><div class="line"></div><div class="line">data = <span class="symbol">Series</span>(np.random.randn(<span class="number">8</span>), index = states)</div><div class="line">data[[<span class="string">'Vermont'</span>, <span class="string">'Nevada'</span>, <span class="string">'Idaho'</span>]] = np.nan</div><div class="line"></div><div class="line"></div><div class="line">data</div><div class="line"></div><div class="line"><span class="symbol">Out</span>[<span class="number">111</span>]: </div><div class="line"><span class="symbol">Ohio</span>          <span class="number">0.900479</span></div><div class="line"><span class="symbol">New</span> <span class="symbol">York</span>      <span class="number">0.486912</span></div><div class="line"><span class="symbol">Vermont</span>            <span class="symbol">NaN</span></div><div class="line"><span class="symbol">Florida</span>      <span class="number">-0.627281</span></div><div class="line"><span class="symbol">Oregon</span>       <span class="number">-0.580583</span></div><div class="line"><span class="symbol">Nevada</span>             <span class="symbol">NaN</span></div><div class="line"><span class="symbol">California</span>    <span class="number">2.033416</span></div><div class="line"><span class="symbol">Idaho</span>              <span class="symbol">NaN</span></div><div class="line"></div><div class="line">dtype: float64</div><div class="line"></div><div class="line"></div><div class="line">data.groupby(group_key).mean()</div><div class="line"></div><div class="line"><span class="symbol">Out</span>[<span class="number">112</span>]: </div><div class="line"></div><div class="line"><span class="symbol">East</span>    <span class="number">0.253370</span></div><div class="line"><span class="symbol">West</span>    <span class="number">0.726417</span></div><div class="line">dtype: float64</div></pre></td></tr></table></figure>
+<p>用分组平均值取填充NA值</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">fill_mean = lambda g : g.fillna(g.mean())</div><div class="line"></div><div class="line">data.groupby(group_key).apply(fill_mean)</div><div class="line"></div><div class="line">Out[<span class="number">114</span>]: </div><div class="line"></div><div class="line">Ohio          <span class="number">0.900479</span></div><div class="line">New York      <span class="number">0.486912</span></div><div class="line">Vermont       <span class="number">0.253370</span></div><div class="line">Florida      -<span class="number">0.627281</span></div><div class="line">Oregon       -<span class="number">0.580583</span></div><div class="line">Nevada        <span class="number">0.726417</span></div><div class="line">California    <span class="number">2.033416</span></div><div class="line">Idaho         <span class="number">0.726417</span></div><div class="line"></div><div class="line">dtype: float64</div></pre></td></tr></table></figure>
+<p>此外，也可以在代码中预定义各组的填充值。由于分组具有一个name属性，所以我们可以拿来用一下：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">fill_values = &#123;'East':<span class="number">0</span>.<span class="number">5</span>, 'West':-<span class="number">1</span>&#125;</div><div class="line"></div><div class="line">fill_func = lambda g : g.fillna(fill_values[g.name])</div><div class="line"></div><div class="line">data.groupby(group_key).apply(fill_func)</div><div class="line"></div><div class="line">Out[<span class="number">118</span>]: </div><div class="line"></div><div class="line">Ohio          <span class="number">0.900479</span></div><div class="line">New York      <span class="number">0.486912</span></div><div class="line">Vermont       <span class="number">0.500000</span></div><div class="line">Florida      -<span class="number">0.627281</span></div><div class="line">Oregon       -<span class="number">0.580583</span></div><div class="line">Nevada       -<span class="number">1.000000</span></div><div class="line">California    <span class="number">2.033416</span></div><div class="line">Idaho        -<span class="number">1.000000</span></div><div class="line"></div><div class="line">dtype: float64</div></pre></td></tr></table></figure>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag">#Python</a>
+          
+            <a href="/tags/pandas/" rel="tag">#pandas</a>
+          
+            <a href="/tags/groupby/" rel="tag">#groupby</a>
+          
+            <a href="/tags/分组/" rel="tag">#分组</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/27/example-pandas-groupby/" rel="next" title="Groupby使用小例子">
+                <i class="fa fa-chevron-left"></i> Groupby使用小例子
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/27/gensim-similarity/" rel="prev" title="gensim文档相似度判断">
+                gensim文档相似度判断 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/06/17/pandas-groupby/"
+     data-title="pandas GroupBy使用"
+     data-content=""
+     data-url="http://www.kekefund.com/2016/06/17/pandas-groupby/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/06/17/pandas-groupby/"
+           data-title="pandas GroupBy使用" data-url="http://www.kekefund.com/2016/06/17/pandas-groupby/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、GroupBy技术"><span class="nav-number">1.</span> <span class="nav-text">一、GroupBy技术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、分组键"><span class="nav-number">2.</span> <span class="nav-text">二、分组键</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、分组"><span class="nav-number">3.</span> <span class="nav-text">三、分组</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，Series为分组键"><span class="nav-number">3.1.</span> <span class="nav-text">1，Series为分组键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，数组为分组键"><span class="nav-number">3.2.</span> <span class="nav-text">2，数组为分组键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3，列名为分组键"><span class="nav-number">3.3.</span> <span class="nav-text">3，列名为分组键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4，字典或Series为分组键"><span class="nav-number">3.4.</span> <span class="nav-text">4，字典或Series为分组键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5，函数为分组键"><span class="nav-number">3.5.</span> <span class="nav-text">5，函数为分组键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6，根据索引级别分组"><span class="nav-number">3.6.</span> <span class="nav-text">6，根据索引级别分组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7，对分组进行迭代"><span class="nav-number">3.7.</span> <span class="nav-text">7，对分组进行迭代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8，按列分组"><span class="nav-number">3.8.</span> <span class="nav-text">8，按列分组</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、数据聚合"><span class="nav-number">4.</span> <span class="nav-text">四、数据聚合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，面向列的多函数应用"><span class="nav-number">4.1.</span> <span class="nav-text">1，面向列的多函数应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，apply：一般性的“拆分-应用-合并”"><span class="nav-number">4.2.</span> <span class="nav-text">2，apply：一般性的“拆分 - 应用 - 合并”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3，用特定于分组的值填充缺失值"><span class="nav-number">4.3.</span> <span class="nav-text">3，用特定于分组的值填充缺失值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#示例：用平均值填充NA值"><span class="nav-number">4.3.1.</span> <span class="nav-text">示例：用平均值填充NA值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对不同的分组填充不同的值"><span class="nav-number">4.3.2.</span> <span class="nav-text">对不同的分组填充不同的值</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>

@@ -1,0 +1,1039 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="股票,大数据," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KeKeFund" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="每个证券公司都有一个分析师团队，不定期发布投资研究报告。分析师的研报准吗？分析师的“言值”究竟有多高？“信谁”的大数据科学团队对这个问题也很好奇。究竟准不准，我们信数据不信故事。技术男的方法非常简单暴力：  把分析师发布的研报预测与相关股票最后涨跌的结果作对比，判断该研报预测的准确性 把分析师发布的所有研报汇总起来，就得到分析预测的正确率，即“言值”，“言值”可以是从0-100分。 汇总所有分析师">
+<meta name="keywords" content="股票,大数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据教你挑选分析师">
+<meta property="og:url" content="http://www.kekefund.com/2016/06/27/fenxishi-band/index.html">
+<meta property="og:site_name" content="KeKeFund">
+<meta property="og:description" content="每个证券公司都有一个分析师团队，不定期发布投资研究报告。分析师的研报准吗？分析师的“言值”究竟有多高？“信谁”的大数据科学团队对这个问题也很好奇。究竟准不准，我们信数据不信故事。技术男的方法非常简单暴力：  把分析师发布的研报预测与相关股票最后涨跌的结果作对比，判断该研报预测的准确性 把分析师发布的所有研报汇总起来，就得到分析预测的正确率，即“言值”，“言值”可以是从0-100分。 汇总所有分析师">
+<meta property="og:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-02/1.png">
+<meta property="og:updated_time" content="2017-04-07T06:00:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="大数据教你挑选分析师">
+<meta name="twitter:description" content="每个证券公司都有一个分析师团队，不定期发布投资研究报告。分析师的研报准吗？分析师的“言值”究竟有多高？“信谁”的大数据科学团队对这个问题也很好奇。究竟准不准，我们信数据不信故事。技术男的方法非常简单暴力：  把分析师发布的研报预测与相关股票最后涨跌的结果作对比，判断该研报预测的准确性 把分析师发布的所有研报汇总起来，就得到分析预测的正确率，即“言值”，“言值”可以是从0-100分。 汇总所有分析师">
+<meta name="twitter:image" content="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-02/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 大数据教你挑选分析师 | KeKeFund </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-69979657-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?336c5d7270cff49527647639835acb15";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">KeKeFund</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">金融 · Python · 技术博客</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                大数据教你挑选分析师
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-06-27T17:10:47+08:00" content="2016-06-27">
+              2016-06-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Stock/" itemprop="url" rel="index">
+                    <span itemprop="name">Stock</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+                    
+          &nbsp; | &nbsp; 
+          
+          <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Hits
+
+
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/06/27/fenxishi-band/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/27/fenxishi-band/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>每个证券公司都有一个分析师团队，不定期发布投资研究报告。分析师的研报准吗？分析师的“言值”究竟有多高？<br>“信谁”的大数据科学团队对这个问题也很好奇。究竟准不准，我们信数据不信故事。<br>技术男的方法非常简单暴力：</p>
+<ol>
+<li>把分析师发布的研报预测与相关股票最后涨跌的结果作对比，判断该研报预测的准确性</li>
+<li>把分析师发布的所有研报汇总起来，就得到分析预测的正确率，即“言值”，“言值”可以是从0-100分。</li>
+<li>汇总所有分析师的数据，就可以得到全部分析师的“言值”分布。</li>
+</ol>
+<p>我们从“信谁”平台收集了几乎全部证券公司的3022名分析师、45万条研报数据进行分析。通过大数据挖掘和提取，总结了一些有意思的数据与大家分享。</p>
+<hr>
+<h1 id="一、中国分析师分布情况"><a href="#一、中国分析师分布情况" class="headerlink" title="一、中国分析师分布情况"></a>一、中国分析师分布情况</h1><p>国内的机构分析师基本集中在北京、上海、深圳等地。与国内的财富聚集地区一致。</p>
+<p><a href="http://kekefund.com/map_analyst.html" target="_blank" rel="external"><img src="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-02/1.png" alt=""></a></p>
+<a id="more"></a>
+<h1 id="二、高言值分析师"><a href="#二、高言值分析师" class="headerlink" title="二、高言值分析师"></a>二、高言值分析师</h1><p>“信谁”数据科学团队在评价分析师“言值”时设定了每位分析师至少发布10篇研报的门槛，这样计算分析师“言值”才有统计意义。<br>经过建模分析，可以看出分析师“言值”呈现一个偏右的正态分布图。这说明优秀的分析师总是占少数，大多数分析师的分析水平都维持在中等偏上水平。</p>
+<div><iframe src="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-02/fenxishi_yanzhi_fenbu.html" width="500" height="350" frameborder="no" scrolling="no"></iframe></div>
+
+
+<h2 id="1，神预测——百发百中榜单"><a href="#1，神预测——百发百中榜单" class="headerlink" title="1，神预测——百发百中榜单"></a>1，神预测——百发百中榜单</h2><p>预测准确度达到100%的分析师有26名，他们发表的文章数量从10~41篇不等。</p>
+<table>
+<thead>
+<tr>
+<th>分析师</th>
+<th>机构</th>
+<th>文章总数</th>
+<th>正确率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应振洲</td>
+<td>申银万国</td>
+<td>41</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>郑及游</td>
+<td>华融证券</td>
+<td>23</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>邓涛</td>
+<td>长江证券</td>
+<td>22</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>孙金霞</td>
+<td>光大证券</td>
+<td>22</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>范佳瓅</td>
+<td>光大证券</td>
+<td>20</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>丁芸洁</td>
+<td>平安证券</td>
+<td>19</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>胡晓华</td>
+<td>华泰证券</td>
+<td>18</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>梅剑锋</td>
+<td>申银万国</td>
+<td>17</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>王秀钢</td>
+<td>海通证券</td>
+<td>16</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>戚海鹏</td>
+<td>湘财证券</td>
+<td>15</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>徐颢</td>
+<td>湘财证券</td>
+<td>12</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>原瑞政</td>
+<td>中信建投</td>
+<td>12</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>朱玮琳</td>
+<td>国海证券</td>
+<td>12</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>刘伟杰</td>
+<td>山西证券</td>
+<td>11</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>郭湛</td>
+<td>东方证券</td>
+<td>11</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>张博</td>
+<td>渤海证券</td>
+<td>11</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>易凯</td>
+<td>湖南金证投资</td>
+<td>11</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>太平洋证券研究院</td>
+<td>太平洋证券</td>
+<td>11</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>张润毅</td>
+<td>国泰君安</td>
+<td>11</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>马蘅</td>
+<td>中投证券</td>
+<td>10</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>农林牧渔研究小组</td>
+<td>德邦证券</td>
+<td>10</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>朱颖</td>
+<td>中信证券</td>
+<td>10</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>舒亮</td>
+<td>国金证券</td>
+<td>10</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>邱义鹏</td>
+<td>长城证券</td>
+<td>10</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>栾钊</td>
+<td>湘财证券</td>
+<td>10</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>王赛楠</td>
+<td>太平洋证券</td>
+<td>10</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<p>对于这些“股神”级分析师，我们可以保持高度关注，今后他们说的话是相当“靠谱”的，我们随后也会选择“股神”进行个人专访，满足粉丝们的好奇心。</p>
+<h2 id="2，最有言值担当分析师榜单"><a href="#2，最有言值担当分析师榜单" class="headerlink" title="2，最有言值担当分析师榜单"></a>2，最有言值担当分析师榜单</h2><p>言值担当的分析师不仅要有预测准确度，还要一定的预测文章数量保证，产出量是检验分析师“言值”担当的另外一个标准。</p>
+<h3 id="挑选标准"><a href="#挑选标准" class="headerlink" title="挑选标准:"></a>挑选标准:</h3><ul>
+<li>预测准确度 ≥ 85%</li>
+<li>发表文章数 ≥ 30篇</li>
+</ul>
+<p>按此标准，正好挑选出108名分析师，这些分析师兼备高言值和高产出，对同期的市场的趋势把握准确。<br>我们挑选排名TOP10的分析师，展示其预测准确度和研报总数。</p>
+<div><iframe src="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-02/fenxishi_kaopu.html" width="500" height="350" frameborder="no" scrolling="no"></iframe></div><br>&gt; 注: 蓝色为研报总数，绿色为准确率。<br><br>得到这批分析师推荐、特别是多名高“言值”分析师同时推荐的股票，应该会有更好的投资价值！只要关注“信谁”微信公号，就可以免费、定期获得这些股票列表！<br><br><br>## 3，超低言值——“百发百不中”榜单<br>有“高富帅”的分析师，同样也有屌丝分析师。数据科学团队找出了这些低言值的分析师，发现预测准确度低到可以和北京小汽车摇号比例媲美，最低的准确度居然不到1%，125篇预测文章，只有1篇正确！对于这样的选手，我们只能呵呵了。<br>但可以反其道而行之，他预测上涨的我们就坚决回避，“信谁”也提供“避雷针”，帮助大家回避这些高风险股票。<br><div><iframe src="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-02/fenxishi_bad10.html" width="500" height="350" frameborder="no" scrolling="no"></iframe></div><br>&gt; 注: 蓝色为研报总数，绿色为准确率。<br><br><br># 三、哪家机构言值最高<br><br>数据科学团队还将分析师映射到其所在机构，对45万条预测言论做分析，发现预测准确度是以60%-70%为中心的正态分布。<br><div><iframe src="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-02/institute_yanzhi_fenbu.html" width="500" height="350" frameborder="no" scrolling="no"></iframe></div><br>一些高产的机构，比如长江证券，16000篇研报，能够达到70%以上的准确度，相比一些发表研报不过百但言值高的小机构，也一样非常不易。<br><br>## 研报产量TOP10 &amp; 预测准确率TOP10<br>如下：<br><div><iframe src="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-02/institute_kaopu.html" width="500" height="700" frameborder="no" scrolling="no"></iframe></div>
+
+
+<blockquote>
+<p>注: 蓝色为研报总数，绿色为准确率。</p>
+</blockquote>
+<h1 id="四、股票也有言值？——分析师最爱的股票榜单"><a href="#四、股票也有言值？——分析师最爱的股票榜单" class="headerlink" title="四、股票也有言值？——分析师最爱的股票榜单"></a>四、股票也有言值？——分析师最爱的股票榜单</h1><p>目前A股2862只股票，对于分析师来说，分析一只股票是要花不少时间，将A股所有股票都分析一遍是一个不可能完成的任务，因此每个分析师都会有自己的选股风格，将自己的专业优势集中在少数几只股票上。<br>数据科学团队提取出所有被预测的股票，然后对股票对按出现频率从高到低排序，可以看出分析师最关注的股票类型。</p>
+<h2 id="1，股票关注度TOP10："><a href="#1，股票关注度TOP10：" class="headerlink" title="1，股票关注度TOP10："></a>1，股票关注度TOP10：</h2><div><iframe src="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-02/stock_attention_top10.html" width="500" height="400" frameborder="no" scrolling="no"></iframe></div>
+
+<p>前十大股票基本都来自主板股票，只有1只中小板股票。说明机构对于主板的股票较为关注，主板股票总数量较多也是分析师们关注度高的另一个原因。</p>
+<h2 id="2，分析师关注板块分析"><a href="#2，分析师关注板块分析" class="headerlink" title="2，分析师关注板块分析"></a>2，分析师关注板块分析</h2><p>通过统计分析师关注股票的所属板块和行业，我们可以发现分析师的整体投资风格。</p>
+<h3 id="按关注板块热度划分："><a href="#按关注板块热度划分：" class="headerlink" title="按关注板块热度划分："></a>按关注板块热度划分：</h3><p><div><iframe src="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-02/stock_board_all.html" width="500" height="300" frameborder="no" scrolling="no"></iframe></div><br><em>注：板块划分的股票统计范围：创业板开板（2009年12月30日）~ 至今。</em></p>
+<h3 id="按行业分类来划分："><a href="#按行业分类来划分：" class="headerlink" title="按行业分类来划分："></a>按行业分类来划分：</h3><p><div><iframe src="http://7xo67b.com1.z0.glb.clouddn.com/2016-06-02/stock_industry.html" width="500" height="300" frameborder="no" scrolling="no"></iframe></div><br><em>注：图中数字为该行业的股票预测次数。</em></p>
+<p>从各板块被分析的股票占比来看，分析师们对于创业板和中小板更加热衷，这与近年来创业板、中小板更加活跃也有一定关系。</p>
+<h1 id="附，研报计算公式："><a href="#附，研报计算公式：" class="headerlink" title="附，研报计算公式："></a>附，研报计算公式：</h1><p>研报计算公式</p>
+<table>
+<thead>
+<tr>
+<th>投资建议</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>买入</td>
+<td>涨幅相对大盘指数大于15%</td>
+</tr>
+<tr>
+<td>增持</td>
+<td>涨幅相对大盘指数大于7.5% </td>
+</tr>
+<tr>
+<td>持有</td>
+<td>震荡幅度相比大盘不超过15% </td>
+</tr>
+<tr>
+<td>减持</td>
+<td>跌幅超过大盘指数7.5% </td>
+</tr>
+<tr>
+<td>卖出</td>
+<td>跌幅超过大盘指数15%</td>
+</tr>
+</tbody>
+</table>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/股票/" rel="tag">#股票</a>
+          
+            <a href="/tags/大数据/" rel="tag">#大数据</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/25/follow-analyst-trade/" rel="next" title="跟着分析师炒股系列（一）">
+                <i class="fa fa-chevron-left"></i> 跟着分析师炒股系列（一）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/27/example-pandas-groupby/" rel="prev" title="Groupby使用小例子">
+                Groupby使用小例子 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/06/27/fenxishi-band/"
+     data-title="大数据教你挑选分析师"
+     data-content=""
+     data-url="http://www.kekefund.com/2016/06/27/fenxishi-band/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/06/27/fenxishi-band/"
+           data-title="大数据教你挑选分析师" data-url="http://www.kekefund.com/2016/06/27/fenxishi-band/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/avatar.png" alt="Binger" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">Binger</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">learn python and invest</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">44</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">83</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/cbbing" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、中国分析师分布情况"><span class="nav-number">1.</span> <span class="nav-text">一、中国分析师分布情况</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、高言值分析师"><span class="nav-number">2.</span> <span class="nav-text">二、高言值分析师</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，神预测——百发百中榜单"><span class="nav-number">2.1.</span> <span class="nav-text">1，神预测——百发百中榜单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，最有言值担当分析师榜单"><span class="nav-number">2.2.</span> <span class="nav-text">2，最有言值担当分析师榜单</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#挑选标准"><span class="nav-number">2.2.1.</span> <span class="nav-text">挑选标准:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、股票也有言值？——分析师最爱的股票榜单"><span class="nav-number">3.</span> <span class="nav-text">四、股票也有言值？——分析师最爱的股票榜单</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，股票关注度TOP10："><span class="nav-number">3.1.</span> <span class="nav-text">1，股票关注度TOP10：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，分析师关注板块分析"><span class="nav-number">3.2.</span> <span class="nav-text">2，分析师关注板块分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#按关注板块热度划分："><span class="nav-number">3.2.1.</span> <span class="nav-text">按关注板块热度划分：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#按行业分类来划分："><span class="nav-number">3.2.2.</span> <span class="nav-text">按行业分类来划分：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#附，研报计算公式："><span class="nav-number">4.</span> <span class="nav-text">附，研报计算公式：</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binger</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+
+  
+  <span>
+    &nbsp; | &nbsp;本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+  </span>
+
+  
+  
+
+</div>
+
+
+
+
+
+<script async="async" src="//dn-lbstatics.qbox.me/lbservice/busuanzi/2.0/busuanzi.mini.js"></script>
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"cbbing"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+
+  
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/mathjax/2.4.0/config/TeX-AMS-MML_HTMLorMML.js"></script>
+  
+
+
+  
+  
+
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+
+<!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+</body>
+</html>
