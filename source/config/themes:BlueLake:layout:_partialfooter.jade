@@ -1,0 +1,24 @@
+#footer
+  .footer-info
+    p
+      a(href="/baidusitemap.xml") 网站地图
+      
+      |  |
+      a(href="/atom.xml") 订阅本站
+      
+      span 联系博主：
+        a.fa.fa-email(href="mailto:#{theme.about.email}",target="_blank") 
+        a.fa.fa-weibo(href="#{theme.about.weibo_url}",target="_blank")
+        a.fa.fa-github(href="#{theme.about.github_url}",target="_blank") 
+    p
+      span  Copyright &copy;
+        a(href=url_for('.'), rel='nofollow')= config.author || config.title + '.'
+      span  Powered by
+        a(rel='nofollow', target='_blank', href='https://hexo.io')  Hexo.
+      span
+        a(rel='nofollow', target='_blank', href='https://github.com/chaooo/hexo-theme-BlueLake') 
+        
+        span 本站总访问量<span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span>次
+
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
