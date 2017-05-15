@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2017-05-15T07:55:48.000Z</updated>
+  <updated>2017-05-15T08:23:22.000Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -20,9 +20,11 @@
     <link href="http://www.kekefund.com/2017/05/15/ireport-use-db/"/>
     <id>http://www.kekefund.com/2017/05/15/ireport-use-db/</id>
     <published>2017-05-15T07:40:53.000Z</published>
-    <updated>2017-05-15T07:55:48.000Z</updated>
+    <updated>2017-05-15T08:23:22.000Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="一、配置数据库"><a href="#一、配置数据库" class="headerlink" title="一、配置数据库"></a>一、配置数据库</h1><p>点击下图的红框：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir1.png" alt=""><br><a id="more"></a><br>新建一个Database JDBC connection:<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir2.png" alt=""><br>配置好MySQL的信息，Test成功！<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir3.png" alt=""></p>
+    <content type="html"><![CDATA[<p>ireport是java项目中比较好用的pdf报告生成工具，可以通过JRBeanCollectionDataSource传递java对象至ireport。在项目比较小的时候是比较快捷的。当项目需求复杂了，人员增多了，这种方式不适合任务细分，前后流程衔接太紧密，而且不好调试。<br>采用Mysql作为中间数据交换，能直接在ireport中预览数据展示结果。而且前后端解耦，可以将任务分派给不同的人来做。<br><a id="more"></a></p>
+<h1 id="一、配置数据库"><a href="#一、配置数据库" class="headerlink" title="一、配置数据库"></a>一、配置数据库</h1><p>点击下图的红框：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir1.png" alt=""></p>
+<p>新建一个Database JDBC connection:<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir2.png" alt=""><br>配置好MySQL的信息，Test成功！<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir3.png" alt=""></p>
 <h1 id="二、使用-JDBC连接"><a href="#二、使用-JDBC连接" class="headerlink" title="二、使用 JDBC连接"></a>二、使用 JDBC连接</h1><h2 id="1，SQL与Java-Object的对应关系"><a href="#1，SQL与Java-Object的对应关系" class="headerlink" title="1，SQL与Java Object的对应关系"></a>1，SQL与Java Object的对应关系</h2><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir10.png" alt=""></p>
 <h2 id="2，SQL-Qurey"><a href="#2，SQL-Qurey" class="headerlink" title="2，SQL Qurey"></a>2，SQL Qurey</h2><p>点击下图的红框：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir4.png" alt=""><br>编写SQL语句，点击“Read Fields”，会显示查询的字段，点击OK，字段会在左侧的Fields中显示出来。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir5.png" alt=""></p>
 <p>Fields会根据sql查询的字段自动生成：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir6.png" alt=""><br>在Detail报表中调用Fields：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir7.png" alt=""><br>Preview预览如下：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir8.png" alt=""></p>
@@ -35,7 +37,7 @@
     
     <summary type="html">
     
-      &lt;h1 id=&quot;一、配置数据库&quot;&gt;&lt;a href=&quot;#一、配置数据库&quot; class=&quot;headerlink&quot; title=&quot;一、配置数据库&quot;&gt;&lt;/a&gt;一、配置数据库&lt;/h1&gt;&lt;p&gt;点击下图的红框：&lt;br&gt;&lt;img src=&quot;http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir1.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;
+      &lt;p&gt;ireport是java项目中比较好用的pdf报告生成工具，可以通过JRBeanCollectionDataSource传递java对象至ireport。在项目比较小的时候是比较快捷的。当项目需求复杂了，人员增多了，这种方式不适合任务细分，前后流程衔接太紧密，而且不好调试。&lt;br&gt;采用Mysql作为中间数据交换，能直接在ireport中预览数据展示结果。而且前后端解耦，可以将任务分派给不同的人来做。&lt;br&gt;
     
     </summary>
     
