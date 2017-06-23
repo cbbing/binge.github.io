@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2017-06-15T09:33:38.000Z</updated>
+  <updated>2017-06-23T07:51:19.000Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -16,11 +16,151 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>2017腾讯云+未来峰会</title>
+    <link href="http://www.kekefund.com/2017/06/23/qcloud-summit/"/>
+    <id>http://www.kekefund.com/2017/06/23/qcloud-summit/</id>
+    <published>2017-06-23T07:19:59.000Z</published>
+    <updated>2017-06-23T07:51:19.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="云时代的新趋势-马化腾"><a href="#云时代的新趋势-马化腾" class="headerlink" title="云时代的新趋势  马化腾"></a>云时代的新趋势  马化腾</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs1.png" alt=""><br><a id="more"></a></p>
+<blockquote>
+<p>电子发票，扫描填写，云端上传，财务报销，钱款到账</p>
+</blockquote>
+<h1 id="人工智能，为何是现在？"><a href="#人工智能，为何是现在？" class="headerlink" title="人工智能，为何是现在？"></a>人工智能，为何是现在？</h1><blockquote>
+<p>张首晟 斯坦福大学物理教授，美国国家科学院院士</p>
+</blockquote>
+<ul>
+<li>摩尔定律所描述的计算能力的指数增长</li>
+<li>互联网和物联网的爆发性增长所产生的海量数据</li>
+<li>智能算法的快速发展</li>
+</ul>
+<h2 id="仅基于摄像头的自动驾驶技术"><a href="#仅基于摄像头的自动驾驶技术" class="headerlink" title="仅基于摄像头的自动驾驶技术"></a>仅基于摄像头的自动驾驶技术</h2><p>不需要激光雷达，也不需要高清三维地图 =&gt;Autox技术的可扩展性<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs2.png" alt=""></p>
+<ul>
+<li><p>大数据<br>金融、教育、健康……，我们需要更多的结构化数据。</p>
+</li>
+<li><p>数据市场<br>分享个人数据而保护个人隐私 =&gt; 形成数据市场<br>Homomorphic encryption（同态加密）技术</p>
+</li>
+</ul>
+<h1 id="AI即服务"><a href="#AI即服务" class="headerlink" title="AI即服务"></a>AI即服务</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs3.png" alt=""></p>
+<h1 id="金融科技"><a href="#金融科技" class="headerlink" title="金融科技"></a>金融科技</h1><blockquote>
+<p>李亮，平安科技首席战略官 </p>
+</blockquote>
+<ul>
+<li>1.0：金融IT，科技支持金融</li>
+<li>2.0：互联网金融，互联网+金融</li>
+<li>3.0：金融科技，科技引领金融<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs4.png" alt=""></li>
+</ul>
+<h2 id="AI、云、数字化O2O和安全是推动金融科技发展的四大关键支柱"><a href="#AI、云、数字化O2O和安全是推动金融科技发展的四大关键支柱" class="headerlink" title="AI、云、数字化O2O和安全是推动金融科技发展的四大关键支柱"></a>AI、云、数字化O2O和安全是推动金融科技发展的四大关键支柱</h2><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs5.png" alt=""></p>
+<h2 id="金融·科技-or-科技·金融"><a href="#金融·科技-or-科技·金融" class="headerlink" title="金融·科技 or 科技·金融"></a>金融·科技 or 科技·金融</h2><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs6.png" alt=""></p>
+<h2 id="金融应用场景"><a href="#金融应用场景" class="headerlink" title="金融应用场景"></a>金融应用场景</h2><ul>
+<li>投资类<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs7.png" alt=""></li>
+</ul>
+<ul>
+<li>银行类<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs8.png" alt=""></li>
+<li>保险类<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs9.png" alt=""></li>
+</ul>
+<h1 id="无缝的数据访问是推动AI商业化应用的关键"><a href="#无缝的数据访问是推动AI商业化应用的关键" class="headerlink" title="无缝的数据访问是推动AI商业化应用的关键"></a>无缝的数据访问是推动AI商业化应用的关键</h1><blockquote>
+<p>田民，顺丰集团CTO，顺丰科技CEO</p>
+</blockquote>
+<h2 id="AI的4大核心要素"><a href="#AI的4大核心要素" class="headerlink" title="AI的4大核心要素"></a>AI的4大核心要素</h2><ul>
+<li>数据</li>
+<li>场景</li>
+<li>技术</li>
+<li>算法</li>
+</ul>
+<h2 id="AI转型的5大关键"><a href="#AI转型的5大关键" class="headerlink" title="AI转型的5大关键"></a>AI转型的5大关键</h2><ul>
+<li>成功用例</li>
+<li>数据生态</li>
+<li>技术工具</li>
+<li>无缝介入工作流程</li>
+<li>开放的文化和组织</li>
+</ul>
+<h2 id="AI技术采用率成熟度的6大标准"><a href="#AI技术采用率成熟度的6大标准" class="headerlink" title="AI技术采用率成熟度的6大标准"></a>AI技术采用率成熟度的6大标准</h2><ul>
+<li>数字化成熟度</li>
+<li>商业规模化应用</li>
+<li>核心业务应用</li>
+<li>技术多元化</li>
+<li>投资回报</li>
+<li>高管态度<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs10.png" alt=""></li>
+</ul>
+<h1 id="互联网专场"><a href="#互联网专场" class="headerlink" title="互联网专场"></a>互联网专场</h1><h2 id="摩拜高速增长背后的技术支撑（六脉神剑）"><a href="#摩拜高速增长背后的技术支撑（六脉神剑）" class="headerlink" title="摩拜高速增长背后的技术支撑（六脉神剑）"></a>摩拜高速增长背后的技术支撑（六脉神剑）</h2><blockquote>
+<p>摩拜首席架构师 范同祥</p>
+</blockquote>
+<ul>
+<li>物联网技术</li>
+<li>云计算平台</li>
+<li>微服务架构</li>
+<li>DevOps流水线</li>
+<li>腾讯专家团</li>
+<li>摩拜技术文化<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs11.png" alt=""></li>
+</ul>
+<h3 id="领先同行的物联网技术"><a href="#领先同行的物联网技术" class="headerlink" title="领先同行的物联网技术"></a>领先同行的物联网技术</h3><ul>
+<li>智能锁</li>
+<li>OTA在线升级</li>
+<li>软硬件快速迭代</li>
+<li>近100项专利或专利申请</li>
+<li>GPS定位</li>
+<li>GSM通信</li>
+<li>蓝牙开锁</li>
+<li>NB-IoT<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs12.png" alt=""></li>
+</ul>
+<h3 id="拥抱主流技术栈"><a href="#拥抱主流技术栈" class="headerlink" title="拥抱主流技术栈"></a>拥抱主流技术栈</h3><ul>
+<li>Spring Cloud</li>
+<li>Netflix OSS</li>
+<li>Consul</li>
+<li>ZipKin<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs13.png" alt=""></li>
+</ul>
+<h3 id="服务分层，保障核心系统稳定可用"><a href="#服务分层，保障核心系统稳定可用" class="headerlink" title="服务分层，保障核心系统稳定可用"></a>服务分层，保障核心系统稳定可用</h3><ul>
+<li>数据分层</li>
+<li>核心业务系统</li>
+<li>运营支撑系统<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs14.png" alt=""><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs15.png" alt=""></li>
+</ul>
+<h3 id="实用、高效的工具链，步入DevOps快车道"><a href="#实用、高效的工具链，步入DevOps快车道" class="headerlink" title="实用、高效的工具链，步入DevOps快车道"></a>实用、高效的工具链，步入DevOps快车道</h3><ul>
+<li>代码模板化</li>
+<li>服务容器化</li>
+<li>环境标准化</li>
+<li>自动化测试</li>
+<li>自动化部署</li>
+<li>多分支并行迭代<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs16.png" alt=""></li>
+</ul>
+<h3 id="借力腾讯云"><a href="#借力腾讯云" class="headerlink" title="借力腾讯云"></a>借力腾讯云</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs18.png" alt=""></p>
+<h3 id="技术文化"><a href="#技术文化" class="headerlink" title="技术文化"></a>技术文化</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs17.png" alt=""></p>
+<h1 id="金融专场"><a href="#金融专场" class="headerlink" title="金融专场"></a>金融专场</h1><h2 id="云上“智”造新金融"><a href="#云上“智”造新金融" class="headerlink" title="云上“智”造新金融"></a>云上“智”造新金融</h2><blockquote>
+<p>朱立强，腾讯FiT副总裁,腾讯云副总裁</p>
+</blockquote>
+<p>AI与金融结合的方向<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs19.png" alt=""></p>
+<h2 id="“云-AI”金融应用"><a href="#“云-AI”金融应用" class="headerlink" title="“云+AI”金融应用"></a>“云+AI”金融应用</h2><ul>
+<li>智能投顾<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs20.png" alt=""></li>
+<li>智能营销<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs21.png" alt=""></li>
+<li>智能审批<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs22.png" alt=""></li>
+<li>反欺诈<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs23.png" alt=""></li>
+</ul>
+<h1 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h1><p><a href="https://cloud.tencent.com/act/tcc2017" target="_blank" rel="external">2017腾讯云+未来峰会</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;云时代的新趋势-马化腾&quot;&gt;&lt;a href=&quot;#云时代的新趋势-马化腾&quot; class=&quot;headerlink&quot; title=&quot;云时代的新趋势  马化腾&quot;&gt;&lt;/a&gt;云时代的新趋势  马化腾&lt;/h1&gt;&lt;p&gt;&lt;img src=&quot;http://7xo67b.com1.z0.glb.clouddn.com/2017-06-23/qs1.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;
+    
+    </summary>
+    
+      <category term="Others" scheme="http://www.kekefund.com/categories/Others/"/>
+    
+    
+      <category term="AI" scheme="http://www.kekefund.com/tags/AI/"/>
+    
+      <category term="云计算" scheme="http://www.kekefund.com/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/"/>
+    
+      <category term="金融" scheme="http://www.kekefund.com/tags/%E9%87%91%E8%9E%8D/"/>
+    
+  </entry>
+  
+  <entry>
     <title>采用Docker集成jquery-file-upload组件到WEB应用</title>
     <link href="http://www.kekefund.com/2017/06/15/jquery-file-upload-docker/"/>
     <id>http://www.kekefund.com/2017/06/15/jquery-file-upload-docker/</id>
     <published>2017-06-15T09:13:19.000Z</published>
-    <updated>2017-06-15T09:33:38.000Z</updated>
+    <updated>2017-06-15T09:51:13.000Z</updated>
     
     <content type="html"><![CDATA[<h1 id="1，Docker镜像"><a href="#1，Docker镜像" class="headerlink" title="1，Docker镜像"></a>1，Docker镜像</h1><p>jQuery-File-Upload 组件是一个非常好用的文件上传组件，有很多友好的特性：</p>
 <ul>
@@ -1007,45 +1147,6 @@
       <category term="centos7" scheme="http://www.kekefund.com/tags/centos7/"/>
     
       <category term="字体" scheme="http://www.kekefund.com/tags/%E5%AD%97%E4%BD%93/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>mac版 eclipse 只能run不能debug的解决方案</title>
-    <link href="http://www.kekefund.com/2017/01/10/mac-eclipse-debug/"/>
-    <id>http://www.kekefund.com/2017/01/10/mac-eclipse-debug/</id>
-    <published>2017-01-10T03:07:36.000Z</published>
-    <updated>2017-04-19T03:37:45.000Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="mac版-eclipse-只能run不能debug的解决方案"><a href="#mac版-eclipse-只能run不能debug的解决方案" class="headerlink" title="mac版 eclipse 只能run不能debug的解决方案"></a>mac版 eclipse 只能run不能debug的解决方案</h1><p>mac：macOS Sierra 10.12.2<br>eclipse：Version: Neon.1a Release (4.6.1)</p>
-<p>debug时进度一直停在93%，然后超时报错：<br><a id="more"></a><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/20170110/17011001.png" alt=""></p>
-<figure class="highlight subunit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ERROR: </span>transport error 202: gethostbyname: unknown host</div><div class="line"><span class="keyword">ERROR: </span>JDWP Transport dt_socket failed to initialize, TRANSPORT_INIT(510)</div><div class="line">JDWP exit error AGENT_ERROR_TRANSPORT_INIT(197): No transports initialized [debugInit.c:750]</div><div class="line">FATAL ERROR in native method: JDWP No transports initialized, jvmtiError=AGENT_ERROR_TRANSPORT_INIT(197)</div></pre></td></tr></table></figure>
-<p>分析错误提示，是找不到主机host，google一下，在stackoverflow找到了解决方案，在hosts中加入<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">127<span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-class">.1</span>	<span class="selector-tag">localhost</span></div></pre></td></tr></table></figure></p>
-<p>-hosts修改方法：<br>hosts不能直接在/etc中修改；<br>在Finder中，点击shift+command+G，输入/etc，将hosts文件拷贝到桌面，修改后再拷贝回去（需要输入密码）。</p>
-<p>再次debug，正常！<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/20170110/17011002.png" alt=""></p>
-<ul>
-<li>参考:</li>
-</ul>
-<blockquote>
-<p><a href="http://stackoverflow.com/questions/29188789/eclipse-mac-os-x-debug-error-fatal-error-in-native-method-jdwp-no-transports" target="_blank" rel="external">http://stackoverflow.com/questions/29188789/eclipse-mac-os-x-debug-error-fatal-error-in-native-method-jdwp-no-transports</a></p>
-</blockquote>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;mac版-eclipse-只能run不能debug的解决方案&quot;&gt;&lt;a href=&quot;#mac版-eclipse-只能run不能debug的解决方案&quot; class=&quot;headerlink&quot; title=&quot;mac版 eclipse 只能run不能debug的解决方案&quot;&gt;&lt;/a&gt;mac版 eclipse 只能run不能debug的解决方案&lt;/h1&gt;&lt;p&gt;mac：macOS Sierra 10.12.2&lt;br&gt;eclipse：Version: Neon.1a Release (4.6.1)&lt;/p&gt;
-&lt;p&gt;debug时进度一直停在93%，然后超时报错：&lt;br&gt;
-    
-    </summary>
-    
-      <category term="Java" scheme="http://www.kekefund.com/categories/Java/"/>
-    
-    
-      <category term="mac" scheme="http://www.kekefund.com/tags/mac/"/>
-    
-      <category term="eclipse" scheme="http://www.kekefund.com/tags/eclipse/"/>
-    
-      <category term="debug" scheme="http://www.kekefund.com/tags/debug/"/>
     
   </entry>
   
