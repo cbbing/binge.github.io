@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2017-10-13T05:53:34.000Z</updated>
+  <updated>2017-10-13T05:58:02.000Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -20,16 +20,16 @@
     <link href="http://www.kekefund.com/2017/10/13/nginx-cache/"/>
     <id>http://www.kekefund.com/2017/10/13/nginx-cache/</id>
     <published>2017-10-13T05:45:50.000Z</published>
-    <updated>2017-10-13T05:53:34.000Z</updated>
+    <updated>2017-10-13T05:58:02.000Z</updated>
     
     <content type="html"><![CDATA[<p>在浏览器和应用服务器之间，存在多种“潜在”缓存，如：</p>
 <ul>
 <li>客户端浏览器缓存</li>
 <li>中间缓存</li>
 <li>内容分发网络（CDN）</li>
-<li>服务器上的负载均衡和反向代理</li>
+<li>服务器上的负载均衡和反向代理<a id="more"></a>
+缓存，仅在反向代理和负载均衡的层面，就对性能提高有很大的帮助。</li>
 </ul>
-<p>缓存，仅在反向代理和负载均衡的层面，就对性能提高有很大的帮助。</p>
 <h1 id="为什么要用缓存？"><a href="#为什么要用缓存？" class="headerlink" title="为什么要用缓存？"></a>为什么要用缓存？</h1><ul>
 <li>网站的访问速度更快</li>
 <li>减轻源服务器的负担</li>
@@ -137,9 +137,7 @@
 &lt;li&gt;客户端浏览器缓存&lt;/li&gt;
 &lt;li&gt;中间缓存&lt;/li&gt;
 &lt;li&gt;内容分发网络（CDN）&lt;/li&gt;
-&lt;li&gt;服务器上的负载均衡和反向代理&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;缓存，仅在反向代理和负载均衡的
+&lt;li&gt;服务器上的负载均衡和反向代理
     
     </summary>
     
@@ -157,18 +155,12 @@
     <link href="http://www.kekefund.com/2017/08/09/docker-command/"/>
     <id>http://www.kekefund.com/2017/08/09/docker-command/</id>
     <published>2017-08-09T08:06:45.000Z</published>
-    <updated>2017-08-09T08:17:46.000Z</updated>
+    <updated>2017-10-13T05:58:52.000Z</updated>
     
     <content type="html"><![CDATA[<p>Docker 命令操作手册，方便查询使用。</p>
 <h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><p>docker run </p>
 <blockquote>
-<p>–name 指定容器名</p>
-<p>-p 指定端口映射</p>
-<p>-v 挂载数据卷或者本地目录映射 :ro 挂载为只读</p>
-<p>-d 后台持续运行</p>
-<p>-i 交互式操作</p>
-<p>-t 终端</p>
-<p>-rm 容器退出后随之将其删除(与-d 冲突)</p>
+<p>–name 指定容器名<br>-p 指定端口映射<br><a id="more"></a><br>-v 挂载数据卷或者本地目录映射 :ro 挂载为只读<br>-d 后台持续运行<br>-i 交互式操作<br>-t 终端<br>-rm 容器退出后随之将其删除(与-d 冲突)</p>
 </blockquote>
 <p>eg:</p>
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">docker <span class="keyword">run</span><span class="bash"> --name ghost1 -p 80:2368 -v /c/Dev/server/blogtest2:/var/lib/ghost ghost</span></div><div class="line">docker <span class="keyword">run</span><span class="bash"> -it --rm ubuntu:14.04 bash</span></div><div class="line">docker <span class="keyword">run</span><span class="bash"> ubuntu:14.04 /bin/<span class="built_in">echo</span> <span class="string">'Hello world'</span></span></div><div class="line">docker <span class="keyword">run</span><span class="bash"> --name webserver <span class="_">-d</span> -p 80:80 nginx</span></div></pre></td></tr></table></figure>
@@ -195,7 +187,7 @@
       &lt;p&gt;Docker 命令操作手册，方便查询使用。&lt;/p&gt;
 &lt;h1 id=&quot;运行&quot;&gt;&lt;a href=&quot;#运行&quot; class=&quot;headerlink&quot; title=&quot;运行&quot;&gt;&lt;/a&gt;运行&lt;/h1&gt;&lt;p&gt;docker run &lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;–name 指定容
+&lt;p&gt;–name 指定容器名&lt;br&gt;-p 指定端口映射&lt;br&gt;
     
     </summary>
     
@@ -211,9 +203,9 @@
     <link href="http://www.kekefund.com/2017/08/08/docker-image-auo-build/"/>
     <id>http://www.kekefund.com/2017/08/08/docker-image-auo-build/</id>
     <published>2017-08-08T10:09:51.000Z</published>
-    <updated>2017-08-10T03:33:15.000Z</updated>
+    <updated>2017-10-13T05:59:14.000Z</updated>
     
-    <content type="html"><![CDATA[<p>基于Git的代码版本控制，能保证每个开发人员的开发成果得到有效的保护，不会发生因为其他人的“误操作”操作将自己辛辛苦苦写的代码删除，而且能够跟踪每一次的改动，能快速回滚到之前任一版本。<br>基于Docker镜像的版本控制，能保证应用服务的正常迭代更新，某一版本出问题了可以快速切换至其他镜像版本。</p>
+    <content type="html"><![CDATA[<p>基于Git的代码版本控制，能保证每个开发人员的开发成果得到有效的保护，不会发生因为其他人的“误操作”操作将自己辛辛苦苦写的代码删除，而且能够跟踪每一次的改动，能快速回滚到之前任一版本。<br>基于Docker镜像的版本控制，能保证应用服务的正常迭代更新，某一版本出问题了可以快速切换至其他镜像版本。<br><a id="more"></a></p>
 <h1 id="1，镜像仓库"><a href="#1，镜像仓库" class="headerlink" title="1，镜像仓库"></a>1，镜像仓库</h1><p>镜像的版本控制，主要是通过给image加tag来区分。首先，我们需要一个镜像仓库，最好是私有仓库。目前国内阿里云和腾讯云都提供免费的私有镜像服务，当然，我们还可以自己搭建私有镜像仓库。</p>
 <h2 id="1-1，腾讯云镜像仓库：（https-console-qcloud-com-ccs）"><a href="#1-1，腾讯云镜像仓库：（https-console-qcloud-com-ccs）" class="headerlink" title="1.1，腾讯云镜像仓库：（https://console.qcloud.com/ccs）"></a>1.1，腾讯云镜像仓库：（<a href="https://console.qcloud.com/ccs）" target="_blank" rel="external">https://console.qcloud.com/ccs）</a></h2><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-08-08/b1.png" alt=""></p>
 <h2 id="1-2，阿里云镜像仓库：（https-cr-console-aliyun-com）"><a href="#1-2，阿里云镜像仓库：（https-cr-console-aliyun-com）" class="headerlink" title="1.2，阿里云镜像仓库：（https://cr.console.aliyun.com）"></a>1.2，阿里云镜像仓库：（<a href="https://cr.console.aliyun.com）" target="_blank" rel="external">https://cr.console.aliyun.com）</a></h2><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-08-08/b2.png" alt=""></p>
@@ -260,7 +252,7 @@
     
     <summary type="html">
     
-      &lt;p&gt;基于Git的代码版本控制，能保证每个开发人员的开发成果得到有效的保护，不会发生因为其他人的“误操作”操作将自己辛辛苦苦写的代码删除，而且能够跟踪每一次的改动，能快速回滚到之前任一版本。&lt;br&gt;基于Docker镜像的版本控制，能保证应用服务的正常迭代更新，某一版本出问题了可以
+      &lt;p&gt;基于Git的代码版本控制，能保证每个开发人员的开发成果得到有效的保护，不会发生因为其他人的“误操作”操作将自己辛辛苦苦写的代码删除，而且能够跟踪每一次的改动，能快速回滚到之前任一版本。&lt;br&gt;基于Docker镜像的版本控制，能保证应用服务的正常迭代更新，某一版本出问题了可以快速切换至其他镜像版本。&lt;br&gt;
     
     </summary>
     
