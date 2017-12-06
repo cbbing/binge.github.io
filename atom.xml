@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2017-10-27T11:20:58.000Z</updated>
+  <updated>2017-12-06T05:58:18.369Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -14,6 +14,50 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>scrapy+selenium爬取UC头条网站</title>
+    <link href="http://www.kekefund.com/2017/12/06/scrapy-and-selenium/"/>
+    <id>http://www.kekefund.com/2017/12/06/scrapy-and-selenium/</id>
+    <published>2017-12-06T05:49:26.000Z</published>
+    <updated>2017-12-06T05:58:18.369Z</updated>
+    
+    <content type="html"><![CDATA[<p>Scrapy是Python优秀的爬虫框架，selenium是非常好用的自动化WEB测试工具，两者结合可以非常容易对动态网页进行爬虫。<br>本文的需求是抓取UC头条各个板块的内容。UC头条(<a href="https://news.uc.cn/" target="_blank" rel="external">https://news.uc.cn/</a> )网站没有提供搜索入口，只能每个板块的首页向下滚动鼠标加载更多。要对这样的网站进行检索，抓取其内容，采用一般的scrapy请求方式，每次只能获取最新的10条数据，分析其JS请求，发现参数过于复杂，没有规律。如果想获取更多数据，则需要采用模拟浏览器的方法，这时候selenium就派上用场了。<br><a id="more"></a><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-12-06/86387208.png" alt=""></p>
+<h1 id="1，定义spider"><a href="#1，定义spider" class="headerlink" title="1，定义spider"></a>1，定义spider</h1><p>模拟从百度搜索进入，这个步骤可以省略，主要为了跳到parse函数<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UCTouTiaoSpider</span>(<span class="title">VideoBaseSpider</span>):</span></div><div class="line">    name = <span class="string">"uctoutiao_spider"</span></div><div class="line">    df_keys = [<span class="string">'人物'</span>, <span class="string">'百科'</span>, <span class="string">'乌镇'</span>]</div><div class="line"> </div><div class="line"> </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(<span class="keyword">self</span>, scrapy_task_id=None, *args, **kwargs)</span></span>:        </div><div class="line">        <span class="keyword">self</span>.url_src = <span class="string">"http://www.baidu.com"</span></div><div class="line"> </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start_requests</span><span class="params">(<span class="keyword">self</span>)</span></span>:</div><div class="line"> </div><div class="line">        requests = []</div><div class="line">        request = scrapy.Request(<span class="string">"http://www.baidu.com"</span>, callback=<span class="keyword">self</span>.parse)</div><div class="line">        requests.append(request)       </div><div class="line">        <span class="keyword">return</span> requests</div></pre></td></tr></table></figure></p>
+<h1 id="2，parse函数"><a href="#2，parse函数" class="headerlink" title="2，parse函数"></a>2，parse函数</h1><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">def parse(self, response):</div><div class="line">    self.<span class="built_in">log</span>(response.url)</div><div class="line"> </div><div class="line"> </div><div class="line">    urls = [<span class="string">"https://news.uc.cn/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_redian/"</span>,</div><div class="line">            <span class="comment"># "https://news.uc.cn/c_shipin/",</span></div><div class="line">            <span class="comment"># "https://news.uc.cn/c_gaoxiao/",</span></div><div class="line">            <span class="string">"https://news.uc.cn/c_shehui/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_yule/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_keji/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_tiyu/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_qiche/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_caijing/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_junshi/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_tansuo/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_lishi/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_youxi/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_lvyou/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/news/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_shishang/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_jiankang/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_guoji/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_yuer/"</span>,</div><div class="line">            <span class="string">"https://news.uc.cn/c_meishi/"</span>]</div><div class="line">      </div><div class="line">    <span class="comment"># 启动浏览器，这里用的火狐，如果在linux环境下可以用PhantomJS，稳定性稍微差点，有内存泄露的风险。</span></div><div class="line">    driver = webdriver.Firefox()</div><div class="line">    <span class="keyword">for</span> url <span class="keyword">in</span> urls:</div><div class="line">        <span class="keyword">try</span>:</div><div class="line">            print(url)</div><div class="line">            driver.<span class="built_in">get</span>(url)</div><div class="line">            <span class="comment">#模拟鼠标滚到底部(加载100条数据)</span></div><div class="line">            <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">10</span>):</div><div class="line">                driver.execute_script(<span class="string">"window.scrollTo(0, document.body.scrollHeight)"</span>)</div><div class="line">                driver.implicitly_wait(<span class="number">10</span>)  <span class="comment"># 隐性等待,最长10秒</span></div><div class="line"> </div><div class="line">            <span class="comment"># print driver.page_source</span></div><div class="line">            soup = bs(driver.page_source, <span class="string">'lxml'</span>)</div><div class="line">            articles = soup.find_all(href=re.compile(<span class="string">"/a_\w+?/"</span>), <span class="keyword">text</span>=re.compile(<span class="string">".+"</span>))</div><div class="line">            <span class="keyword">for</span> article <span class="keyword">in</span> articles:</div><div class="line">                <span class="keyword">for</span> key <span class="keyword">in</span> self.df_keys:</div><div class="line">                    <span class="keyword">item</span> = VideoItem()  <span class="comment">#自定义的Item</span></div><div class="line">                    <span class="keyword">item</span>[<span class="string">'title'</span>] = article.<span class="keyword">text</span></div><div class="line">                    <span class="keyword">item</span>[<span class="string">'href'</span>] = article[<span class="string">'href'</span>]                    </div><div class="line">                    self.<span class="built_in">log</span>(<span class="keyword">item</span>)</div><div class="line">                    yield <span class="keyword">item</span></div><div class="line"> </div><div class="line">        except Exception <span class="keyword">as</span> e:</div><div class="line">            print e</div><div class="line">            <span class="keyword">if</span> driver == None:</div><div class="line">                driver = webdriver.Firefox()</div><div class="line"> </div><div class="line">    <span class="keyword">if</span> driver != None:</div><div class="line">        driver.quit()</div></pre></td></tr></table></figure>
+<p>真正的实现部分比较简单，几句代码就搞定了。</p>
+<h1 id="附："><a href="#附：" class="headerlink" title="附："></a>附：</h1><h2 id="selenium使用实例"><a href="#selenium使用实例" class="headerlink" title="selenium使用实例"></a>selenium使用实例</h2><h3 id="1，切换焦点至新窗口"><a href="#1，切换焦点至新窗口" class="headerlink" title="1，切换焦点至新窗口"></a>1，切换焦点至新窗口</h3><p>在页面上点击一个button, 然后打开了一个新的window, 将当前IWebDriver的focus切换到新window，使用IWebDriver.SwitchTo().Window(string windowName)。</p>
+<p>例如， 我点击按钮以后弹出一个名字叫做”Content Display”的window， 要切换焦点到新窗口的方法是， 首先，获得新window的window name, 大家不要误以为page tile就是window name 哦， 如果你使用driver.SwitchTo().Window(“Content Display”)是找不到window name 叫做”Content Display”的窗口的， 其实Window Name 是一长串数字，类似“59790103-4e06-4433-97a9-b6e519a84fd0”。</p>
+<p>要正确切换到”Content Display”的方法是：</p>
+<ol>
+<li><p>获得当前所有的WindowHandles。</p>
+</li>
+<li><p>循环遍历到所有的window, 查找window.title与”Content Display”相符的window返回。</p>
+</li>
+</ol>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> handle <span class="keyword">in</span> dr<span class="selector-class">.window_handles</span>:</div><div class="line">    dr<span class="selector-class">.switch_to</span><span class="selector-class">.window</span>(handle)</div><div class="line">    print dr<span class="selector-class">.title</span></div><div class="line">    <span class="keyword">if</span> len(dr.title) == <span class="string">'目标窗口标题'</span>:</div><div class="line">        break</div></pre></td></tr></table></figure>
+<blockquote>
+<p>参考：<a href="http://www.cnblogs.com/qixue/p/3928775.html" target="_blank" rel="external">Selenium - IWebDriver.SwitchTo() frame 和 Window 的用法</a></p>
+</blockquote>
+<h3 id="2-，移至底部"><a href="#2-，移至底部" class="headerlink" title="2 ，移至底部"></a>2 ，移至底部</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">driver</span><span class="selector-class">.execute_script</span>("<span class="selector-tag">window</span><span class="selector-class">.scrollTo</span>(0, <span class="selector-tag">document</span><span class="selector-class">.body</span><span class="selector-class">.scrollHeight</span>)")</div></pre></td></tr></table></figure>
+<h3 id="3，移动至指定元素"><a href="#3，移动至指定元素" class="headerlink" title="3，移动至指定元素"></a>3，移动至指定元素</h3><p>某些按钮点击时必须可见，于是要把屏幕移动到按钮可见的区域<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">element</span> = driver.find_element_by_xpath(<span class="string">"//a[@class='p-next']"</span>)</div><div class="line"><span class="keyword">element</span>.location_once_scrolled_into_view</div><div class="line"> </div><div class="line"><span class="comment">#或者</span></div><div class="line">driver.set_window_size(<span class="number">800</span>,<span class="number">800</span>)</div><div class="line"><span class="keyword">element</span> = driver.find_element_by_xpath(<span class="string">"//a[@class='p-next']"</span>)</div><div class="line">js = <span class="string">"window.scrollTo(&#123;&#125;,&#123;&#125;);"</span>.<span class="built_in">format</span>(<span class="keyword">element</span>.location[<span class="string">'x'</span>], <span class="keyword">element</span>.location[<span class="string">'y'</span>] - <span class="number">100</span>)</div><div class="line">driver.execute_script(js)</div></pre></td></tr></table></figure></p>
+<p>参考：<br><a href="https://huilansame.github.io/huilansame.github.io/archivers/sleep-implicitlywait-wait" target="_blank" rel="external">Python selenium —— 一定要会用selenium的等待，三种等待方式解读</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Scrapy是Python优秀的爬虫框架，selenium是非常好用的自动化WEB测试工具，两者结合可以非常容易对动态网页进行爬虫。&lt;br&gt;本文的需求是抓取UC头条各个板块的内容。UC头条(&lt;a href=&quot;https://news.uc.cn/&quot;&gt;https://news.uc.cn/&lt;/a&gt; )网站没有提供搜索入口，只能每个板块的首页向下滚动鼠标加载更多。要对这样的网站进行检索，抓取其内容，采用一般的scrapy请求方式，每次只能获取最新的10条数据，分析其JS请求，发现参数过于复杂，没有规律。如果想获取更多数据，则需要采用模拟浏览器的方法，这时候selenium就派上用场了。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="Python" scheme="http://www.kekefund.com/categories/Python/"/>
+    
+    
+      <category term="selenium" scheme="http://www.kekefund.com/tags/selenium/"/>
+    
+      <category term="scrapy" scheme="http://www.kekefund.com/tags/scrapy/"/>
+    
+  </entry>
   
   <entry>
     <title>nginx日志分析</title>
@@ -675,9 +719,9 @@
     
       <category term="ireport" scheme="http://www.kekefund.com/tags/ireport/"/>
     
-      <category term="报告" scheme="http://www.kekefund.com/tags/%E6%8A%A5%E5%91%8A/"/>
-    
       <category term="mysql" scheme="http://www.kekefund.com/tags/mysql/"/>
+    
+      <category term="报告" scheme="http://www.kekefund.com/tags/%E6%8A%A5%E5%91%8A/"/>
     
   </entry>
   
@@ -1140,38 +1184,6 @@
       <category term="docker" scheme="http://www.kekefund.com/tags/docker/"/>
     
       <category term="mysql" scheme="http://www.kekefund.com/tags/mysql/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>mac下安装docker</title>
-    <link href="http://www.kekefund.com/2017/03/17/docker-on-mac/"/>
-    <id>http://www.kekefund.com/2017/03/17/docker-on-mac/</id>
-    <published>2017-03-17T07:01:10.000Z</published>
-    <updated>2017-04-19T03:41:21.000Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>系统要求：OS X EI Captian 10.11以上</p>
-<p>docker默认是在linux下运行，要在mac下运行，需要安装linux的虚拟环境。好在docker官网提供了mac版的docker安装包。<br>在<a href="https://www.docker.com/docker-mac" target="_blank" rel="external">https://www.docker.com/docker-mac</a> 下载Docker.img。<br>安装完成后，顶栏会出现<br><a id="more"></a><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-17/dm1.png" alt=""></p>
-<p>双击安装后，到终端查看：<br>docker version<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="string">[cbb@~]$</span> <span class="string">docker</span> <span class="string">version</span></div><div class="line"><span class="attr">Client:</span></div><div class="line"><span class="attr"> Version:</span>      <span class="number">17.03</span><span class="number">.0</span><span class="bullet">-ce</span></div><div class="line"> <span class="string">API</span> <span class="attr">version:</span>  <span class="number">1.26</span></div><div class="line"> <span class="string">Go</span> <span class="attr">version:</span>   <span class="string">go1.7.5</span></div><div class="line"> <span class="string">Git</span> <span class="attr">commit:</span>   <span class="number">60</span><span class="string">ccb22</span></div><div class="line"><span class="attr"> Built:</span>        <span class="string">Thu</span> <span class="string">Feb</span> <span class="number">23</span> <span class="number">10</span><span class="string">:40:59</span> <span class="number">2017</span></div><div class="line"> <span class="string">OS/Arch:</span>      <span class="string">darwin/amd64</span></div><div class="line"></div><div class="line"><span class="attr">Server:</span></div><div class="line"><span class="attr"> Version:</span>      <span class="number">17.03</span><span class="number">.0</span><span class="bullet">-ce</span></div><div class="line"> <span class="string">API</span> <span class="attr">version:</span>  <span class="number">1.26</span> <span class="string">(minimum</span> <span class="string">version</span> <span class="number">1.12</span><span class="string">)</span></div><div class="line"> <span class="string">Go</span> <span class="attr">version:</span>   <span class="string">go1.7.5</span></div><div class="line"> <span class="string">Git</span> <span class="attr">commit:</span>   <span class="number">3</span><span class="string">a232c8</span></div><div class="line"><span class="attr"> Built:</span>        <span class="string">Tue</span> <span class="string">Feb</span> <span class="number">28</span> <span class="number">07</span><span class="string">:52:04</span> <span class="number">2017</span></div><div class="line"> <span class="string">OS/Arch:</span>      <span class="string">linux/amd64</span></div><div class="line"><span class="attr"> Experimental:</span> <span class="literal">true</span></div></pre></td></tr></table></figure></p>
-<p>出现版本号即安装成功！</p>
-<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>可以设置开机启动<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-17/dm2.png" alt=""></p>
-<p>设置与宿主机的文件共享<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-17/dm3.png" alt=""></p>
-<p>设置CPU和内存大小，与VirtualBox一样。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-17/dm4.png" alt=""></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;安装&quot;&gt;&lt;a href=&quot;#安装&quot; class=&quot;headerlink&quot; title=&quot;安装&quot;&gt;&lt;/a&gt;安装&lt;/h1&gt;&lt;p&gt;系统要求：OS X EI Captian 10.11以上&lt;/p&gt;
-&lt;p&gt;docker默认是在linux下运行，要在mac下运行，需要安装linux的虚拟环境。好在docker官网提供了mac版的docker安装包。&lt;br&gt;在&lt;a href=&quot;https://www.docker.com/docker-mac&quot;&gt;https://www.docker.com/docker-mac&lt;/a&gt; 下载Docker.img。&lt;br&gt;安装完成后，顶栏会出现&lt;br&gt;
-    
-    </summary>
-    
-      <category term="Docker" scheme="http://www.kekefund.com/categories/Docker/"/>
-    
-    
-      <category term="mac" scheme="http://www.kekefund.com/tags/mac/"/>
-    
-      <category term="docker" scheme="http://www.kekefund.com/tags/docker/"/>
     
   </entry>
   
