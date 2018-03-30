@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2017-12-06T05:58:18.369Z</updated>
+  <updated>2018-03-30T01:47:49.416Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -14,6 +14,49 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Docker容器运行多条命令(supervisor)</title>
+    <link href="http://www.kekefund.com/2018/03/30/supervisor/"/>
+    <id>http://www.kekefund.com/2018/03/30/supervisor/</id>
+    <published>2018-03-30T01:45:32.000Z</published>
+    <updated>2018-03-30T01:47:49.416Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1, 简介"></a>1, 简介</h1><p>Dockerfile 运行只支持一条命令，当在Docker里要运行多条命令，用supervisor来管理就比较合适了。<br>Supervisor是一个 Python 开发的 client/server 系统，可以管理和监控类 UNIX 操作系统上面的进程。它可以同时启动，关闭多个进程，使用起来特别的方便。</p>
+<h2 id="组成部分"><a href="#组成部分" class="headerlink" title="组成部分"></a>组成部分</h2><p>supervisor 主要由两部分组成：</p>
+<ol>
+<li>supervisord(server 部分)：主要负责管理子进程，响应客户端命令以及日志的输出等；</li>
+<li>supervisorctl(client 部分)：命令行客户端，用户可以通过它与不同的 supervisord 进程联系，获取子进程的状态等。</li>
+</ol>
+<h1 id="2，存在的问题——日志不输出"><a href="#2，存在的问题——日志不输出" class="headerlink" title="2，存在的问题——日志不输出"></a>2，存在的问题——日志不输出</h1><p>但是使用supervisor，Django运行的日志就不会在Docker里输出了，默认的输出如下：<br><figure class="highlight pf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="number">2018</span>-<span class="number">03</span>-<span class="number">28</span> <span class="number">06</span>:<span class="number">48</span>:<span class="number">20</span>,<span class="number">292</span> CRIT Supervisor running as root (no <span class="keyword">user</span> <span class="keyword">in</span> config file)</div><div class="line"><span class="number">2018</span>-<span class="number">03</span>-<span class="number">28</span> <span class="number">06</span>:<span class="number">48</span>:<span class="number">20</span>,<span class="number">308</span> INFO supervisord started with pid <span class="number">1</span></div><div class="line"><span class="number">2018</span>-<span class="number">03</span>-<span class="number">28</span> <span class="number">06</span>:<span class="number">48</span>:<span class="number">21</span>,<span class="number">310</span> INFO spawned: 'celery_beat' with pid <span class="number">7</span></div><div class="line"><span class="number">2018</span>-<span class="number">03</span>-<span class="number">28</span> <span class="number">06</span>:<span class="number">48</span>:<span class="number">21</span>,<span class="number">312</span> INFO spawned: 'celery_worker' with pid <span class="number">8</span></div><div class="line"><span class="number">2018</span>-<span class="number">03</span>-<span class="number">28</span> <span class="number">06</span>:<span class="number">48</span>:<span class="number">21</span>,<span class="number">313</span> INFO spawned: 'django' with pid <span class="number">9</span></div><div class="line"><span class="number">2018</span>-<span class="number">03</span>-<span class="number">28</span> <span class="number">06</span>:<span class="number">48</span>:<span class="number">22</span>,<span class="number">315</span> INFO success: celery_beat entered RUNNING <span class="keyword">state</span>, process has stayed up <span class="keyword">for</span> &gt; than <span class="number">1</span> seconds (startsecs)</div><div class="line"><span class="number">2018</span>-<span class="number">03</span>-<span class="number">28</span> <span class="number">06</span>:<span class="number">48</span>:<span class="number">22</span>,<span class="number">315</span> INFO success: celery_worker entered RUNNING <span class="keyword">state</span>, process has stayed up <span class="keyword">for</span> &gt; than <span class="number">1</span> seconds (startsecs)</div><div class="line"><span class="number">2018</span>-<span class="number">03</span>-<span class="number">28</span> <span class="number">06</span>:<span class="number">48</span>:<span class="number">22</span>,<span class="number">315</span> INFO success: django entered RUNNING <span class="keyword">state</span>, process has stayed up <span class="keyword">for</span> &gt; than <span class="number">1</span> seconds (startsecs)</div></pre></td></tr></table></figure></p>
+<p>上面的Docker中supervisor配置如下：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="section">[supervisord]</span></div><div class="line"><span class="attr">nodaemon</span>=<span class="literal">true</span></div><div class="line"><span class="section"></span></div><div class="line">[program:django]</div><div class="line"><span class="attr">command</span>=python manage.py runserver <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">8080</span></div><div class="line"><span class="section"></span></div><div class="line">[program:celery_worker]</div><div class="line"><span class="attr">command</span>=python manage.py celery worker -c <span class="number">4</span> -l info</div><div class="line"><span class="section"></span></div><div class="line">[program:celery_beat]</div><div class="line"><span class="attr">command</span>=python manage.py celery beat</div></pre></td></tr></table></figure></p>
+<p>这样的配置在容器中是同时运行Django，celery。</p>
+<h1 id="3，解决方案"><a href="#3，解决方案" class="headerlink" title="3，解决方案"></a>3，解决方案</h1><h2 id="1，改进后的配置方案"><a href="#1，改进后的配置方案" class="headerlink" title="1，改进后的配置方案"></a>1，改进后的配置方案</h2><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="section">[inet_http_server]</span></div><div class="line"><span class="attr">port</span>=<span class="number">9001</span></div><div class="line"><span class="attr">username</span>=abc</div><div class="line"><span class="attr">password</span>=<span class="number">123456</span></div><div class="line"><span class="section"></span></div><div class="line">[supervisord]</div><div class="line"><span class="attr">nodaemon</span>=<span class="literal">true</span></div><div class="line"><span class="attr">logfile</span>=/var/log/supervisor/supervisord.log ; (main log file;default <span class="variable">$CWD</span>/supervisord.log)</div><div class="line"><span class="attr">pidfile</span>=/var/run/supervisord.pid ; (supervisord pidfile;default supervisord.pid)</div><div class="line"><span class="attr">childlogdir</span>=/var/log/supervisor            ; (<span class="string">'AUTO'</span> child log dir, default <span class="variable">$TEMP</span>)</div><div class="line"><span class="section"></span></div><div class="line">[program:django]</div><div class="line"><span class="attr">command</span>=python manage.py runserver <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">8080</span></div><div class="line"><span class="comment">#stdout_logfile = /var/log/supervisord/django_stdout.log</span></div><div class="line"><span class="attr">loglevel</span>=info</div><div class="line"><span class="attr">redirect_stderr</span>=<span class="literal">true</span></div><div class="line"><span class="section"></span></div><div class="line">[program:celery_worker]</div><div class="line"><span class="attr">command</span>=python manage.py celery worker -c <span class="number">4</span> -l info</div><div class="line"><span class="attr">loglevel</span>=info</div><div class="line"><span class="attr">redirect_stderr</span>=<span class="literal">true</span></div><div class="line"><span class="section"></span></div><div class="line">[program:celery_beat]</div><div class="line"><span class="attr">command</span>=python manage.py celery beat</div><div class="line"><span class="attr">loglevel</span>=info</div><div class="line"><span class="attr">redirect_stderr</span>=<span class="literal">true</span></div></pre></td></tr></table></figure>
+<p>实测发现Django的日志输出会写到stderr.log文件中，所以在配置文件中将错误日志重定向到标准日志里;<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">redirect_stderr</span>=<span class="literal">true</span></div></pre></td></tr></table></figure></p>
+<p>容器中的生成的日志文件如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">root@a16bc77e96bc:/var/<span class="built_in">log</span>/supervisor<span class="meta"># ls</span></div><div class="line">celery_beat-<span class="built_in">stderr</span>---supervisor-rSPQ7E.<span class="built_in">log</span>    django-<span class="built_in">stderr</span>---supervisor<span class="number">-9</span>LS_KA.<span class="built_in">log</span></div><div class="line">celery_beat-<span class="built_in">stdout</span>---supervisor-t5Q4UI.<span class="built_in">log</span>    django-<span class="built_in">stdout</span>---supervisor-cTSBmq.<span class="built_in">log</span></div><div class="line">celery_worker-<span class="built_in">stderr</span>---supervisor-TRFzc7.<span class="built_in">log</span>  supervisord.<span class="built_in">log</span></div><div class="line">celery_worker-<span class="built_in">stdout</span>---supervisor-xNgeBU.<span class="built_in">log</span></div></pre></td></tr></table></figure></p>
+<h2 id="2，查看日志"><a href="#2，查看日志" class="headerlink" title="2，查看日志"></a>2，查看日志</h2><p>运行容器时，将9001端口映射出去，通过ip:9001访问：</p>
+<p>点击 Tail -f 查看各个进程的日志。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
+<p><a href="http://debugo.com/docker-supervisord/" target="_blank" rel="external">http://debugo.com/docker-supervisord/</a></p>
+<p><a href="http://blog.csdn.net/zhousenshan/article/details/52988885" target="_blank" rel="external">http://blog.csdn.net/zhousenshan/article/details/52988885</a></p>
+<p><a href="http://supervisord.org/configuration.html" target="_blank" rel="external">supervisor配置</a></p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;1-简介&quot;&gt;&lt;a href=&quot;#1-简介&quot; class=&quot;headerlink&quot; title=&quot;1, 简介&quot;&gt;&lt;/a&gt;1, 简介&lt;/h1&gt;&lt;p&gt;Dockerfile 运行只支持一条命令，当在Docker里要运行多条命令，用supervisor来管理就比较合适了。&lt;
+    
+    </summary>
+    
+      <category term="Docker" scheme="http://www.kekefund.com/categories/Docker/"/>
+    
+    
+      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
+    
+      <category term="supervisor" scheme="http://www.kekefund.com/tags/supervisor/"/>
+    
+  </entry>
   
   <entry>
     <title>scrapy+selenium爬取UC头条网站</title>
@@ -586,9 +629,9 @@
       <category term="Docker" scheme="http://www.kekefund.com/categories/Docker/"/>
     
     
-      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
-    
       <category term="Dockerfile" scheme="http://www.kekefund.com/tags/Dockerfile/"/>
+    
+      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
     
       <category term="jquery-file-upload" scheme="http://www.kekefund.com/tags/jquery-file-upload/"/>
     
@@ -652,14 +695,14 @@
     <link href="http://www.kekefund.com/2017/05/25/scrapy-splash/"/>
     <id>http://www.kekefund.com/2017/05/25/scrapy-splash/</id>
     <published>2017-05-25T09:05:06.000Z</published>
-    <updated>2017-06-07T02:36:37.000Z</updated>
+    <updated>2017-12-18T08:48:43.450Z</updated>
     
     <content type="html"><![CDATA[<p>scrapy只支持静态网页的抓取，通过scrapy-splash，能实现对JavaScript的解析。<br><a id="more"></a></p>
 <h1 id="一、搭建Docker服务器"><a href="#一、搭建Docker服务器" class="headerlink" title="一、搭建Docker服务器"></a>一、搭建Docker服务器</h1><blockquote>
 <p>Docker的相关知识参考本站的<a href="http://kekefund.com/categories/Docker/" target="_blank" rel="external">Docker相关文章</a>。</p>
 </blockquote>
 <p>Scrapy-Splash采用Splash HTTP API，需要搭建一个Splash实例，用Docker搭建最方便：</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ docker <span class="keyword">run</span><span class="bash"> <span class="_">-d</span> -p 8050:8050 --restart=always --name=splash scrapinghub/splash</span></div></pre></td></tr></table></figure>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ docker <span class="keyword">run</span><span class="bash"> <span class="_">-d</span> -p 8050:8050 --restart=always --name=splash -m 200m scrapinghub/splash</span></div><div class="line"> </div><div class="line"><span class="comment"># -m 200m 内存限制使用200兆</span></div></pre></td></tr></table></figure>
 <p>在服务器运行好Docker后，就可以通过IP+端口(例如：<a href="http://123.206.211.100:8050" target="_blank" rel="external">http://123.206.211.100:8050</a>  )访问了。</p>
 <h1 id="二、Scrapy项目"><a href="#二、Scrapy项目" class="headerlink" title="二、Scrapy项目"></a>二、Scrapy项目</h1><h2 id="1，安装scrapy-splash"><a href="#1，安装scrapy-splash" class="headerlink" title="1，安装scrapy-splash"></a>1，安装scrapy-splash</h2><figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ pip <span class="keyword">install</span> scrapy-splash</div></pre></td></tr></table></figure>
 <h2 id="2，配置-setting-py"><a href="#2，配置-setting-py" class="headerlink" title="2，配置(setting.py)"></a>2，配置(setting.py)</h2><h3 id="增加Splash服务器地址"><a href="#增加Splash服务器地址" class="headerlink" title="增加Splash服务器地址"></a>增加Splash服务器地址</h3><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">SPLASH_URL</span> = <span class="string">'http://123.206.211.100:8050'</span></div></pre></td></tr></table></figure>
@@ -1097,93 +1140,6 @@
       <category term="docker" scheme="http://www.kekefund.com/tags/docker/"/>
     
       <category term="ftp" scheme="http://www.kekefund.com/tags/ftp/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>docker部署mysql</title>
-    <link href="http://www.kekefund.com/2017/03/19/docker-mysql/"/>
-    <id>http://www.kekefund.com/2017/03/19/docker-mysql/</id>
-    <published>2017-03-19T15:54:44.000Z</published>
-    <updated>2017-04-19T03:42:40.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>mysql在linux服务器上运行一直比较稳定，但是服务器迁移时mysql在新服务器上的配置是个比较头疼的问题，搞不好数据迁移过来了但是mysql启动不起来，坑比较多。特别是当新的服务器是离线时，安装mysql和数据同步软件更是困难重重。<br>用docker来运行mysql服务是一个比较好的解决方案，mysql的运行环境在容器内已经封装好了，而数据可以直接挂载在宿主主机上。</p>
-<h1 id="一、下载镜像"><a href="#一、下载镜像" class="headerlink" title="一、下载镜像"></a>一、下载镜像</h1><a id="more"></a>
-<p>官网地址：<a href="https://hub.docker.com/_/mysql/" target="_blank" rel="external">https://hub.docker.com/_/mysql/</a></p>
-<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">docker pull mysql</span></div></pre></td></tr></table></figure>
-<p>查看镜像<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@VM_25_5_centos ~]<span class="comment"># docker images</span></div><div class="line">REPOSITORY          <span class="keyword">TAG</span>                 <span class="title">IMAGE</span> ID            CREATED             SIZE</div><div class="line">docker.io/mysql     latest              <span class="number">22</span>be5748ecbe        <span class="number">13</span> days ago         <span class="number">405.6</span> MB</div></pre></td></tr></table></figure></p>
-<h1 id="二、启动容器"><a href="#二、启动容器" class="headerlink" title="二、启动容器"></a>二、启动容器</h1><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ docker <span class="keyword">run</span><span class="bash"> --name cbb-mysql1 -p 3307:3306 -v /home/mysql_data:/var/lib/mysql --restart=always <span class="_">-e</span> MYSQL_ROOT_PASSWORD=123456 <span class="_">-d</span> &lt;IMAGE-ID&gt;</span></div><div class="line">b344e219ff03a92d65f75f74ab5b227838cce8619cbe695ccd1b6889f9a3d174</div></pre></td></tr></table></figure>
-<ul>
-<li>-p：容器的3306映射到主机的3307端口</li>
-<li>-v：容器的/var/lib/mysql目录挂载在主机的/home/mysql_data目录</li>
-<li>-e 设置默认参数，支持参数：    <ul>
-<li>MYSQL_ROOT_PASSWORD</li>
-<li>MYSQL_DATABASE</li>
-<li>MYSQL_USER, MYSQL_PASSWORD</li>
-<li>MYSQL_ALLOW_EMPTY_PASSWORD</li>
-<li>MYSQL_RANDOM_ROOT_PASSWORD</li>
-<li>MYSQL_ONETIME_PASSWORD</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>参考：<a href="https://hub.docker.com/_/mysql/" target="_blank" rel="external">https://hub.docker.com/_/mysql/</a> 的环境参数部分（Environment Variables)</p>
-</blockquote>
-<p>返回一长串字符，则说明创建成功。<br>注：<image-id>也可以是REPOSITORY+TAG，如docker.io/mysql: latest</image-id></p>
-<h1 id="三、进入容器"><a href="#三、进入容器" class="headerlink" title="三、进入容器"></a>三、进入容器</h1><figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">[root@VM_200_249_centos mysql-docker]<span class="comment"># docker exec -it cbb-mysql1 mysql -uroot -p</span></div><div class="line">Enter password:</div><div class="line">Welcome to the MySQ<span class="class">L monitor.  Commands end with ;</span><span class="built_in"> or </span>\g.</div><div class="line">Your MySQL connection id is 3</div><div class="line">Server version: 5.7.17 MySQL Community Server (GPL)</div><div class="line"></div><div class="line">Copyright (c) 2000, 2016, Oracle<span class="built_in"> and/or </span>its affiliates. All rights reserved.</div><div class="line"></div><div class="line">Oracle is a registered trademark of Oracle Corporation<span class="built_in"> and/or </span>its</div><div class="line">affiliates. Other names may be trademarks of their respective</div><div class="line">owners.</div><div class="line"></div><div class="line">Type 'help;'<span class="built_in"> or </span>'\h' for help. Type '\c' to clear the current input statement.</div><div class="line"></div><div class="line">mysql&gt;</div></pre></td></tr></table></figure>
-<h1 id="四、实践"><a href="#四、实践" class="headerlink" title="四、实践"></a>四、实践</h1><p>离线数据库mysql目录下所有文件拷贝到离线服务器上<br>放到指定目录：/home/mysql_data<br>执行命令，建立mysql容器<br><figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[localhost mysql]# docker run --<span class="keyword">name</span> cbb-mysql1 -v /home/mysql_data:/<span class="keyword">var</span>/lib/mysql -p <span class="number">3307</span>:<span class="number">3306</span> -e MYSQL_ROOT_PASSWORD=<span class="number">123456</span> -d mysql:<span class="number">5.6</span></div><div class="line"><span class="number">629</span>a150d4a9cb87080df3d89a6b91e3d56ddd8699e2f6a2d3a908f39d6f87e4c</div></pre></td></tr></table></figure></p>
-<h2 id="1-进入容器，新建账户"><a href="#1-进入容器，新建账户" class="headerlink" title="1, 进入容器，新建账户"></a>1, 进入容器，新建账户</h2><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mysql&gt; use mysql;</div><div class="line">mysql&gt; <span class="keyword">create</span> USER <span class="string">'ts01'</span>@<span class="string">'%'</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">'123456'</span>;</div></pre></td></tr></table></figure>
-<p>说明：</p>
-<ul>
-<li><p>username：你将创建的用户名</p>
-</li>
-<li><p>host：指定该用户在哪个主机上可以登陆，如果是本地用户可用localhost，如果想让该用户可以从任意远程主机登陆，可以使用通配符%</p>
-</li>
-<li><p>password：该用户的登陆密码，密码可以为空，如果为空则该用户可以不需要密码登陆服务器</p>
-</li>
-</ul>
-<h2 id="2-授权"><a href="#2-授权" class="headerlink" title="2, 授权:"></a>2, 授权:</h2><p>命令:<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">GRANT</span> <span class="keyword">privileges</span> <span class="keyword">ON</span> databasename.tablename <span class="keyword">TO</span> <span class="string">'username'</span>@<span class="string">'host'</span></div></pre></td></tr></table></figure></p>
-<p>说明:</p>
-<ul>
-<li><p>privileges：用户的操作权限，如SELECT，INSERT，UPDATE等，如果要授予所的权限则使用ALL</p>
-</li>
-<li><p>databasename：数据库名</p>
-</li>
-<li><p>tablename：表名，如果要授予该用户对所有数据库和表的相应操作权限则可用<em>表示，如</em>.*</p>
-</li>
-</ul>
-<p><strong>例子:</strong></p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span>, <span class="keyword">INSERT</span> <span class="keyword">ON</span> test.user <span class="keyword">TO</span> <span class="string">'pig'</span>@<span class="string">'%'</span>;</div><div class="line"><span class="keyword">GRANT</span> ALL <span class="keyword">ON</span> *.* <span class="keyword">TO</span> <span class="string">'pig'</span>@<span class="string">'%'</span>;</div></pre></td></tr></table></figure>
-<p><strong>注意:</strong></p>
-<p>用以上命令授权的用户不能给其它用户授权，如果想让该用户可以授权，用以下命令:</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">GRANT</span> <span class="keyword">privileges</span> <span class="keyword">ON</span> databasename.tablename <span class="keyword">TO</span> <span class="string">'username'</span>@<span class="string">'host'</span> <span class="keyword">WITH</span> <span class="keyword">GRANT</span> <span class="keyword">OPTION</span>;</div></pre></td></tr></table></figure>
-<h2 id="3，容器间连接"><a href="#3，容器间连接" class="headerlink" title="3，容器间连接"></a>3，容器间连接</h2><p>其它容器想访问mysql容器，可以使用link来连接。例如运行：<br><figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker <span class="built_in">run</span> -d -p <span class="number">80</span>:<span class="number">8096</span> -v /<span class="built_in">home</span>/gtdata:/gtdata --restart=always --name web01 --link=cbb-mysql1:mydb java_web:<span class="number">1.0</span> /root/<span class="built_in">run</span>.sh</div></pre></td></tr></table></figure></p>
-<p>注：</p>
-<ul>
-<li>-p 端口映射</li>
-<li>-v 宿主机目录挂载</li>
-<li>–name 容器名</li>
-<li>–link 连接的容器，另一个容器cbb-mysql在本容器中的名称为mydb，可以直接在本容器中使用mydb</li>
-</ul>
-<p>java_web:1.0容器里运行的是tomcat。<br>进入jdbc.properties<br>修改<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># mydb是mysql容器在web01容器中的别名，mydb等价于192.168.11.121:3306</span></div><div class="line">jdbc.url=<span class="symbol">jdbc:</span><span class="symbol">mysql:</span>/<span class="regexp">/mydb:3306/guotai</span>?useUnicode=<span class="literal">true</span>&amp;characterEncoding=utf-<span class="number">8</span></div></pre></td></tr></table></figure></p>
-<h1 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h1><blockquote>
-<p>1, [宿主服务器上安装VNC] (<a href="http://www.krizna.com/centos/install-vnc-server-centos-7/" target="_blank" rel="external">http://www.krizna.com/centos/install-vnc-server-centos-7/</a>)<br>2, <a href="https://dev.mysql.com/downloads/file/?id=468286" target="_blank" rel="external">centos版workbench</a></p>
-</blockquote>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;mysql在linux服务器上运行一直比较稳定，但是服务器迁移时mysql在新服务器上的配置是个比较头疼的问题，搞不好数据迁移过来了但是mysql启动不起来，坑比较多。特别是当新的服务器是离线时，安装mysql和数据同步软件更是困难重重。&lt;br&gt;用docker来运行mysql服务是一个比较好的解决方案，mysql的运行环境在容器内已经封装好了，而数据可以直接挂载在宿主主机上。&lt;/p&gt;
-&lt;h1 id=&quot;一、下载镜像&quot;&gt;&lt;a href=&quot;#一、下载镜像&quot; class=&quot;headerlink&quot; title=&quot;一、下载镜像&quot;&gt;&lt;/a&gt;一、下载镜像&lt;/h1&gt;
-    
-    </summary>
-    
-      <category term="Docker" scheme="http://www.kekefund.com/categories/Docker/"/>
-    
-    
-      <category term="docker" scheme="http://www.kekefund.com/tags/docker/"/>
-    
-      <category term="mysql" scheme="http://www.kekefund.com/tags/mysql/"/>
     
   </entry>
   
