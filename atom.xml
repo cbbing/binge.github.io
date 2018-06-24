@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2018-06-24T01:38:43.242Z</updated>
+  <updated>2018-06-24T04:21:35.626Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -14,6 +14,58 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>内网映射方案(lanproxy)</title>
+    <link href="http://www.kekefund.com/2018/06/24/lanproxy/"/>
+    <id>http://www.kekefund.com/2018/06/24/lanproxy/</id>
+    <published>2018-06-24T03:56:49.000Z</published>
+    <updated>2018-06-24T04:21:35.626Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="现状"><a href="#现状" class="headerlink" title="现状"></a>现状</h1><p>现在运营商提供的宽带服务，无论是动态IP，还是固定IP，默认都是禁止所有端口服务的（目前了解上海是这样的），在路由器上配置的端口映射和DMZ都失效。申请开通端口需要域名备案，过程比较繁琐。<br>运营商这么做是为了防止个人随意开设各种非法服务，也防止黑客通过扫描器进行抓鸡和批量扫描。这样封禁，虽然一定程度上保证了我们的网络安全，比如说前段时间的勒索病毒正因为国内大部分用户没有独立的公网IP，并且操作系统最容易爆发漏洞的一些，135，139等端口被运营商封禁了，使得国内个人家庭电脑中招的概率小了很多；但是导致即使有公网IP，也无法使用常用端口向外网提供服务。<br><a id="more"></a></p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>通过NAPT原理得知：NAPT实现了内网主机在没有公网IP的情况下访问公网主机。<br>那么我们可以这样做：假设公网IP为23.23.23.23，内网IP为192.168.1.2。<br>公网主机先监听80端口，监听这个端口是用于向外部提供一个HTTP服务，80是WEB服务器的默认端口。同时其他任意一个端口（这里我们假设为7777），监听这个端口是用于让内网服务器主动连接进来打通一个隧道。接着内网再主动向公网主机的7777发起一个请求，这样内网就成功与公网主机建立了一个连接通道。</p>
+<p>然后当有任何客户端主动连接公网的80端口时，公网接收到连接请求之后马上把这连接请求通过先前建立好的隧道转发到内网主机，内网主机接收到来自隧道的数据包后再主动连接内网主机自身的80端口，连接成功之后将数据包原封不动地转发数据包给80端口，待HTTP服务器程序处理完这个数据包，生成了响应报文之后再原路转发回去，最终到达公网的80端口，然后返回给最开始请求公网服务器80端口的客户端。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/lanproxy1.png" alt=""></p>
+<p>大名鼎鼎的花生壳内网版以及nat123等内网穿透工具的原理基本就是如此。</p>
+<blockquote>
+<p><a href="https://juejin.im/entry/59f2ed94518825098951554c" target="_blank" rel="external">https://juejin.im/entry/59f2ed94518825098951554c</a></p>
+</blockquote>
+<h1 id="lanproxy"><a href="#lanproxy" class="headerlink" title="lanproxy"></a>lanproxy</h1><p>lanproxy是一个将局域网个人电脑、服务器代理到公网的内网穿透工具，目前仅支持tcp流量转发，可支持任何tcp上层协议（访问内网网站、本地支付接口调试、ssh访问、远程桌面…）。目前市面上提供类似服务的有花生壳、TeamViewer、GoToMyCloud等等，但要使用第三方的公网服务器就必须为第三方付费，并且这些服务都有各种各样的限制，此外，由于数据包会流经第三方，因此对数据安全也是一大隐患。</p>
+<h2 id="1，服务器配置"><a href="#1，服务器配置" class="headerlink" title="1，服务器配置"></a>1，服务器配置</h2><p>服务器如腾讯云服务器、阿里云服务器，必须有独立IP。<br>下载<a href="https://seafile.io2c.com/d/3b1b44fee5f74992bb17/?p=/lanproxy-server&amp;mode=list" target="_blank" rel="external">lanproxy-server-20171116.zip</a>，解压后放到服务器上。<br>server的配置文件放置在conf目录中，配置 config.properties<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">server.bind=<span class="number">0.0</span>.<span class="number">0.0</span></div><div class="line"></div><div class="line">#与代理客户端通信端口</div><div class="line">server.port=<span class="number">4900</span></div><div class="line"></div><div class="line">#ssl相关配置</div><div class="line">server<span class="selector-class">.ssl</span><span class="selector-class">.enable</span>=true</div><div class="line">server<span class="selector-class">.ssl</span><span class="selector-class">.bind</span>=<span class="number">0.0</span>.<span class="number">0.0</span></div><div class="line">server<span class="selector-class">.ssl</span><span class="selector-class">.port</span>=<span class="number">4993</span></div><div class="line">server<span class="selector-class">.ssl</span><span class="selector-class">.jksPath</span>=test<span class="selector-class">.jks</span></div><div class="line">server<span class="selector-class">.ssl</span><span class="selector-class">.keyStorePassword</span>=<span class="number">123456</span></div><div class="line">server<span class="selector-class">.ssl</span><span class="selector-class">.keyManagerPassword</span>=<span class="number">123456</span></div><div class="line"></div><div class="line">#这个配置可以忽略</div><div class="line">server<span class="selector-class">.ssl</span><span class="selector-class">.needsClientAuth</span>=false</div><div class="line"></div><div class="line">#WEB在线配置管理相关信息</div><div class="line">config<span class="selector-class">.server</span><span class="selector-class">.bind</span>=<span class="number">0.0</span>.<span class="number">0.0</span></div><div class="line">config<span class="selector-class">.server</span><span class="selector-class">.port</span>=<span class="number">8090</span></div><div class="line">config<span class="selector-class">.admin</span><span class="selector-class">.username</span>=admin</div><div class="line">config<span class="selector-class">.admin</span><span class="selector-class">.password</span>=admin</div></pre></td></tr></table></figure></p>
+<p>代理配置，打开地址 <a href="http://ip:8090" target="_blank" rel="external">http://ip:8090</a> ，使用上面配置中配置的用户名密码登录<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/lanproxy2.png" alt=""></p>
+<p>添加客户端:<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/lanproxy3.png" alt=""></p>
+<p>配置客户端：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/lanproxy4.png" alt=""></p>
+<p>示例是将公网的80、443端口映射到内网主机的80、443端口。</p>
+<h2 id="2，Java客户端配置"><a href="#2，Java客户端配置" class="headerlink" title="2，Java客户端配置"></a>2，Java客户端配置</h2><blockquote>
+<p>Java client的配置文件放置在conf目录中，配置 config.properties<br><figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#与在proxy-server配置后台创建客户端时填写的秘钥保持一致；</span></div><div class="line">client.<span class="attr">key=</span></div><div class="line">ssl.<span class="attr">enable=true</span></div><div class="line">ssl.<span class="attr">jksPath=test.jks</span></div><div class="line">ssl.<span class="attr">keyStorePassword=123456</span></div><div class="line"></div><div class="line"><span class="comment">#这里填写实际的proxy-server地址；没有服务器默认即可，自己有服务器的更换为自己的proxy-server（IP）地址</span></div><div class="line">server.<span class="attr">host=lp.thingsglobal.org</span></div><div class="line"></div><div class="line"><span class="comment">#proxy-server ssl默认端口4993，默认普通端口4900</span></div><div class="line"><span class="comment">#ssl.enable=true时这里填写ssl端口，ssl.enable=false时这里填写普通端口</span></div><div class="line">server.<span class="attr">port=4993</span></div></pre></td></tr></table></figure></p>
+</blockquote>
+<p>java客户端需要以下环境:</p>
+<ul>
+<li>安装java1.7或以上环境</li>
+<li>linux（mac）环境中运行bin目录下的 startup.sh</li>
+<li>windows环境中运行bin目录下的 startup.bat</li>
+</ul>
+<h2 id="3，其他平台客户端"><a href="#3，其他平台客户端" class="headerlink" title="3，其他平台客户端"></a>3，其他平台客户端</h2><p>不用java客户端的可以使用下面提供的各个平台的客户端，省去安装java运行环境</p>
+<p><strong>源码地址</strong><br><a href="https://github.com/ffay/lanproxy-go-client" target="_blank" rel="external">https://github.com/ffay/lanproxy-go-client</a></p>
+<p><strong>发布包</strong><br><a href="https://github.com/ffay/lanproxy-go-client/releases" target="_blank" rel="external">https://github.com/ffay/lanproxy-go-client/releases</a></p>
+<p><strong>普通端口连接</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># mac 64位</span></div><div class="line">nohup ./client_darwin_amd64 <span class="_">-s</span> SERVER_IP -p SERVER_PORT -k CLIENT_KEY &amp;</div><div class="line"></div><div class="line"><span class="comment"># linux 64位</span></div><div class="line">nohup ./client_linux_amd64 <span class="_">-s</span> SERVER_IP -p SERVER_PORT -k CLIENT_KEY &amp;</div><div class="line"></div><div class="line"><span class="comment"># windows 64 位</span></div><div class="line">./client_windows_amd64.exe <span class="_">-s</span> SERVER_IP -p SERVER_PORT -k CLIENT_KEY</div></pre></td></tr></table></figure></p>
+<p><strong>SSL端口连接</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># mac 64位</span></div><div class="line">nohup ./client_darwin_amd64 <span class="_">-s</span> SERVER_IP -p SERVER_SSL_PORT -k CLIENT_KEY -ssl <span class="literal">true</span> &amp;</div><div class="line"></div><div class="line"><span class="comment"># linux 64位</span></div><div class="line">nohup ./client_linux_amd64 <span class="_">-s</span> SERVER_IP -p SERVER_SSL_PORT -k CLIENT_KEY -ssl <span class="literal">true</span> &amp;</div><div class="line"></div><div class="line"><span class="comment"># windows 64 位</span></div><div class="line">./client_windows_amd64.exe <span class="_">-s</span> SERVER_IP -p SERVER_SSL_PORT -k CLIENT_KEY -ssl <span class="literal">true</span></div></pre></td></tr></table></figure></p>
+<h2 id="实测"><a href="#实测" class="headerlink" title="实测"></a>实测</h2><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/lanproxy5.png" alt=""><br>查看管理后台的数据统计，有访问流量，说明转发成功！</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;现状&quot;&gt;&lt;a href=&quot;#现状&quot; class=&quot;headerlink&quot; title=&quot;现状&quot;&gt;&lt;/a&gt;现状&lt;/h1&gt;&lt;p&gt;现在运营商提供的宽带服务，无论是动态IP，还是固定IP，默认都是禁止所有端口服务的（目前了解上海是这样的），在路由器上配置的端口映射和DMZ都失效。申请开通端口需要域名备案，过程比较繁琐。&lt;br&gt;运营商这么做是为了防止个人随意开设各种非法服务，也防止黑客通过扫描器进行抓鸡和批量扫描。这样封禁，虽然一定程度上保证了我们的网络安全，比如说前段时间的勒索病毒正因为国内大部分用户没有独立的公网IP，并且操作系统最容易爆发漏洞的一些，135，139等端口被运营商封禁了，使得国内个人家庭电脑中招的概率小了很多；但是导致即使有公网IP，也无法使用常用端口向外网提供服务。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="系统" scheme="http://www.kekefund.com/categories/%E7%B3%BB%E7%BB%9F/"/>
+    
+    
+      <category term="内网映射" scheme="http://www.kekefund.com/tags/%E5%86%85%E7%BD%91%E6%98%A0%E5%B0%84/"/>
+    
+      <category term="端口转发" scheme="http://www.kekefund.com/tags/%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91/"/>
+    
+  </entry>
   
   <entry>
     <title>seafile服务器配置</title>
@@ -687,9 +739,9 @@
       <category term="Docker" scheme="http://www.kekefund.com/categories/Docker/"/>
     
     
-      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
-    
       <category term="Dockerfile" scheme="http://www.kekefund.com/tags/Dockerfile/"/>
+    
+      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
     
       <category term="jquery-file-upload" scheme="http://www.kekefund.com/tags/jquery-file-upload/"/>
     
@@ -1123,50 +1175,6 @@
       <category term="VNC" scheme="http://www.kekefund.com/tags/VNC/"/>
     
       <category term="gnome" scheme="http://www.kekefund.com/tags/gnome/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>github创建分支</title>
-    <link href="http://www.kekefund.com/2017/03/23/git-branch-create/"/>
-    <id>http://www.kekefund.com/2017/03/23/git-branch-create/</id>
-    <published>2017-03-23T08:02:32.000Z</published>
-    <updated>2017-04-19T03:43:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>理论部分参考：<a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001375840038939c291467cc7c747b1810aab2fb8863508000" target="_blank" rel="external">创建与合并分支</a></p>
-<h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><p>软件一个阶段开发完成，需要建立一个分支来保存当前的稳定版本。</p>
-<ul>
-<li><p>采用SourceTree 创建分支：</p>
-<a id="more"></a>
-<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git1.png" alt=""></p>
-</li>
-<li><p>创建完成后再SourceTree左侧树型菜单会出现分支名称：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git2.png" alt=""></p>
-</li>
-<li><p>点击推送，将分支同步到服务器<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git3.png" alt=""></p>
-</li>
-</ul>
-<ul>
-<li>github上就能看到分支了：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git4.png" alt=""></li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;原理&quot;&gt;&lt;a href=&quot;#原理&quot; class=&quot;headerlink&quot; title=&quot;原理&quot;&gt;&lt;/a&gt;原理&lt;/h1&gt;&lt;p&gt;理论部分参考：&lt;a href=&quot;http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001375840038939c291467cc7c747b1810aab2fb8863508000&quot;&gt;创建与合并分支&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&quot;实践&quot;&gt;&lt;a href=&quot;#实践&quot; class=&quot;headerlink&quot; title=&quot;实践&quot;&gt;&lt;/a&gt;实践&lt;/h1&gt;&lt;p&gt;软件一个阶段开发完成，需要建立一个分支来保存当前的稳定版本。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;采用SourceTree 创建分支：&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Git" scheme="http://www.kekefund.com/categories/Git/"/>
-    
-    
-      <category term="git" scheme="http://www.kekefund.com/tags/git/"/>
-    
-      <category term="branch" scheme="http://www.kekefund.com/tags/branch/"/>
-    
-      <category term="SourceTree" scheme="http://www.kekefund.com/tags/SourceTree/"/>
     
   </entry>
   
