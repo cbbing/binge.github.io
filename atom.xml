@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2018-03-30T01:53:19.655Z</updated>
+  <updated>2018-06-24T01:38:43.242Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -16,11 +16,69 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>seafile服务器配置</title>
+    <link href="http://www.kekefund.com/2018/06/24/seafile-server/"/>
+    <id>http://www.kekefund.com/2018/06/24/seafile-server/</id>
+    <published>2018-06-24T01:28:22.000Z</published>
+    <updated>2018-06-24T01:38:43.242Z</updated>
+    
+    <content type="html"><![CDATA[<p>公司内部网盘分享方案。</p>
+<p>目前开源的企业网盘方案有seafile，<a href="http://kekefund.com/2017/04/19/docker-owncloud/" target="_blank" rel="external">ownCloud</a>。</p>
+<p>Seafile 是一款开源的企业云盘，注重可靠性和性能。支持 Windows, Mac, Linux, iOS, Android 全平台。支持文件同步或者直接挂载到本地访问。</p>
+<a id="more"></a>
+<h1 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h1><h2 id="1、搭建seafile服务器"><a href="#1、搭建seafile服务器" class="headerlink" title="1、搭建seafile服务器"></a>1、搭建seafile服务器</h2><p>seafile服务器主要支持Linux系统，包括Debian，Ubuntu，Centos等，也支持Windows系统（版本更新有滞后，人数超过25人会卡）。同时也提供 <a href="https://manual-cn.seafile.com/deploy/deploy_with_docker.html" target="_blank" rel="external">Docker安装</a>方式，更加轻松的部署和更新Seafile服务。</p>
+<p>本文采用Docker的部署方式。</p>
+<ul>
+<li>配置文件：docker-compose.yml</li>
+</ul>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="attribute">version</span>: '3.4'</div><div class="line"></div><div class="line"><span class="less"><span class="attribute">services</span>:</span></div><div class="line"></div><div class="line">  <span class="attribute">seafile</span>:</div><div class="line"></div><div class="line">    <span class="attribute">image</span>: seafileltd/<span class="attribute">seafile</span>:latest</div><div class="line"></div><div class="line">    <span class="attribute">volumes</span>:</div><div class="line"></div><div class="line">        - ./<span class="attribute">shared</span>:/shared</div><div class="line"></div><div class="line">    <span class="attribute">ports</span>:</div><div class="line"></div><div class="line">      - <span class="number">80</span>:<span class="number">80</span></div><div class="line"></div><div class="line">      - <span class="number">8000</span>:<span class="number">8000</span></div><div class="line"></div><div class="line">    <span class="attribute">environment</span>:</div><div class="line"></div><div class="line">      <span class="attribute">SEAFILE_SERVER_HOSTNAME</span>: pan.xxx.com</div><div class="line"></div><div class="line">      <span class="attribute">SEAFILE_ADMIN_EMAIL</span>:xxx<span class="variable">@163</span>.com</div><div class="line"></div><div class="line">      <span class="attribute">SEAFILE_ADMIN_PASSWORD</span>: <span class="number">123456</span></div></pre></td></tr></table></figure>
+<p>该配置文件将seafile的数据文件存储于当前目录的shared目录下，开放80和8000端口；环境变量设置了访问的主机IP或域名、设置了管理员账号和密码。                                                                                                                                                                              </p>
+<h2 id="2、向Let’s-encrypt申请SSL证书"><a href="#2、向Let’s-encrypt申请SSL证书" class="headerlink" title="2、向Let’s encrypt申请SSL证书"></a>2、向Let’s encrypt申请SSL证书</h2><p>添加环境变量，并且添加443端口。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="attr">SEAFILE_SERVER_LETSENCRYPT</span>=<span class="literal">true</span></div></pre></td></tr></table></figure>
+<p>这样完整的docker-compose.yml如下：<br><figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">version</span>: <span class="string">'3'</span></div><div class="line"><span class="attribute">services</span>:</div><div class="line">  <span class="attribute">seafile</span>:</div><div class="line">    <span class="attribute">image</span>: seafileltd/<span class="attribute">seafile</span>:latest</div><div class="line">    <span class="attribute">volumes</span>:</div><div class="line">        - ./<span class="attribute">shared</span>:/shared</div><div class="line">    <span class="attribute">ports</span>:</div><div class="line">      - <span class="number">80</span>:<span class="number">80</span></div><div class="line">      - <span class="number">443</span>:<span class="number">443</span></div><div class="line">      - <span class="number">8000</span>:<span class="number">8000</span></div><div class="line">    <span class="attribute">environment</span>:</div><div class="line">      <span class="attribute">SEAFILE_SERVER_LETSENCRYPT</span>: <span class="string">"true"</span></div><div class="line">      <span class="attribute">SEAFILE_SERVER_HOSTNAME</span>: pan1.cbbing.com</div><div class="line">      <span class="attribute">SEAFILE_ADMIN_EMAIL</span>: cbbing<span class="variable">@163</span>.com</div><div class="line">      <span class="attribute">SEAFILE_ADMIN_PASSWORD</span>: <span class="number">12356789</span></div></pre></td></tr></table></figure></p>
+<h2 id="3、支持在线编辑"><a href="#3、支持在线编辑" class="headerlink" title="3、支持在线编辑"></a>3、支持在线编辑</h2><p>onlyoffice 的 documentserver 镜像是提供在线编辑服务的，镜像内已包含了 nginx 服务器，支持 80 端口和 443 端口，如果有合法证书，我们可以使用 https 连接。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">git clone https://github.com/neroxps/Docker-Only-Office-Chinese-font.git </div><div class="line"></div><div class="line">cd Docker-Only-Office-Chinese-font docker </div><div class="line"></div><div class="line">build -t onlyoffice/chinese .</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="comment"># http</span></div><div class="line"></div><div class="line">docker <span class="keyword">run</span><span class="bash"> -itd -p 780:80 --name office --restart=always onlyoffice/chinese</span></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="comment"># https</span></div><div class="line"></div><div class="line">docker <span class="keyword">run</span><span class="bash"> -itd -p 7443:443 --name office --restart=always onlyoffice/chinese</span></div></pre></td></tr></table></figure>
+<ul>
+<li>conf/seahub_settings.py添加</li>
+</ul>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment"># Enable Only Office</span></div><div class="line"></div><div class="line"><span class="attr">ENABLE_ONLYOFFICE</span> = <span class="literal">True</span></div><div class="line"></div><div class="line"><span class="attr">VERIFY_ONLYOFFICE_CERTIFICATE</span> = <span class="literal">False</span></div><div class="line"></div><div class="line"><span class="attr">ONLYOFFICE_APIJS_URL</span> = <span class="string">'http://pan.fofpower.com:780/web-apps/apps/api/documents/api.js'</span></div><div class="line"></div><div class="line"><span class="attr">ONLYOFFICE_FILE_EXTENSION</span> = (<span class="string">'doc'</span>, <span class="string">'docx'</span>, <span class="string">'ppt'</span>, <span class="string">'pptx'</span>, <span class="string">'xls'</span>, <span class="string">'xlsx'</span>, <span class="string">'odt'</span>, <span class="string">'fodt'</span>, <span class="string">'odp'</span>, <span class="string">'fodp'</span>, <span class="string">'ods'</span>, <span class="string">'fods'</span>)</div></pre></td></tr></table></figure>
+<blockquote>
+<p><a href="https://bbs.seafile.com/t/topic/3430" target="_blank" rel="external">https://bbs.seafile.com/t/topic/3430</a></p>
+</blockquote>
+<h1 id="二、使用"><a href="#二、使用" class="headerlink" title="二、使用"></a>二、使用</h1><h1 id="1、添加-导入用户"><a href="#1、添加-导入用户" class="headerlink" title="1、添加/导入用户"></a>1、添加/导入用户</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/seafile1.png" alt=""></p>
+<p>下载模板，填入用户信息批量添加用户，适合从企业邮箱通讯录中批量导入用户</p>
+<h1 id="2、新建群组"><a href="#2、新建群组" class="headerlink" title="2、新建群组"></a>2、新建群组</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/seafile2.png" alt=""></p>
+<p>群组共享的资料库对组内所有成员可见，方便部门内部文档沟通。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/seafile3.png" alt=""></p>
+<h2 id="3，多终端使用"><a href="#3，多终端使用" class="headerlink" title="3，多终端使用"></a>3，多终端使用</h2><p>seafile支持ios，android，同步盘，web端，实测体验不错。<br>需要注意的是，如果seafile服务器端做了域名映射，需要修改系统配置，否则ios和android手机端文件上传和下载会失败。</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/seafile4.png" alt=""><br>将SERVICE_URL的8000去掉，直接用80端口<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="string">SERVICE_URL:</span>  <span class="string">http:</span><span class="comment">//pan.xxxx.com</span></div></pre></td></tr></table></figure></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
+<p><a href="https://www.kancloud.cn/kancloud/seafile-manual/51487" target="_blank" rel="external">https://www.kancloud.cn/kancloud/seafile-manual/51487</a><br><a href="https://bbs.seafile.com/t/topic/3430" target="_blank" rel="external">https://bbs.seafile.com/t/topic/3430</a></p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;公司内部网盘分享方案。&lt;/p&gt;
+&lt;p&gt;目前开源的企业网盘方案有seafile，&lt;a href=&quot;http://kekefund.com/2017/04/19/docker-owncloud/&quot;&gt;ownCloud&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;Seafile 是一款开源的企业云盘，注重可靠性和性能。支持 Windows, Mac, Linux, iOS, Android 全平台。支持文件同步或者直接挂载到本地访问。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="系统" scheme="http://www.kekefund.com/categories/%E7%B3%BB%E7%BB%9F/"/>
+    
+    
+      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
+    
+      <category term="seafile" scheme="http://www.kekefund.com/tags/seafile/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Docker容器运行多条命令(supervisor)</title>
     <link href="http://www.kekefund.com/2018/03/30/supervisor/"/>
     <id>http://www.kekefund.com/2018/03/30/supervisor/</id>
     <published>2018-03-30T01:45:32.000Z</published>
-    <updated>2018-03-30T01:53:19.655Z</updated>
+    <updated>2018-03-30T01:53:19.656Z</updated>
     
     <content type="html"><![CDATA[<h1 id="一-简介"><a href="#一-简介" class="headerlink" title="一, 简介"></a>一, 简介</h1><p>Dockerfile 运行只支持一条命令，当在Docker里要运行多条命令，用supervisor来管理就比较合适了。<br>Supervisor是一个 Python 开发的 client/server 系统，可以管理和监控类 UNIX 操作系统上面的进程。它可以同时启动，关闭多个进程，使用起来特别的方便。</p>
 <h2 id="组成部分"><a href="#组成部分" class="headerlink" title="组成部分"></a>组成部分</h2><p>supervisor 主要由两部分组成：</p>
@@ -63,7 +121,7 @@
     <link href="http://www.kekefund.com/2017/12/06/scrapy-and-selenium/"/>
     <id>http://www.kekefund.com/2017/12/06/scrapy-and-selenium/</id>
     <published>2017-12-06T05:49:26.000Z</published>
-    <updated>2017-12-06T05:58:18.369Z</updated>
+    <updated>2017-12-06T05:58:18.370Z</updated>
     
     <content type="html"><![CDATA[<p>Scrapy是Python优秀的爬虫框架，selenium是非常好用的自动化WEB测试工具，两者结合可以非常容易对动态网页进行爬虫。<br>本文的需求是抓取UC头条各个板块的内容。UC头条(<a href="https://news.uc.cn/" target="_blank" rel="external">https://news.uc.cn/</a> )网站没有提供搜索入口，只能每个板块的首页向下滚动鼠标加载更多。要对这样的网站进行检索，抓取其内容，采用一般的scrapy请求方式，每次只能获取最新的10条数据，分析其JS请求，发现参数过于复杂，没有规律。如果想获取更多数据，则需要采用模拟浏览器的方法，这时候selenium就派上用场了。<br><a id="more"></a><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-12-06/86387208.png" alt=""></p>
 <h1 id="1，定义spider"><a href="#1，定义spider" class="headerlink" title="1，定义spider"></a>1，定义spider</h1><p>模拟从百度搜索进入，这个步骤可以省略，主要为了跳到parse函数<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UCTouTiaoSpider</span>(<span class="title">VideoBaseSpider</span>):</span></div><div class="line">    name = <span class="string">"uctoutiao_spider"</span></div><div class="line">    df_keys = [<span class="string">'人物'</span>, <span class="string">'百科'</span>, <span class="string">'乌镇'</span>]</div><div class="line"> </div><div class="line"> </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(<span class="keyword">self</span>, scrapy_task_id=None, *args, **kwargs)</span></span>:        </div><div class="line">        <span class="keyword">self</span>.url_src = <span class="string">"http://www.baidu.com"</span></div><div class="line"> </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start_requests</span><span class="params">(<span class="keyword">self</span>)</span></span>:</div><div class="line"> </div><div class="line">        requests = []</div><div class="line">        request = scrapy.Request(<span class="string">"http://www.baidu.com"</span>, callback=<span class="keyword">self</span>.parse)</div><div class="line">        requests.append(request)       </div><div class="line">        <span class="keyword">return</span> requests</div></pre></td></tr></table></figure></p>
@@ -629,9 +687,9 @@
       <category term="Docker" scheme="http://www.kekefund.com/categories/Docker/"/>
     
     
-      <category term="Dockerfile" scheme="http://www.kekefund.com/tags/Dockerfile/"/>
-    
       <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
+    
+      <category term="Dockerfile" scheme="http://www.kekefund.com/tags/Dockerfile/"/>
     
       <category term="jquery-file-upload" scheme="http://www.kekefund.com/tags/jquery-file-upload/"/>
     
@@ -695,7 +753,7 @@
     <link href="http://www.kekefund.com/2017/05/25/scrapy-splash/"/>
     <id>http://www.kekefund.com/2017/05/25/scrapy-splash/</id>
     <published>2017-05-25T09:05:06.000Z</published>
-    <updated>2017-12-18T08:48:43.450Z</updated>
+    <updated>2017-12-18T08:48:43.451Z</updated>
     
     <content type="html"><![CDATA[<p>scrapy只支持静态网页的抓取，通过scrapy-splash，能实现对JavaScript的解析。<br><a id="more"></a></p>
 <h1 id="一、搭建Docker服务器"><a href="#一、搭建Docker服务器" class="headerlink" title="一、搭建Docker服务器"></a>一、搭建Docker服务器</h1><blockquote>
@@ -762,9 +820,9 @@
     
       <category term="ireport" scheme="http://www.kekefund.com/tags/ireport/"/>
     
-      <category term="mysql" scheme="http://www.kekefund.com/tags/mysql/"/>
-    
       <category term="报告" scheme="http://www.kekefund.com/tags/%E6%8A%A5%E5%91%8A/"/>
+    
+      <category term="mysql" scheme="http://www.kekefund.com/tags/mysql/"/>
     
   </entry>
   
@@ -1109,37 +1167,6 @@
       <category term="branch" scheme="http://www.kekefund.com/tags/branch/"/>
     
       <category term="SourceTree" scheme="http://www.kekefund.com/tags/SourceTree/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>docker版FTP服务器</title>
-    <link href="http://www.kekefund.com/2017/03/20/docker-ftp/"/>
-    <id>http://www.kekefund.com/2017/03/20/docker-ftp/</id>
-    <published>2017-03-20T13:52:43.000Z</published>
-    <updated>2017-04-19T03:43:15.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>docker版ftp服务器，适用于部署离线局域网服务器</p>
-<h1 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h1><p>来源：<a href="https://hub.docker.com/r/bogem/ftp/" target="_blank" rel="external">https://hub.docker.com/r/bogem/ftp/</a><br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[root@VM_25_5_centos mydata]<span class="comment"># docker pull bogem/ftp</span></div><div class="line"></div><div class="line">[root@VM_25_5_centos mydata]<span class="comment"># docker images</span></div><div class="line">REPOSITORY            <span class="keyword">TAG</span>                 <span class="title">IMAGE</span> ID            CREATED             SIZE</div><div class="line">docker.io/bogem/ftp   latest              a40e9c43c530        <span class="number">4</span> weeks ago         <span class="number">174.7</span> MB</div></pre></td></tr></table></figure></p>
-<a id="more"></a>
-<h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">docker run -d -v /mydata:/home/vsftpd -p 20:20 -p 21:21 </div><div class="line">-<span class="ruby">p <span class="number">47400</span>-<span class="number">47470</span><span class="symbol">:</span><span class="number">47400</span>-<span class="number">47470</span> \</span></div><div class="line">-<span class="ruby">e FTP_USER=test </span></div><div class="line">-<span class="ruby">e FTP_PASS=test </span></div><div class="line">-<span class="ruby">e PASV_ADDRESS=<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span> </span></div><div class="line">-<span class="ruby">-name ftp1 \</span></div><div class="line">-<span class="ruby">-restart=always bogem/ftp</span></div></pre></td></tr></table></figure>
-<p>注：PASV_ADDRESS如果设置成127.0.0.1，则只能本地访问；设置成0.0.0.0 则可以外网访问。<br>详细参数参考:<a href="https://hub.docker.com/r/fauria/vsftpd/" target="_blank" rel="external">https://hub.docker.com/r/fauria/vsftpd/</a> 中的环境变量部分。</p>
-<h1 id="FileZilla客户端连接"><a href="#FileZilla客户端连接" class="headerlink" title="FileZilla客户端连接"></a>FileZilla客户端连接</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-20/dockerftp.png" alt=""></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;docker版ftp服务器，适用于部署离线局域网服务器&lt;/p&gt;
-&lt;h1 id=&quot;下载&quot;&gt;&lt;a href=&quot;#下载&quot; class=&quot;headerlink&quot; title=&quot;下载&quot;&gt;&lt;/a&gt;下载&lt;/h1&gt;&lt;p&gt;来源：&lt;a href=&quot;https://hub.docker.com/r/bogem/ftp/&quot;&gt;https://hub.docker.com/r/bogem/ftp/&lt;/a&gt;&lt;br&gt;&lt;figure class=&quot;highlight crmsh&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;[root@VM_25_5_centos mydata]&lt;span class=&quot;comment&quot;&gt;# docker pull bogem/ftp&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;[root@VM_25_5_centos mydata]&lt;span class=&quot;comment&quot;&gt;# docker images&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;REPOSITORY            &lt;span class=&quot;keyword&quot;&gt;TAG&lt;/span&gt;                 &lt;span class=&quot;title&quot;&gt;IMAGE&lt;/span&gt; ID            CREATED             SIZE&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;docker.io/bogem/ftp   latest              a40e9c43c530        &lt;span class=&quot;number&quot;&gt;4&lt;/span&gt; weeks ago         &lt;span class=&quot;number&quot;&gt;174.7&lt;/span&gt; MB&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Docker" scheme="http://www.kekefund.com/categories/Docker/"/>
-    
-    
-      <category term="docker" scheme="http://www.kekefund.com/tags/docker/"/>
-    
-      <category term="ftp" scheme="http://www.kekefund.com/tags/ftp/"/>
     
   </entry>
   
