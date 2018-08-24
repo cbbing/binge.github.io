@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2018-08-24T01:31:51.172Z</updated>
+  <updated>2018-08-24T01:58:28.629Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -14,6 +14,73 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Django中配置Gunicorn</title>
+    <link href="http://www.kekefund.com/2018/08/24/django-gunicorn/"/>
+    <id>http://www.kekefund.com/2018/08/24/django-gunicorn/</id>
+    <published>2018-08-24T01:51:17.000Z</published>
+    <updated>2018-08-24T01:58:28.629Z</updated>
+    
+    <content type="html"><![CDATA[<p>Gunicorn是一个被广泛使用的高性能的Python WSGI UNIX HTTP服务器，移植至Ruby的独角兽（Unicorn）项目，使用pre-fork worker模式，具有使用非常简单，轻量级的资源消耗，以及高性能等特点。</p>
+<p>Django自带的简易服务器，它是一个纯Python写的轻量级的WEB服务器，但它是为了开发而设计的，不适合在生产环境中部署。<br><a id="more"></a></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">python</span> <span class="selector-tag">manage</span><span class="selector-class">.py</span> <span class="selector-tag">runserver</span> 0<span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-pseudo">:8000</span></div></pre></td></tr></table></figure>
+<p>在Django中配置gunicorn，适合高并发的生产环境。</p>
+<h1 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h1><ul>
+<li><p>Gunicorn是基于prefork模式的Python wsgi应用服务器，支持 Unix like的系统</p>
+</li>
+<li><p>采用epoll (Linux下) 非阻塞网络I/O 模型</p>
+</li>
+<li><p>多种Worker类型可以选择 同步的，基于事件的（gevent tornado等），基于多线程的</p>
+</li>
+<li><p>高性能，比之uwsgi不相上下</p>
+</li>
+<li><p>配置使用非常简单</p>
+</li>
+<li><p>支持 Python 2.x &gt;= 2.6 or Python 3.x &gt;= 3.2</p>
+</li>
+</ul>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pip <span class="keyword">install</span> gunicorn</div></pre></td></tr></table></figure>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><ul>
+<li>settings.py</li>
+</ul>
+<p>在settings.py添加gunicorn。</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">INSTALLED_APPS = [</div><div class="line">    ...</div><div class="line">    <span class="string">'gunicorn'</span>,</div><div class="line">    ...</div><div class="line">]</div></pre></td></tr></table></figure>
+<ul>
+<li>gunicorn配置文件gunicorn.conf.py</li>
+</ul>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> logging</div><div class="line"><span class="keyword">import</span> logging.handlers</div><div class="line"><span class="keyword">from</span> logging.handlers <span class="keyword">import</span> WatchedFileHandler</div><div class="line"><span class="keyword">import</span> os</div><div class="line"><span class="keyword">import</span> multiprocessing</div><div class="line"></div><div class="line">bind = <span class="string">"0.0.0.0:8091"</span>   #绑定的ip与端口</div><div class="line">backlog = <span class="number">512</span>                #监听队列数量，<span class="number">64</span><span class="number">-2048</span></div><div class="line">#chdir = <span class="string">'/home/test/server/bin'</span>  #gunicorn要切换到的目的工作目录</div><div class="line">worker_class = <span class="string">'sync'</span> #使用gevent模式，还可以使用sync 模式，默认的是sync模式</div><div class="line">workers = <span class="number">4</span> # multiprocessing.cpu_count()    #进程数</div><div class="line">threads = <span class="number">16</span> #multiprocessing.cpu_count()*<span class="number">4</span> #指定每个进程开启的线程数</div><div class="line">loglevel = <span class="string">'info'</span> #日志级别，这个日志级别指的是错误日志的级别，而访问日志的级别无法设置</div><div class="line">access_log_format = <span class="string">'%(t)s %(p)s %(h)s "%(r)s" %(s)s %(L)s %(b)s %(f)s" "%(a)s"'</span></div><div class="line"></div><div class="line"># accesslog = <span class="string">"/home/log/gunicorn_access.log"</span>      #访问日志文件</div><div class="line">#errorlog = <span class="string">"/home/log/gunicorn_error.log"</span>        #错误日志文件</div><div class="line">accesslog = <span class="string">"-"</span>  #访问日志文件，<span class="string">"-"</span> 表示标准输出</div><div class="line">errorlog = <span class="string">"-"</span>   #错误日志文件，<span class="string">"-"</span> 表示标准输出</div><div class="line"></div><div class="line">proc_name = <span class="string">'fof_api'</span>   #进程名</div></pre></td></tr></table></figure>
+<p>其中access_log_format选项的变量含义如下：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">其每个选项的含义如下：</div><div class="line">h          remote <span class="selector-tag">address</span></div><div class="line">l          <span class="string">'-'</span></div><div class="line">u          currently <span class="string">'-'</span>, may be user name <span class="keyword">in</span> future releases</div><div class="line">t          date of the request</div><div class="line">r          status line (e<span class="selector-class">.g</span>. ``GET / HTTP/<span class="number">1.1</span>``)</div><div class="line">s          status</div><div class="line"><span class="selector-tag">b</span>          response length or <span class="string">'-'</span></div><div class="line">f          referer</div><div class="line"><span class="selector-tag">a</span>          user agent</div><div class="line">T          request <span class="selector-tag">time</span> <span class="keyword">in</span> seconds</div><div class="line">D          request <span class="selector-tag">time</span> <span class="keyword">in</span> microseconds</div><div class="line">L          request <span class="selector-tag">time</span> <span class="keyword">in</span> decimal seconds</div><div class="line"><span class="selector-tag">p</span>          process ID</div></pre></td></tr></table></figure></p>
+<p>accesslog、errorlog日志文件可以写到文件，也可以标准输出到屏幕。</p>
+<h1 id="正常启动"><a href="#正常启动" class="headerlink" title="正常启动"></a>正常启动</h1><p>以gunicorn.conf.py配置文件启动gunicorn<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gunicorn -c gunicorn<span class="selector-class">.conf</span><span class="selector-class">.py</span> api<span class="selector-class">.wsgi</span>:application</div></pre></td></tr></table></figure></p>
+<p>也可以直接启动<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">gunicorn</span> <span class="selector-tag">api</span><span class="selector-class">.wsgi</span><span class="selector-pseudo">:application</span> <span class="selector-tag">-b</span> 0<span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-pseudo">:8091</span> <span class="selector-tag">-w</span> 4 <span class="selector-tag">-k</span> <span class="selector-tag">gthread</span></div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>-w 4是启动4个进程，可以支持更多的并发。</p>
+</blockquote>
+<p>or</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">gunicorn</span> <span class="selector-tag">api</span><span class="selector-class">.wsgi</span><span class="selector-pseudo">:application</span> <span class="selector-tag">-b</span> 0<span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-pseudo">:8091</span> <span class="selector-tag">-w</span> 4 <span class="selector-tag">-k</span> <span class="selector-tag">gthread</span>  <span class="selector-tag">--thread</span> 40 <span class="selector-tag">--max-requests</span> 4096 <span class="selector-tag">--max-requests-jitter</span> 512</div></pre></td></tr></table></figure>
+<blockquote>
+<p>参数详见官网的配置说明，参考文章底部的链接</p>
+</blockquote>
+<h1 id="Docker方式启动"><a href="#Docker方式启动" class="headerlink" title="Docker方式启动"></a>Docker方式启动</h1><p>Dockerfile文件<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">FROM</span> python:<span class="number">3.5</span></div><div class="line"><span class="keyword">RUN</span><span class="bash"> mkdir -p /usr/src/app</span></div><div class="line"><span class="keyword">WORKDIR</span><span class="bash"> /usr/src/app</span></div><div class="line"> </div><div class="line"><span class="keyword">COPY</span><span class="bash"> requirements.txt /usr/src/app/requirements.txt</span></div><div class="line"><span class="keyword">RUN</span><span class="bash"> pip install -r /usr/src/app/requirements.txt</span></div><div class="line"> </div><div class="line"><span class="keyword">COPY</span><span class="bash"> . /usr/src/app</span></div><div class="line"><span class="keyword">CMD</span><span class="bash"> gunicorn -c gunicorn.conf.py api.wsgi:application</span></div></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[<span class="number">24</span><span class="regexp">/Aug/</span><span class="number">2018</span>:<span class="number">09</span>:<span class="number">45</span>:<span class="number">42</span> +<span class="number">0800</span>] &lt;<span class="number">16</span>&gt; <span class="number">10.154</span><span class="number">.53</span><span class="number">.113</span> <span class="string">"POST /api/v1/compose/ HTTP/1.0"</span> <span class="number">200</span> <span class="number">5.369574</span> <span class="number">1113</span> <span class="string">https:</span><span class="comment">//xxxx.com/ProductPerspective/detail" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"</span></div><div class="line">[<span class="number">24</span><span class="regexp">/Aug/</span><span class="number">2018</span>:<span class="number">09</span>:<span class="number">45</span>:<span class="number">43</span> +<span class="number">0800</span>] &lt;<span class="number">14</span>&gt; <span class="number">10.154</span><span class="number">.53</span><span class="number">.113</span> <span class="string">"POST /api/v1/fund_static/ HTTP/1.0"</span> <span class="number">200</span> <span class="number">5.868518</span> <span class="number">481</span> <span class="string">https:</span><span class="comment">//xxxx.com/ProductPerspective/detail" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"</span></div><div class="line">[<span class="number">24</span><span class="regexp">/Aug/</span><span class="number">2018</span>:<span class="number">09</span>:<span class="number">46</span>:<span class="number">00</span> +<span class="number">0800</span>] &lt;<span class="number">334</span>&gt; <span class="number">10.154</span><span class="number">.53</span><span class="number">.113</span> <span class="string">"POST /api/v1/adjustment/ HTTP/1.0"</span> <span class="number">200</span> <span class="number">0.845745</span> <span class="number">1398</span> <span class="string">https:</span><span class="comment">//xxxx.com/ProductPerspective/detail" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"</span></div><div class="line">[<span class="number">24</span><span class="regexp">/Aug/</span><span class="number">2018</span>:<span class="number">09</span>:<span class="number">46</span>:<span class="number">00</span> +<span class="number">0800</span>] &lt;<span class="number">12</span>&gt; <span class="number">10.154</span><span class="number">.53</span><span class="number">.113</span> <span class="string">"POST /api/v1/risk/ HTTP/1.0"</span> <span class="number">200</span> <span class="number">0.860662</span> <span class="number">1254</span> <span class="string">https:</span><span class="comment">//xxxx.com/ProductPerspective/detail" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"</span></div></pre></td></tr></table></figure></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="http://docs.gunicorn.org/en/stable/settings.html?highlight=backlog" target="_blank" rel="external">gunicorn参数</a></li>
+<li><a href="https://www.jianshu.com/p/260f18aa5462" target="_blank" rel="external">Gunicorn运行与配置</a></li>
+<li><a href="https://blog.csdn.net/y472360651/article/details/78538188" target="_blank" rel="external">Gunicorn-配置详解</a></li>
+<li><a href="http://xiaorui.cc/2014/11/22/%E7%94%A8gunicorn%E5%92%8Cgevent%E6%8F%90%E9%AB%98python-web%E6%A1%86%E6%9E%B6%E7%9A%84%E6%80%A7%E8%83%BD/" target="_blank" rel="external">用gunicorn和gevent提高python-web框架的性能</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Gunicorn是一个被广泛使用的高性能的Python WSGI UNIX HTTP服务器，移植至Ruby的独角兽（Unicorn）项目，使用pre-fork worker模式，具有使用非常简单，轻量级的资源消耗，以及高性能等特点。&lt;/p&gt;
+&lt;p&gt;Django自带的简易服务器，它是一个纯Python写的轻量级的WEB服务器，但它是为了开发而设计的，不适合在生产环境中部署。&lt;br&gt;
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>服务器被矿机程序攻击</title>
@@ -1071,37 +1138,6 @@
       <category term="branch" scheme="http://www.kekefund.com/tags/branch/"/>
     
       <category term="SourceTree" scheme="http://www.kekefund.com/tags/SourceTree/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>docker版FTP服务器</title>
-    <link href="http://www.kekefund.com/2017/03/20/docker-ftp/"/>
-    <id>http://www.kekefund.com/2017/03/20/docker-ftp/</id>
-    <published>2017-03-20T13:52:43.000Z</published>
-    <updated>2017-04-19T03:43:15.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>docker版ftp服务器，适用于部署离线局域网服务器</p>
-<h1 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h1><p>来源：<a href="https://hub.docker.com/r/bogem/ftp/" target="_blank" rel="external">https://hub.docker.com/r/bogem/ftp/</a><br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[root@VM_25_5_centos mydata]<span class="comment"># docker pull bogem/ftp</span></div><div class="line"></div><div class="line">[root@VM_25_5_centos mydata]<span class="comment"># docker images</span></div><div class="line">REPOSITORY            <span class="keyword">TAG</span>                 <span class="title">IMAGE</span> ID            CREATED             SIZE</div><div class="line">docker.io/bogem/ftp   latest              a40e9c43c530        <span class="number">4</span> weeks ago         <span class="number">174.7</span> MB</div></pre></td></tr></table></figure></p>
-<a id="more"></a>
-<h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">docker run -d -v /mydata:/home/vsftpd -p 20:20 -p 21:21 </div><div class="line">-<span class="ruby">p <span class="number">47400</span>-<span class="number">47470</span><span class="symbol">:</span><span class="number">47400</span>-<span class="number">47470</span> \</span></div><div class="line">-<span class="ruby">e FTP_USER=test </span></div><div class="line">-<span class="ruby">e FTP_PASS=test </span></div><div class="line">-<span class="ruby">e PASV_ADDRESS=<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span> </span></div><div class="line">-<span class="ruby">-name ftp1 \</span></div><div class="line">-<span class="ruby">-restart=always bogem/ftp</span></div></pre></td></tr></table></figure>
-<p>注：PASV_ADDRESS如果设置成127.0.0.1，则只能本地访问；设置成0.0.0.0 则可以外网访问。<br>详细参数参考:<a href="https://hub.docker.com/r/fauria/vsftpd/" target="_blank" rel="external">https://hub.docker.com/r/fauria/vsftpd/</a> 中的环境变量部分。</p>
-<h1 id="FileZilla客户端连接"><a href="#FileZilla客户端连接" class="headerlink" title="FileZilla客户端连接"></a>FileZilla客户端连接</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-20/dockerftp.png" alt=""></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;docker版ftp服务器，适用于部署离线局域网服务器&lt;/p&gt;
-&lt;h1 id=&quot;下载&quot;&gt;&lt;a href=&quot;#下载&quot; class=&quot;headerlink&quot; title=&quot;下载&quot;&gt;&lt;/a&gt;下载&lt;/h1&gt;&lt;p&gt;来源：&lt;a href=&quot;https://hub.docker.com/r/bogem/ftp/&quot;&gt;https://hub.docker.com/r/bogem/ftp/&lt;/a&gt;&lt;br&gt;&lt;figure class=&quot;highlight crmsh&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;[root@VM_25_5_centos mydata]&lt;span class=&quot;comment&quot;&gt;# docker pull bogem/ftp&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;[root@VM_25_5_centos mydata]&lt;span class=&quot;comment&quot;&gt;# docker images&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;REPOSITORY            &lt;span class=&quot;keyword&quot;&gt;TAG&lt;/span&gt;                 &lt;span class=&quot;title&quot;&gt;IMAGE&lt;/span&gt; ID            CREATED             SIZE&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;docker.io/bogem/ftp   latest              a40e9c43c530        &lt;span class=&quot;number&quot;&gt;4&lt;/span&gt; weeks ago         &lt;span class=&quot;number&quot;&gt;174.7&lt;/span&gt; MB&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Docker" scheme="http://www.kekefund.com/categories/Docker/"/>
-    
-    
-      <category term="docker" scheme="http://www.kekefund.com/tags/docker/"/>
-    
-      <category term="ftp" scheme="http://www.kekefund.com/tags/ftp/"/>
     
   </entry>
   
