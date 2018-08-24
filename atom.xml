@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2018-06-24T04:21:35.626Z</updated>
+  <updated>2018-08-24T01:31:51.172Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -16,11 +16,126 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>服务器被矿机程序攻击</title>
+    <link href="http://www.kekefund.com/2018/07/31/attack-miner/"/>
+    <id>http://www.kekefund.com/2018/07/31/attack-miner/</id>
+    <published>2018-07-31T01:28:46.000Z</published>
+    <updated>2018-08-24T01:31:51.172Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="事件经过"><a href="#事件经过" class="headerlink" title="事件经过"></a>事件经过</h1><p>今天早上7:00，收到腾讯云监控发来基础监控告警：某台服务器的CPU利用率为100%。SSH登录到服务器正常，说明root密码还没有被更改，我最初怀疑有可能是DDos攻击。<br><a id="more"></a><br>执行top命令：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/attack02.png" alt=""></p>
+<p>发现有个名为qW3xT.2的程序CPU占用高达397.3%，服务器为4核8G，那就基本上把所有CPU资源占了，也就是腾讯云发来的CPU使用率大于99%。</p>
+<p>Google搜索第一条显示这是一个矿机程序。</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/attack03.png" alt=""></p>
+<p>那就是说明云服务器被矿机程序破解了。</p>
+<ul>
+<li>切换到/tmp目录：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/attack01.png" alt=""></li>
+</ul>
+<p>有两个可执行程序ddgs.3013和qW3xT.2</p>
+<ul>
+<li>查看定时任务：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/attack04.png" alt=""></li>
+</ul>
+<p>执行远程脚本<a href="http://149.56.106.215:8000/i.sh" target="_blank" rel="external">http://149.56.106.215:8000/i.sh</a></p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>1，删掉/tmp下的ddgs.3013和qW3xT.2<br>2.，删掉cron任务</p>
+<h1 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h1><p>云服务器上近期搭建了一个redis服务，没采用密码验证，挖矿程序就是通过Redis拿到了系统的控制权。</p>
+<h1 id="关于reidis-未授权登陆漏洞"><a href="#关于reidis-未授权登陆漏洞" class="headerlink" title="关于reidis 未授权登陆漏洞"></a>关于reidis 未授权登陆漏洞</h1><h2 id="漏洞概要"><a href="#漏洞概要" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>Redis 默认情况下，会绑定在 0.0.0.0:6379，这样将会将Redis服务暴露到公网上，如果在没有开启认证的情况下，可以导致任意用户在可以访问目标服务器的情况下未授权访问Redis以及读取Redis的数据。攻击者在未授权访问Redis的情况下可以利用Redis的相关方法，可以成功将自己的公钥写入目标服务器的 /root/.ssh 文件夹的authotrized_keys 文件中，进而可以直接登录目标服务器。</p>
+<h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h2><p>Redis 安全模型的观念是: “请不要将Redis暴露在公开网络中, 因为让不受信任的客户接触到Redis是非常危险的” 。<br>Redis 作者之所以放弃解决未授权访问导致的不安全性是因为, 99.99%使用Redis的场景都是在沙盒化的环境中, 为了0.01%的可能性增加安全规则的同时也增加了复杂性, 虽然这个问题的并不是不能解决的, 但是这在他的设计哲学中仍是不划算的。<br>因为其他受信任用户需要使用Redis或者因为运维人员的疏忽等原因，部分Redis 绑定在0.0.0.0:6379，并且没有开启认证（这是Redis的默认配置），如果没有进行采用相关的策略，比如添加防火墙规则避免其他非信任来源 ip访问等，将会导致Redis服务直接暴露在公网上，导致其他用户可以直接在非授权情况下直接访问Redis服务并进行相关操作。<br>利用Redis自身的相关方法，可以进行写文件操作，攻击者可以成功将自己的公钥写入目标服务器的 /root/.ssh 文件夹的authotrized_keys文件中，进而可以直接登录目标服务器。 （导致可以执行任何操作）</p>
+<p>参考</p>
+<blockquote>
+<p><a href="https://wwxinjie.github.io/2018/06/15/linux-clean-mineral/" target="_blank" rel="external">https://wwxinjie.github.io/2018/06/15/linux-clean-mineral/</a><br><a href="https://blog.csdn.net/whs_321/article/details/51734602" target="_blank" rel="external">https://blog.csdn.net/whs_321/article/details/51734602</a></p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;事件经过&quot;&gt;&lt;a href=&quot;#事件经过&quot; class=&quot;headerlink&quot; title=&quot;事件经过&quot;&gt;&lt;/a&gt;事件经过&lt;/h1&gt;&lt;p&gt;今天早上7:00，收到腾讯云监控发来基础监控告警：某台服务器的CPU利用率为100%。SSH登录到服务器正常，说明root密码还没有被更改，我最初怀疑有可能是DDos攻击。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="服务器" scheme="http://www.kekefund.com/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+    
+    
+      <category term="服务器" scheme="http://www.kekefund.com/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+    
+      <category term="攻击" scheme="http://www.kekefund.com/tags/%E6%94%BB%E5%87%BB/"/>
+    
+      <category term="矿机" scheme="http://www.kekefund.com/tags/%E7%9F%BF%E6%9C%BA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>API自动化测试</title>
+    <link href="http://www.kekefund.com/2018/07/15/api-test/"/>
+    <id>http://www.kekefund.com/2018/07/15/api-test/</id>
+    <published>2018-07-15T07:11:41.000Z</published>
+    <updated>2018-08-24T01:25:44.535Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>公司目前用的前后端分离的架构，API接口的稳定性直接影响了与前端团队的沟通效率，前端开发和测试人员都比较熟练的使用Postman来测试API接口。</p>
+<p>API接口的自动化测试有很多方案，但Postman+Newman+Jenkins的组合方案，对于测试人员的学习成本最低，实现起来速度是最快的。</p>
+<p>由于公司目前已经采用Jenkins做自动化部署，因此只需要安装Newman，整个流程即可走通。<br><a id="more"></a></p>
+<p>实现步骤如下：</p>
+<ol>
+<li><p>Postman编写测试用例；</p>
+</li>
+<li><p>导出到json文件</p>
+</li>
+<li><p>Newman执行json文件</p>
+</li>
+<li><p>Jenkins调用newman命令，定时执行或者触发执行</p>
+</li>
+</ol>
+<h1 id="1，Postman编写测试用例"><a href="#1，Postman编写测试用例" class="headerlink" title="1，Postman编写测试用例"></a>1，Postman编写测试用例</h1><blockquote>
+<p>Postman is the only complete API development environment, for API developers, used by more than 5 million developers and 100,000 companies worldwide. Postman makes working with APIs faster and easier by supporting developers at every stage of their workflow, and is available for Mac OS X, Windows, and Linux users.</p>
+</blockquote>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/test01.png" alt=""></p>
+<p>配置环境变量：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test02.png" alt=""></p>
+<p>这里建立了测试环境和生产环境；</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/test04.png" alt=""><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test03.png" alt=""><br>配置好环境变量后，就可以在api请求时用环境变量，方便切换测试环境和生产环境。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test05.png" alt=""></p>
+<p>可以直接在Postman中跑测试用例<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test06.png" alt=""></p>
+<p>如果是临时的API接口测试，到这步就可以了。当然，我们的目的是实现测试自动化，接着往下走。</p>
+<h1 id="2，导出到JSON"><a href="#2，导出到JSON" class="headerlink" title="2，导出到JSON"></a>2，导出到JSON</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/test07.png" alt=""></p>
+<h1 id="3，添加到github项目"><a href="#3，添加到github项目" class="headerlink" title="3，添加到github项目"></a>3，添加到github项目</h1><p>创建一个github项目，专门存储postman脚本。这是为了方便项目成员在本地提交，跟踪版本。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test08.png" alt=""></p>
+<h1 id="4，Jenkins集成"><a href="#4，Jenkins集成" class="headerlink" title="4，Jenkins集成"></a>4，Jenkins集成</h1><p>新建一个自由风格的项目<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test09.png" alt=""><br>配置git<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test10.png" alt=""></p>
+<p>构建触发器<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test11.png" alt=""><br>每天6点执行一次。</p>
+<p>执行SHELL<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test12.png" alt=""></p>
+<p>其中 newman是预先安装在系统上的：<br>先安装nodejs，再安装newman:</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm <span class="keyword">install</span> -g newman</div></pre></td></tr></table></figure>
+<p>脚本：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">newman --version</div><div class="line"></div><div class="line">newman run Brison<span class="selector-class">.postman_collection</span><span class="selector-class">.json</span> -e test<span class="selector-class">.postman_environment</span><span class="selector-class">.json</span> --reporters cli,<span class="selector-tag">html</span>,json,junit --reporter-json-export brison_jsonOut<span class="selector-class">.json</span> --reporter-junit-export brison_xmlOut<span class="selector-class">.xml</span> --reporter-html-export brison_htmlOut.html</div></pre></td></tr></table></figure>
+<p>Brison.postman_collection.json是postman请求 collection集合。<br>test.postman_environment.json 是环境变量。<br>生成brison_jsonOut.json，brison_xmlOut.xml，brison_htmlOut.html</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://blog.csdn.net/wanglin_lin/article/details/51959342" target="_blank" rel="external">https://blog.csdn.net/wanglin_lin/article/details/51959342</a></p>
+<p><a href="https://www.jianshu.com/p/dd0db1b13cfc" target="_blank" rel="external">https://www.jianshu.com/p/dd0db1b13cfc</a></p>
+<p><a href="https://www.getpostman.com/docs/v6/postman/collection_runs/integration_with_jenkins" target="_blank" rel="external">https://www.getpostman.com/docs/v6/postman/collection_runs/integration_with_jenkins</a></p>
+<p><a href="https://www.jianshu.com/p/d958fc8bf7a4" target="_blank" rel="external">https://www.jianshu.com/p/d958fc8bf7a4</a></p>
+<p><a href="https://www.jianshu.com/p/2c83f2ffbd5e" target="_blank" rel="external">https://www.jianshu.com/p/2c83f2ffbd5e</a></p>
+<p><a href="https://www.cnblogs.com/lsjdddddd/p/5734531.html" target="_blank" rel="external">https://www.cnblogs.com/lsjdddddd/p/5734531.html</a></p>
+<p><a href="https://www.jianshu.com/p/9b196c71d1fc" target="_blank" rel="external">https://www.jianshu.com/p/9b196c71d1fc</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h1&gt;&lt;p&gt;公司目前用的前后端分离的架构，API接口的稳定性直接影响了与前端团队的沟通效率，前端开发和测试人员都比较熟练的使用Postman来测试API接口。&lt;/p&gt;
+&lt;p&gt;API接口的自动化测试有很多方案，但Postman+Newman+Jenkins的组合方案，对于测试人员的学习成本最低，实现起来速度是最快的。&lt;/p&gt;
+&lt;p&gt;由于公司目前已经采用Jenkins做自动化部署，因此只需要安装Newman，整个流程即可走通。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="架构" scheme="http://www.kekefund.com/categories/%E6%9E%B6%E6%9E%84/"/>
+    
+    
+      <category term="postman" scheme="http://www.kekefund.com/tags/postman/"/>
+    
+      <category term="newman" scheme="http://www.kekefund.com/tags/newman/"/>
+    
+      <category term="测试" scheme="http://www.kekefund.com/tags/%E6%B5%8B%E8%AF%95/"/>
+    
+  </entry>
+  
+  <entry>
     <title>内网映射方案(lanproxy)</title>
     <link href="http://www.kekefund.com/2018/06/24/lanproxy/"/>
     <id>http://www.kekefund.com/2018/06/24/lanproxy/</id>
     <published>2018-06-24T03:56:49.000Z</published>
-    <updated>2018-06-24T04:21:35.626Z</updated>
+    <updated>2018-07-23T02:56:16.648Z</updated>
     
     <content type="html"><![CDATA[<h1 id="现状"><a href="#现状" class="headerlink" title="现状"></a>现状</h1><p>现在运营商提供的宽带服务，无论是动态IP，还是固定IP，默认都是禁止所有端口服务的（目前了解上海是这样的），在路由器上配置的端口映射和DMZ都失效。申请开通端口需要域名备案，过程比较繁琐。<br>运营商这么做是为了防止个人随意开设各种非法服务，也防止黑客通过扫描器进行抓鸡和批量扫描。这样封禁，虽然一定程度上保证了我们的网络安全，比如说前段时间的勒索病毒正因为国内大部分用户没有独立的公网IP，并且操作系统最容易爆发漏洞的一些，135，139等端口被运营商封禁了，使得国内个人家庭电脑中招的概率小了很多；但是导致即使有公网IP，也无法使用常用端口向外网提供服务。<br><a id="more"></a></p>
 <h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>通过NAPT原理得知：NAPT实现了内网主机在没有公网IP的情况下访问公网主机。<br>那么我们可以这样做：假设公网IP为23.23.23.23，内网IP为192.168.1.2。<br>公网主机先监听80端口，监听这个端口是用于向外部提供一个HTTP服务，80是WEB服务器的默认端口。同时其他任意一个端口（这里我们假设为7777），监听这个端口是用于让内网服务器主动连接进来打通一个隧道。接着内网再主动向公网主机的7777发起一个请求，这样内网就成功与公网主机建立了一个连接通道。</p>
@@ -44,6 +159,7 @@
 <li>linux（mac）环境中运行bin目录下的 startup.sh</li>
 <li>windows环境中运行bin目录下的 startup.bat</li>
 </ul>
+<p>下载: <a href="http://7xo67b.com1.z0.glb.clouddn.com/lanproxy-java-client-20171116.zip" target="_blank" rel="external">lanproxy-java-client-20171116</a></p>
 <h2 id="3，其他平台客户端"><a href="#3，其他平台客户端" class="headerlink" title="3，其他平台客户端"></a>3，其他平台客户端</h2><p>不用java客户端的可以使用下面提供的各个平台的客户端，省去安装java运行环境</p>
 <p><strong>源码地址</strong><br><a href="https://github.com/ffay/lanproxy-go-client" target="_blank" rel="external">https://github.com/ffay/lanproxy-go-client</a></p>
 <p><strong>发布包</strong><br><a href="https://github.com/ffay/lanproxy-go-client/releases" target="_blank" rel="external">https://github.com/ffay/lanproxy-go-client/releases</a></p>
@@ -264,141 +380,6 @@
   </entry>
   
   <entry>
-    <title>nginx 缓存与优化</title>
-    <link href="http://www.kekefund.com/2017/10/13/nginx-cache/"/>
-    <id>http://www.kekefund.com/2017/10/13/nginx-cache/</id>
-    <published>2017-10-13T05:45:50.000Z</published>
-    <updated>2017-10-13T05:58:02.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>在浏览器和应用服务器之间，存在多种“潜在”缓存，如：</p>
-<ul>
-<li>客户端浏览器缓存</li>
-<li>中间缓存</li>
-<li>内容分发网络（CDN）</li>
-<li>服务器上的负载均衡和反向代理<a id="more"></a>
-缓存，仅在反向代理和负载均衡的层面，就对性能提高有很大的帮助。</li>
-</ul>
-<h1 id="为什么要用缓存？"><a href="#为什么要用缓存？" class="headerlink" title="为什么要用缓存？"></a>为什么要用缓存？</h1><ul>
-<li>网站的访问速度更快</li>
-<li>减轻源服务器的负担</li>
-<li>提高负载平衡器、反向代理和应用服务器前端web服务的性能</li>
-</ul>
-<h1 id="nginx代理模块缓存指令"><a href="#nginx代理模块缓存指令" class="headerlink" title="nginx代理模块缓存指令"></a>nginx代理模块缓存指令</h1><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>proxy_cache</td>
-<td>定义缓存的共享内存区域</td>
-</tr>
-<tr>
-<td>proxy_cache_bypass</td>
-<td>一个或者多个字符串变量，变量的值为非空或者非零将会导致响应从上游服务器获取而不是缓存</td>
-</tr>
-<tr>
-<td>proxy_cache_key</td>
-<td>用来区分缓存文件的key，作为缓存key的一个字符串，用于存储或者获取缓存值。默认值为$scheme$proxy_host$uri$is_args$args</td>
-</tr>
-<tr>
-<td>proxy_cache_lock</td>
-<td>启用这个指令，当多个客户端请求一个缓存中不存在的文件（或称之为一个MISS），只有这些请求中的第一个被允许发送至服务器。其他请求在第一个请求得到满意结果之后在缓存中得到文件。</td>
-</tr>
-<tr>
-<td>proxy_cache_lock_timeout</td>
-<td>等待一个请求将出现在缓存或者proxy_cache_lock锁释放的时间长度</td>
-</tr>
-<tr>
-<td>proxy_cache_min_uses</td>
-<td>在一个响应被缓存为一个key之前需要请求的最小次数</td>
-</tr>
-<tr>
-<td>proxy_cache_path</td>
-<td>一个放置缓存响应和共享zone（keys_zone=name:size）的目录，用于存放key和响应的元数据。</td>
-</tr>
-<tr>
-<td>proxy_cache_path:keys_zone</td>
-<td>设置一个共享内存区，用于存储缓存键和元数据，有些类似计时器的用途。</td>
-</tr>
-<tr>
-<td>proxy_cache_path:levels</td>
-<td>冒号用于分隔在每个级别（1或2）的子目录名长度，最多三级深；</td>
-</tr>
-<tr>
-<td>proxy_cache_path:inactive</td>
-<td>在一个不活动的响应被驱除出缓存之前待在缓存中的最大时间长度；例如设置如60m，则文件如果在60分钟之内没有被请求，则缓存管理会自动将其在内存中删除，不管文件是否过期。</td>
-</tr>
-<tr>
-<td>proxy_cache_path:max_size</td>
-<td>缓存的最大值，当大小超过这个值，缓存管理器溢出最近最少使用的缓存条目；</td>
-</tr>
-<tr>
-<td>proxy_cache_path:loader_files</td>
-<td>缓存文件的最大数量，它们的元数据被每个缓存载入进程迭代载入；</td>
-</tr>
-<tr>
-<td>proxy_cache_path:loader_sleep</td>
-<td>在每个迭代缓存载入进程之间停顿的毫秒数；</td>
-</tr>
-<tr>
-<td>proxy_cache_path:loader_threshold</td>
-<td>缓存载入进程迭代花去时间的最大值</td>
-</tr>
-<tr>
-<td>proxy_cache_use_stale</td>
-<td>在访问上游服务器的时候发生错误，在这种情况下接受提供过期的缓存数据。参数updating告知NGINX在客户端请求的项目的更新正在原服务器中下载时发送旧内容，而不是向服务器转发重复的请求</td>
-</tr>
-<tr>
-<td>proxy_cache_valid</td>
-<td>缓存的有效期；指定对200、301或者302有效代码缓存的时间长度。特定参数any表示对任何响应都缓存一定时间长度。</td>
-</tr>
-<tr>
-<td>proxy_cache_methods</td>
-<td>缓存支持的方法，默认为GET，可以改为POST，OPTIONS等</td>
-</tr>
-</tbody>
-</table>
-<h1 id="缓存策略"><a href="#缓存策略" class="headerlink" title="缓存策略"></a>缓存策略</h1><ul>
-<li>首页缓存1分钟，因为它所包含的链接及文件列表经常更新</li>
-<li>每篇文章都被缓存1天，因为一旦写完它们将不会改变，但我们又不希望缓存被填满，因此需要移除一些旧的缓存内容以便满足空间的需要。</li>
-<li>尽量地缓存所有图像，因为从磁盘检索图像文件是一件比较“昂贵”的操作。</li>
-</ul>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="section">http</span> &#123;</div><div class="line">    <span class="attribute">proxy_cache_path</span>    /var/spool/nginx/articles    keys_zone=ARTICLES:<span class="number">16m</span>    levels=<span class="number">1</span>:<span class="number">2</span>    inactive=<span class="number">1d</span>;</div><div class="line">    <span class="attribute">proxy_cache_path</span>    /var/spool/nginx/images    keys_zone=IMAGES:<span class="number">128m</span>    levels=<span class="number">1</span>:<span class="number">2</span>    inactive=<span class="number">30d</span>;</div><div class="line">    <span class="attribute">proxy_temp_path</span>    /var/spool/nginx;</div><div class="line"></div><div class="line">    <span class="section">server</span> &#123;</div><div class="line"></div><div class="line">        <span class="attribute">location</span> / &#123;</div><div class="line">            <span class="comment"># 首页</span></div><div class="line">            <span class="attribute">proxy_cache_valid</span> <span class="number">1m</span>;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="attribute">location</span> /articles &#123;</div><div class="line">            <span class="attribute">proxy_cache_valid</span> <span class="number">1d</span>;</div><div class="line">        &#125;</div><div class="line">    </div><div class="line">        <span class="attribute">location</span> /img &#123;</div><div class="line">            <span class="attribute">proxy_cache_valid</span> <span class="number">10y</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><p>下面的配置设计缓存所有的响应6个小时，缓存大小为1GB。任何条目保存刷新，就是说，在6个小时内被调用为超时，有效期为1天。在此时间后，上游服务器将再次调用提供响应。如果上游服务器由于错误、超时、无效头或者是由于缓存条目被升级，那么过期的条目就会被使用。共享内存区、CACHE被定义为10MB，并且在location中使用，在这里设置缓存key，并且也可以从这里查询。<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="section">http</span> &#123;</div><div class="line">    <span class="attribute">proxy_temp_path</span>  /var/spool/nginx;</div><div class="line"></div><div class="line">    <span class="attribute">proxy_cache_path</span>  /var/spool/nginx  keys_zone=CACHE:<span class="number">10m</span>  levels=<span class="number">1</span>:<span class="number">2</span>  inactive=<span class="number">6h</span> max_size=<span class="number">1g</span>;</div><div class="line"> </div><div class="line">    <span class="section">server</span> &#123;</div><div class="line"> </div><div class="line">        <span class="attribute">location</span> / &#123;</div><div class="line">            <span class="comment"># using include to bring in a file with commonly-used settings</span></div><div class="line">            <span class="attribute">include</span> proxy.conf;</div><div class="line"> </div><div class="line">            <span class="attribute">proxy_cache</span> CACHE;</div><div class="line"> </div><div class="line">            <span class="attribute">proxy_cache_valid</span> any <span class="number">1d</span>;</div><div class="line"> </div><div class="line">            <span class="attribute">proxy_cache_use_stale</span> <span class="literal">error</span> timeout invalid_header updating http_500 http_502 http_503 http_504;</div><div class="line"> </div><div class="line">            <span class="attribute">proxy_pass</span> http://upstream;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><h2 id="1，检测缓存状态"><a href="#1，检测缓存状态" class="headerlink" title="1，检测缓存状态"></a>1，检测缓存状态</h2><p>通过添加如下代码实现<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="section">server</span> &#123;</div><div class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</div><div class="line">    <span class="attribute">server_name</span> xx.fofpower.com;</div><div class="line">    <span class="attribute">location</span> / &#123;</div><div class="line">        <span class="attribute">proxy_cache</span> api_cache;</div><div class="line">        <span class="attribute">proxy_cache_valid</span>  <span class="number">200</span> <span class="number">206</span> <span class="number">304</span> <span class="number">301</span> <span class="number">302</span> <span class="number">1d</span>;        </div><div class="line">        <span class="attribute">proxy_ignore_headers</span> Cache-Control;</div><div class="line">        <span class="attribute">add_header</span> X-Cache-Status <span class="variable">$upstream_cache_status</span>;  <span class="comment">#添加此行</span></div><div class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</div><div class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</div><div class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</div><div class="line">        <span class="attribute">proxy_pass</span> http://myapi;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>浏览器上看到的状态可能有：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-10-13/cache1.png" alt=""><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-10-13/cache2.png" alt=""></p>
-<p>$upstream_cache_status可能值：<br>1，MISS——响应在缓存中找不到，所以需要在服务器中取得。<br>2，HIT——响应包含来自缓存的最新有效的内容<br>3，EXPIRED——缓存中的某一项过期了，来自原始服务器的响应包含最新的内容<br>4，STALE——内容陈旧是因为原始服务器不能正确响应。需要配置proxy_cache_use_stale<br>5，UPDATING——内容过期了，因为相对于之前的请求，响应的入口（entry）已经更新，并且proxy_cache_use_stale的updating已被设置<br>6，REVALIDATED——proxy_cache_revalidate命令被启用，NGINX检测得知当前的缓存内容依然有效(If-Modified-Since或者If-None-Match)</p>
-<h1 id="2，缓存POST请求"><a href="#2，缓存POST请求" class="headerlink" title="2，缓存POST请求"></a>2，缓存POST请求</h1><p>NGINX默认支持GET请求的缓存，要增加POST，需要设置proxy_cache_methods。<br>对于POST请求，url相同，body内容不同，如果使用默认的proxy_cache_key，会造成不同的post请求，用了一个缓存键，返回给前端的数据会错乱。<br>解决方案是将post的请求参数也作为key的一部分。<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="section">server</span> &#123;</div><div class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</div><div class="line">    <span class="attribute">server_name</span> www.fofeasy.com;</div><div class="line">    <span class="attribute">add_header</span> X-Cache-Status <span class="variable">$upstream_cache_status</span>;</div><div class="line">    <span class="attribute">location</span> / &#123;</div><div class="line">        <span class="attribute">proxy_cache</span> web_cache;</div><div class="line">        <span class="attribute">proxy_cache_valid</span>  <span class="number">200</span> <span class="number">206</span> <span class="number">304</span> <span class="number">301</span> <span class="number">302</span> <span class="number">10d</span>;</div><div class="line">        <span class="attribute">proxy_cache_key</span> <span class="variable">$uri</span><span class="variable">$request_body</span>; <span class="comment">#增加此行</span></div><div class="line">        <span class="attribute">proxy_cache_methods</span> GET POST;  <span class="comment">#增加此行</span></div><div class="line">        <span class="attribute">proxy_ignore_headers</span> Cache-Control;</div><div class="line">        <span class="attribute">proxy_redirect</span> <span class="literal">off</span>;</div><div class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</div><div class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</div><div class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</div><div class="line">        <span class="attribute">proxy_pass</span> http://myweb;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://linux.cn/article-5945-1.html" target="_blank" rel="external">NGINX缓存使用官方指南</a></li>
-<li><a href="https://blessing.studio/use-nginx-proxy-to-cache-dynamic-content/" target="_blank" rel="external">使用 Nginx 反代并缓存动态内容</a></li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;在浏览器和应用服务器之间，存在多种“潜在”缓存，如：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;客户端浏览器缓存&lt;/li&gt;
-&lt;li&gt;中间缓存&lt;/li&gt;
-&lt;li&gt;内容分发网络（CDN）&lt;/li&gt;
-&lt;li&gt;服务器上的负载均衡和反向代理
-    
-    </summary>
-    
-      <category term="Nginx" scheme="http://www.kekefund.com/categories/Nginx/"/>
-    
-    
-      <category term="nginx" scheme="http://www.kekefund.com/tags/nginx/"/>
-    
-      <category term="缓存" scheme="http://www.kekefund.com/tags/%E7%BC%93%E5%AD%98/"/>
-    
-  </entry>
-  
-  <entry>
     <title>docker命令手册</title>
     <link href="http://www.kekefund.com/2017/08/09/docker-command/"/>
     <id>http://www.kekefund.com/2017/08/09/docker-command/</id>
@@ -514,36 +495,6 @@
       <category term="阿里云" scheme="http://www.kekefund.com/tags/%E9%98%BF%E9%87%8C%E4%BA%91/"/>
     
       <category term="build" scheme="http://www.kekefund.com/tags/build/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>SpringMVC工程实现单人登录(踢人)</title>
-    <link href="http://www.kekefund.com/2017/08/03/springmvc-login-single/"/>
-    <id>http://www.kekefund.com/2017/08/03/springmvc-login-single/</id>
-    <published>2017-08-03T07:18:50.000Z</published>
-    <updated>2017-08-03T07:26:36.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>网站不允许多个用户使用一个账号登录，即最后登录的用户会把之前登录在线的用户踢下线。在SpringMVC中配置如下：<br><a id="more"></a></p>
-<h1 id="1，spring-shiro-xml配置"><a href="#1，spring-shiro-xml配置" class="headerlink" title="1，spring-shiro.xml配置"></a>1，spring-shiro.xml配置</h1><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">   ...</div><div class="line">   <span class="comment">&lt;!-- 并发登录控制人数 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"kickoutSessionControlFilter"</span> <span class="attr">class</span>=<span class="string">"com.dzmsoft.ucs.base.shiro.KickoutSessionControlFilter"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"cacheManager"</span> <span class="attr">ref</span>=<span class="string">"cacheManager"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"sessionManager"</span> <span class="attr">ref</span>=<span class="string">"sessionManager"</span>/&gt;</span>   </div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"kickoutAfter"</span> <span class="attr">value</span>=<span class="string">"false"</span>/&gt;</span> </div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxSession"</span> <span class="attr">value</span>=<span class="string">"1"</span>/&gt;</span>  </div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"kickoutUrl"</span> <span class="attr">value</span>=<span class="string">"/login?kickout=true"</span>/&gt;</span> </div><div class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line">   <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"shiroFilter"</span> <span class="attr">class</span>=<span class="string">"org.apache.shiro.spring.web.ShiroFilterFactoryBean"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"securityManager"</span> <span class="attr">ref</span>=<span class="string">"securityManager"</span> /&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"loginUrl"</span> <span class="attr">value</span>=<span class="string">"/login"</span> /&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"successUrl"</span> <span class="attr">value</span>=<span class="string">"/index"</span> /&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"filters"</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">util:map</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"authc"</span> <span class="attr">value-ref</span>=<span class="string">"authcFilter"</span>/&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"kickout"</span> <span class="attr">value-ref</span>=<span class="string">"kickoutSessionControlFilter"</span>/&gt;</span>   #新增</div><div class="line">		<span class="tag">&lt;/<span class="name">util:map</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	<span class="comment">&lt;!--  </span></div><div class="line">       	配置哪些页面需要受保护. </div><div class="line">       	以及访问这些页面需要的权限. </div><div class="line">       	1). anon 可以被匿名访问</div><div class="line">       	2). authc 必须认证(即登录)后才可能访问的页面. </div><div class="line">       	3). logout 登出.</div><div class="line">       	4). roles 角色过滤器--&gt;</div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"filterChainDefinitions"</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span></div><div class="line">		/resources/** = anon</div><div class="line">		/register/** = anon</div><div class="line">		/ucsUser/** = anon</div><div class="line">		/login = anon</div><div class="line">		/rest/** =anon</div><div class="line">		/logout = logout</div><div class="line">		/userManager = roles</div><div class="line">		/** = kickout,authc   #新增</div><div class="line">		<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"> <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line">   ...</div></pre></td></tr></table></figure>
-<h1 id="2，添加KickoutSessionControlFilter-java文件"><a href="#2，添加KickoutSessionControlFilter-java文件" class="headerlink" title="2，添加KickoutSessionControlFilter.java文件"></a>2，添加KickoutSessionControlFilter.java文件</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.dzmsoft.ucs.base.shiro;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.apache.shiro.cache.Cache;</div><div class="line"><span class="keyword">import</span> org.apache.shiro.cache.CacheManager;</div><div class="line"><span class="keyword">import</span> org.apache.shiro.session.Session;</div><div class="line"><span class="keyword">import</span> org.apache.shiro.session.mgt.DefaultSessionKey;</div><div class="line"><span class="keyword">import</span> org.apache.shiro.session.mgt.SessionManager;</div><div class="line"><span class="keyword">import</span> org.apache.shiro.subject.Subject;</div><div class="line"><span class="keyword">import</span> org.apache.shiro.web.filter.AccessControlFilter;</div><div class="line"><span class="keyword">import</span> org.apache.shiro.web.util.WebUtils;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.dzmsoft.framework.base.web.mvc.pojo.ShiroUser;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.ServletRequest;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletResponse;</div><div class="line"><span class="keyword">import</span> java.io.Serializable;</div><div class="line"><span class="keyword">import</span> java.util.Deque;</div><div class="line"><span class="keyword">import</span> java.util.LinkedList;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * &lt;p&gt;User: Zhang Kaitao</div><div class="line"> * &lt;p&gt;Date: 14-2-18</div><div class="line"> * &lt;p&gt;Version: 1.0</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KickoutSessionControlFilter</span> <span class="keyword">extends</span> <span class="title">AccessControlFilter</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String kickoutUrl; <span class="comment">//踢出后到的地址</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> kickoutAfter = <span class="keyword">false</span>; <span class="comment">//踢出之前登录的/之后登录的用户 默认踢出之前登录的用户</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> maxSession = <span class="number">1</span>; <span class="comment">//同一个帐号最大会话数 默认1</span></div><div class="line"></div><div class="line">    <span class="keyword">private</span> SessionManager sessionManager;</div><div class="line">    <span class="keyword">private</span> Cache&lt;String, Deque&lt;Serializable&gt;&gt; cache;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setKickoutUrl</span><span class="params">(String kickoutUrl)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.kickoutUrl = kickoutUrl;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setKickoutAfter</span><span class="params">(<span class="keyword">boolean</span> kickoutAfter)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.kickoutAfter = kickoutAfter;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMaxSession</span><span class="params">(<span class="keyword">int</span> maxSession)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.maxSession = maxSession;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSessionManager</span><span class="params">(SessionManager sessionManager)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.sessionManager = sessionManager;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCacheManager</span><span class="params">(CacheManager cacheManager)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.cache = cacheManager.getCache(<span class="string">"shiro-kickout-session"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">isAccessAllowed</span><span class="params">(ServletRequest request, ServletResponse response, Object mappedValue)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">onAccessDenied</span><span class="params">(ServletRequest request, ServletResponse response)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        Subject subject = getSubject(request, response);</div><div class="line">        <span class="keyword">if</span>(!subject.isAuthenticated() &amp;&amp; !subject.isRemembered()) &#123;</div><div class="line">            <span class="comment">//如果没有登录，直接进行之后的流程</span></div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Session session = subject.getSession();</div><div class="line">        ShiroUser user = (ShiroUser)subject.getPrincipal();</div><div class="line">        String username = user.getName();</div><div class="line"><span class="comment">//        String username = (String) subject.getPrincipal();</span></div><div class="line">        Serializable sessionId = session.getId();</div><div class="line"></div><div class="line">        <span class="comment">//TODO 同步控制</span></div><div class="line">        Deque&lt;Serializable&gt; deque = cache.get(username);</div><div class="line">        <span class="keyword">if</span>(deque == <span class="keyword">null</span>) &#123;</div><div class="line">            deque = <span class="keyword">new</span> LinkedList&lt;Serializable&gt;();</div><div class="line">            cache.put(username, deque);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">//如果队列里没有此sessionId，且用户没有被踢出；放入队列</span></div><div class="line">        <span class="keyword">if</span>(!deque.contains(sessionId) &amp;&amp; session.getAttribute(<span class="string">"kickout"</span>) == <span class="keyword">null</span>) &#123;</div><div class="line">            deque.push(sessionId);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">//如果队列里的sessionId数超出最大会话数，开始踢人</span></div><div class="line">        <span class="keyword">while</span>(deque.size() &gt; maxSession) &#123;</div><div class="line">            Serializable kickoutSessionId = <span class="keyword">null</span>;</div><div class="line">            <span class="keyword">if</span>(kickoutAfter) &#123; <span class="comment">//如果踢出后者</span></div><div class="line">                kickoutSessionId = deque.removeFirst();</div><div class="line">            &#125; <span class="keyword">else</span> &#123; <span class="comment">//否则踢出前者</span></div><div class="line">                kickoutSessionId = deque.removeLast();</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                Session kickoutSession = sessionManager.getSession(<span class="keyword">new</span> DefaultSessionKey(kickoutSessionId));</div><div class="line">                <span class="keyword">if</span>(kickoutSession != <span class="keyword">null</span>) &#123;</div><div class="line">                    <span class="comment">//设置会话的kickout属性表示踢出了</span></div><div class="line">                    kickoutSession.setAttribute(<span class="string">"kickout"</span>, <span class="keyword">true</span>);</div><div class="line">                &#125;</div><div class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;<span class="comment">//ignore exception</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">//如果被踢出了，直接退出，重定向到踢出后的地址</span></div><div class="line">        <span class="keyword">if</span> (session.getAttribute(<span class="string">"kickout"</span>) != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="comment">//会话被踢出了</span></div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                subject.logout();</div><div class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123; <span class="comment">//ignore</span></div><div class="line">            &#125;</div><div class="line">            saveRequest(request);</div><div class="line">            WebUtils.issueRedirect(request, response, kickoutUrl);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="3，login-jsp添加提示"><a href="#3，login-jsp添加提示" class="headerlink" title="3，login.jsp添加提示"></a>3，login.jsp添加提示</h1><p>提示是基于url中的参数kickout来判断的<br><figure class="highlight dust"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="xml">...</span></div><div class="line"><span class="tag">&lt;<span class="name">c:if</span> <span class="attr">test</span>=<span class="string">"$</span></span><span class="template-variable">&#123;not empty param.kickout&#125;</span><span class="xml"><span class="tag"><span class="string">"</span>&gt;</span><span class="tag">&lt;<span class="name">font</span> <span class="attr">color</span>=<span class="string">'red'</span>&gt;</span>您被踢出登录了。<span class="tag">&lt;/<span class="name">font</span>&gt;</span><span class="tag">&lt;/<span class="name">c:if</span>&gt;</span>		</span></div><div class="line">...</div></pre></td></tr></table></figure></p>
-<h1 id="4，ehcache-xml配置"><a href="#4，ehcache-xml配置" class="headerlink" title="4，ehcache.xml配置"></a>4，ehcache.xml配置</h1><p>添加<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">"shiro-kickout-session"</span></span></div><div class="line">           <span class="attr">maxEntriesLocalHeap</span>=<span class="string">"2000"</span></div><div class="line">           <span class="attr">eternal</span>=<span class="string">"false"</span></div><div class="line">           <span class="attr">timeToIdleSeconds</span>=<span class="string">"3600"</span></div><div class="line">           <span class="attr">timeToLiveSeconds</span>=<span class="string">"0"</span></div><div class="line">           <span class="attr">overflowToDisk</span>=<span class="string">"false"</span></div><div class="line">           <span class="attr">statistics</span>=<span class="string">"true"</span>&gt;</div><div class="line">    <span class="tag">&lt;/<span class="name">cache</span>&gt;</span></div></pre></td></tr></table></figure></p>
-<h1 id="5，实测通过"><a href="#5，实测通过" class="headerlink" title="5，实测通过"></a>5，实测通过</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-08-03/kictout.png" alt=""></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;网站不允许多个用户使用一个账号登录，即最后登录的用户会把之前登录在线的用户踢下线。在SpringMVC中配置如下：&lt;br&gt;
-    
-    </summary>
-    
-      <category term="Java" scheme="http://www.kekefund.com/categories/Java/"/>
-    
-    
-      <category term="SpringMVC" scheme="http://www.kekefund.com/tags/SpringMVC/"/>
-    
-      <category term="Login" scheme="http://www.kekefund.com/tags/Login/"/>
     
   </entry>
   
@@ -688,68 +639,6 @@
   </entry>
   
   <entry>
-    <title>采用Docker集成jquery-file-upload组件到WEB应用</title>
-    <link href="http://www.kekefund.com/2017/06/15/jquery-file-upload-docker/"/>
-    <id>http://www.kekefund.com/2017/06/15/jquery-file-upload-docker/</id>
-    <published>2017-06-15T09:13:19.000Z</published>
-    <updated>2017-06-15T09:51:13.000Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="1，Docker镜像"><a href="#1，Docker镜像" class="headerlink" title="1，Docker镜像"></a>1，Docker镜像</h1><p>jQuery-File-Upload 组件是一个非常好用的文件上传组件，有很多友好的特性：</p>
-<ul>
-<li>支持文件多选</li>
-<li>拖拽上传</li>
-<li>上传进度条</li>
-<li>取消上传</li>
-<li>图片、音视频预览</li>
-<li>纯JS和HTML5代码，不需额外安装插件<a id="more"></a>
-</li>
-</ul>
-<p>服务器端提供了三种部署方式: gae-go、gae-python和php，前两种基于gae，在国内基本被墙了，肯定用不了。php的部署用官方提供的部署方式运行不起来，从dockerhub上找到了一个可用的docker镜像:<a href="https://store.docker.com/community/images/yaasita/docker-jquery-file-upload" target="_blank" rel="external">yaasita/docker-jquery-file-upload</a>，日文？&amp;!OMG。</p>
-<ul>
-<li>运行起来：<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ docker run -d -<span class="selector-tag">p</span> <span class="number">22</span> -<span class="selector-tag">p</span> <span class="number">8033</span>:<span class="number">80</span> yaasita/docker-jquery-file-upload /usr/bin/supervisord</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>跟官方给出的Demo是一样的，不过我们需要做下汉化。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-15/up2.png" alt=""></p>
-<h1 id="2，集成"><a href="#2，集成" class="headerlink" title="2，集成"></a>2，集成</h1><p>效果如下：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-15/up1.gif" alt=""></p>
-<p>每个Tab标签对应的是一个地址。</p>
-<h1 id="3，WEB前端"><a href="#3，WEB前端" class="headerlink" title="3，WEB前端"></a>3，WEB前端</h1><p>html调用modal，modal部分如下，通过3个iframe，请求到服务器端的文件上传接口。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 导入modal --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"modal fade"</span> <span class="attr">id</span>=<span class="string">"importModal"</span> <span class="attr">tabindex</span>=<span class="string">"-1"</span> <span class="attr">role</span>=<span class="string">"dialog"</span> <span class="attr">aria-labelledby</span>=<span class="string">"myModalLabel"</span> <span class="attr">aria-hidden</span>=<span class="string">"true"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">"margin-top:10%;"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"modal-dialog"</span> <span class="attr">style</span>=<span class="string">"min-width:600px;width:60%;"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"modal-content"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"modal-header"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">class</span>=<span class="string">"close"</span> <span class="attr">data-dismiss</span>=<span class="string">"modal"</span> <span class="attr">aria-hidden</span>=<span class="string">"true"</span>&gt;</span></div><div class="line">&amp;times;</div><div class="line"><span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">h2</span> <span class="attr">class</span>=<span class="string">"modal-title"</span> <span class="attr">id</span>=<span class="string">"myModalLabel"</span> <span class="attr">style</span>=<span class="string">"font-size:18px;"</span>&gt;</span></div><div class="line">数据导入</div><div class="line"><span class="tag">&lt;/<span class="name">h2</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"modal-body"</span> <span class="attr">id</span>=<span class="string">"upLoad"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">ul</span> <span class="attr">id</span>=<span class="string">"labUl"</span> <span class="attr">class</span>=<span class="string">"labelUl"</span> <span class="attr">style</span>=<span class="string">"float:none;"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">li</span> <span class="attr">id</span>=<span class="string">"basicInfotab"</span> <span class="attr">class</span>=<span class="string">"Active2"</span>&gt;</span><span class="tag">&lt;<span class="name">span</span>&gt;</span>基本信息<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">li</span> <span class="attr">id</span>=<span class="string">"netDatatab"</span>&gt;</span><span class="tag">&lt;<span class="name">span</span>&gt;</span>净值数据<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">li</span> <span class="attr">id</span>=<span class="string">"positionDatatab"</span>&gt;</span><span class="tag">&lt;<span class="name">span</span>&gt;</span>持仓数据<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"basicInfoDiv"</span> <span class="attr">class</span>=<span class="string">"uploadDiv"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">scrolling</span>=<span class="string">"yes"</span> <span class="attr">src</span>=<span class="string">"http://localhost:8010/"</span> <span class="attr">class</span>=<span class="string">"fileUpload"</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"netDataDiv"</span> <span class="attr">class</span>=<span class="string">"uploadDiv"</span> <span class="attr">style</span>=<span class="string">"display:none;"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">scrolling</span>=<span class="string">"yes"</span>  <span class="attr">src</span>=<span class="string">"http://localhost:8011/"</span>  <span class="attr">class</span>=<span class="string">"fileUpload"</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"positionDataDiv"</span> <span class="attr">class</span>=<span class="string">"uploadDiv"</span> <span class="attr">style</span>=<span class="string">"display:none;"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">scrolling</span>=<span class="string">"yes"</span> <span class="attr">src</span>=<span class="string">"http://localhost:8012/"</span>  <span class="attr">class</span>=<span class="string">"fileUpload"</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"modal-footer"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">class</span>=<span class="string">"easy1Btn"</span> <span class="attr">id</span>=<span class="string">"buttonImportAndCalc"</span>&gt;</span>导入&amp;计算</div><div class="line"><span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line"><span class="comment">&lt;!-- &lt;button type="button" id="fileUpload" class="easy2Btn"&gt;上传</span></div><div class="line">&lt;/button&gt; --&gt;</div><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">class</span>=<span class="string">"easy1Btn"</span> <span class="attr">data-dismiss</span>=<span class="string">"modal"</span>&gt;</span>关闭</div><div class="line"><span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"layer"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"onLoad"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="comment">&lt;!-- /.modal-content --&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="comment">&lt;!-- /.modal --&gt;</span></div></pre></td></tr></table></figure></p>
-<h1 id="4，服务器端配置"><a href="#4，服务器端配置" class="headerlink" title="4，服务器端配置"></a>4，服务器端配置</h1><h2 id="4-1，Dockerfile文件"><a href="#4-1，Dockerfile文件" class="headerlink" title="4.1，Dockerfile文件"></a>4.1，Dockerfile文件</h2><p>位置: ./FileUpload/Dockerfile<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment"># Version 0.1</span></div><div class="line"></div><div class="line"><span class="comment"># 基础镜像</span></div><div class="line"><span class="keyword">FROM</span> yaasita/docker-jquery-file-upload</div><div class="line"></div><div class="line"><span class="comment"># 维护者信息</span></div><div class="line"><span class="keyword">MAINTAINER</span> cbbing@<span class="number">163</span>.com</div><div class="line"></div><div class="line"><span class="comment"># 镜像命令</span></div><div class="line"><span class="keyword">COPY</span><span class="bash"> index.html /var/www/upload/index.html</span></div><div class="line"></div><div class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">"/usr/bin/supervisord"</span>]</span></div></pre></td></tr></table></figure></p>
-<p>其中，Dockerfile中的<a href="http://7xo67b.com1.z0.glb.clouddn.com/2017-06-15/index.html" target="_blank" rel="external">index.html</a>文件，是为了汉化docker镜像中的index文件。</p>
-<h2 id="4-2，docker-compose-yml"><a href="#4-2，docker-compose-yml" class="headerlink" title="4.2，docker-compose.yml"></a>4.2，docker-compose.yml</h2><p>docker-compose中配置了3个容器，对外提供文件上传接口，分别对应服务器的info, nav, pos目录。<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">version:</span> <span class="string">'2'</span></div><div class="line"><span class="symbol">services:</span></div><div class="line"></div><div class="line">  <span class="symbol">fileupload1:</span></div><div class="line">    <span class="symbol">build:</span> ./FileUpload</div><div class="line">    <span class="symbol">ports:</span></div><div class="line">      - <span class="number">8010</span><span class="symbol">:</span><span class="number">80</span></div><div class="line">      - <span class="number">22</span></div><div class="line">    <span class="symbol">volumes:</span></div><div class="line">      - <span class="regexp">/usr/local</span><span class="regexp">/upload/info</span><span class="symbol">:/var/www/upload/server/php/files</span></div><div class="line">    <span class="symbol">restart:</span> <span class="string">"always"</span></div><div class="line"></div><div class="line">  <span class="symbol">fileupload2:</span></div><div class="line">    <span class="symbol">build:</span> ./FileUpload</div><div class="line">    <span class="symbol">ports:</span></div><div class="line">      - <span class="number">8011</span><span class="symbol">:</span><span class="number">80</span></div><div class="line">      - <span class="number">22</span></div><div class="line">    <span class="symbol">volumes:</span></div><div class="line">      - <span class="regexp">/usr/local</span><span class="regexp">/upload/nav</span><span class="symbol">:/var/www/upload/server/php/files</span> </div><div class="line">    <span class="symbol">restart:</span> <span class="string">"always"</span></div><div class="line"></div><div class="line">  <span class="symbol">fileupload3:</span></div><div class="line">    <span class="symbol">build:</span> ./FileUpload</div><div class="line">    <span class="symbol">ports:</span></div><div class="line">      - <span class="number">8012</span><span class="symbol">:</span><span class="number">80</span></div><div class="line">      - <span class="number">22</span></div><div class="line">    <span class="symbol">volumes:</span></div><div class="line">      - <span class="regexp">/usr/local</span><span class="regexp">/upload/pos</span><span class="symbol">:/var/www/upload/server/php/files</span></div><div class="line">    <span class="symbol">restart:</span> <span class="string">"always"</span></div></pre></td></tr></table></figure></p>
-<p>目录结构：<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="bullet">-</span> <span class="string">docker-compose.yml</span></div><div class="line"><span class="bullet">-</span> <span class="string">FileUpload/</span></div><div class="line"><span class="bullet">-</span><span class="meta">---</span> <span class="string">Dockerfile</span></div><div class="line"><span class="bullet">-</span><span class="meta">---</span> <span class="string">index.html</span></div></pre></td></tr></table></figure></p>
-<h2 id="4-3-运行"><a href="#4-3-运行" class="headerlink" title="4.3 运行"></a>4.3 运行</h2><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ docker-compose up <span class="comment">--build</span></div></pre></td></tr></table></figure>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
-<p><a href="https://github.com/blueimp/jQuery-File-Upload" target="_blank" rel="external">https://github.com/blueimp/jQuery-File-Upload</a></p>
-</blockquote>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;1，Docker镜像&quot;&gt;&lt;a href=&quot;#1，Docker镜像&quot; class=&quot;headerlink&quot; title=&quot;1，Docker镜像&quot;&gt;&lt;/a&gt;1，Docker镜像&lt;/h1&gt;&lt;p&gt;jQuery-File-Upload 组件是一个非常好用的文件上传组件，有很多友好的特性：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;支持文件多选&lt;/li&gt;
-&lt;li&gt;拖拽上传&lt;/li&gt;
-&lt;li&gt;上传进度条&lt;/li&gt;
-&lt;li&gt;取消上传&lt;/li&gt;
-&lt;li&gt;图片、音视频预览&lt;/li&gt;
-&lt;li&gt;纯JS和HTML5代码，不需额外安装插件
-    
-    </summary>
-    
-      <category term="Docker" scheme="http://www.kekefund.com/categories/Docker/"/>
-    
-    
-      <category term="Dockerfile" scheme="http://www.kekefund.com/tags/Dockerfile/"/>
-    
-      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
-    
-      <category term="jquery-file-upload" scheme="http://www.kekefund.com/tags/jquery-file-upload/"/>
-    
-      <category term="docker-compose" scheme="http://www.kekefund.com/tags/docker-compose/"/>
-    
-  </entry>
-  
-  <entry>
     <title>docker私有仓库搭建</title>
     <link href="http://www.kekefund.com/2017/06/07/doker-registry/"/>
     <id>http://www.kekefund.com/2017/06/07/doker-registry/</id>
@@ -838,43 +727,6 @@
       <category term="Splash" scheme="http://www.kekefund.com/tags/Splash/"/>
     
       <category term="JavaScript" scheme="http://www.kekefund.com/tags/JavaScript/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>iReport 选择MySQL数据源生成报告</title>
-    <link href="http://www.kekefund.com/2017/05/15/ireport-use-db/"/>
-    <id>http://www.kekefund.com/2017/05/15/ireport-use-db/</id>
-    <published>2017-05-15T07:40:53.000Z</published>
-    <updated>2017-05-15T08:23:22.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>ireport是java项目中比较好用的pdf报告生成工具，可以通过JRBeanCollectionDataSource传递java对象至ireport。在项目比较小的时候是比较快捷的。当项目需求复杂了，人员增多了，这种方式不适合任务细分，前后流程衔接太紧密，而且不好调试。<br>采用Mysql作为中间数据交换，能直接在ireport中预览数据展示结果。而且前后端解耦，可以将任务分派给不同的人来做。<br><a id="more"></a></p>
-<h1 id="一、配置数据库"><a href="#一、配置数据库" class="headerlink" title="一、配置数据库"></a>一、配置数据库</h1><p>点击下图的红框：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir1.png" alt=""></p>
-<p>新建一个Database JDBC connection:<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir2.png" alt=""><br>配置好MySQL的信息，Test成功！<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir3.png" alt=""></p>
-<h1 id="二、使用-JDBC连接"><a href="#二、使用-JDBC连接" class="headerlink" title="二、使用 JDBC连接"></a>二、使用 JDBC连接</h1><h2 id="1，SQL与Java-Object的对应关系"><a href="#1，SQL与Java-Object的对应关系" class="headerlink" title="1，SQL与Java Object的对应关系"></a>1，SQL与Java Object的对应关系</h2><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir10.png" alt=""></p>
-<h2 id="2，SQL-Qurey"><a href="#2，SQL-Qurey" class="headerlink" title="2，SQL Qurey"></a>2，SQL Qurey</h2><p>点击下图的红框：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir4.png" alt=""><br>编写SQL语句，点击“Read Fields”，会显示查询的字段，点击OK，字段会在左侧的Fields中显示出来。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir5.png" alt=""></p>
-<p>Fields会根据sql查询的字段自动生成：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir6.png" alt=""><br>在Detail报表中调用Fields：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir7.png" alt=""><br>Preview预览如下：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir8.png" alt=""></p>
-<h1 id="三、在Java项目中调用"><a href="#三、在Java项目中调用" class="headerlink" title="三、在Java项目中调用"></a>三、在Java项目中调用</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-05-15/ir9.png" alt=""><br>需要先在jrxml中设置语言为java，否则会报如下的错误：。<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java.lang.<span class="string">NoClassDefFoundError:</span> org<span class="regexp">/codehaus/</span>groovy<span class="regexp">/control/</span>CompilationFailedException</div></pre></td></tr></table></figure></p>
-<p>java文件:<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> net.sf.jasperreports.engine.JRExporterParameter;</div><div class="line"><span class="keyword">import</span> net.sf.jasperreports.engine.JasperExportManager;</div><div class="line"><span class="keyword">import</span> net.sf.jasperreports.engine.JasperFillManager;</div><div class="line"><span class="keyword">import</span> net.sf.jasperreports.engine.JasperPrint;</div><div class="line"><span class="keyword">import</span> net.sf.jasperreports.engine.JasperReport;</div><div class="line"><span class="keyword">import</span> net.sf.jasperreports.engine.<span class="keyword">export</span>.JRRtfExporter;</div><div class="line"><span class="keyword">import</span> net.sf.jasperreports.engine.util.JRLoader;</div><div class="line"></div><div class="line"><span class="comment"><span class="markdown">/**</span></span></div><div class="line"> * 报告</div><div class="line"> * @author dzm</div><div class="line"> *</div><div class="line"> */</div><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"productReport"</span>)</div><div class="line">public <span class="class"><span class="keyword">class</span> <span class="title">ProductRepotController</span> <span class="keyword">extends</span> <span class="title">BaseController</span></span>&#123;</div><div class="line">    <span class="comment"><span class="markdown">/**</span></span></div><div class="line"><span class="code">    * 一建生成报告</span></div><div class="line"><span class="code">    * parmas: fileFormat: pdf or doc</span></div><div class="line"><span class="code">    */</span></div><div class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"exportReport"</span>, method = RequestMethod.GET)</div><div class="line">    public <span class="keyword">void</span> exportReport(<span class="built_in">String</span> fundId, <span class="built_in">String</span> fundName, <span class="built_in">String</span> fileFormat, HttpServletResponse response)&#123;</div><div class="line"></div><div class="line">        Date curDate = <span class="keyword">new</span> Date();</div><div class="line">        <span class="built_in">String</span> dateStr = DateUtil.formatDate(curDate, <span class="string">"yyyy-MM-dd"</span>);</div><div class="line">        <span class="comment">// 文件路径 </span></div><div class="line">        StringBuilder filePath = <span class="keyword">new</span> StringBuilder(<span class="string">""</span>);</div><div class="line">        filePath.append(upload_path).append(dateStr).append(<span class="string">"/"</span>).append(fundId);</div><div class="line">        FileUtil.createDictionary(filePath.toString());</div><div class="line">        <span class="comment">// 文件名 </span></div><div class="line">        StringBuilder fileName = <span class="keyword">new</span> StringBuilder(<span class="string">""</span>);</div><div class="line">        fileName.append(fundName).append(<span class="string">"报告_"</span>).append(dateStr).append(<span class="string">"."</span>).append(fileFormat);</div><div class="line">        <span class="comment">// 文件全路径</span></div><div class="line">        StringBuilder fullName = <span class="keyword">new</span> StringBuilder(<span class="string">""</span>);</div><div class="line">        fullName.append(filePath).append(<span class="string">"/"</span>).append(fileName);</div><div class="line">        <span class="comment">// 加载报表对象</span></div><div class="line">        InputStream <span class="keyword">is</span> = <span class="keyword">null</span>;</div><div class="line">        JasperReport jasperReport = <span class="keyword">null</span>;</div><div class="line">        JasperPrint jasperPrint = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">is</span> = ProductDetailController.<span class="keyword">class</span>.getClassLoader().getResourceAsStream(analysis_jasper_path);</div><div class="line">        <span class="keyword">try</span>&#123;</div><div class="line">            <span class="comment">// 响应头部信息设置</span></div><div class="line">            response.setContentType(<span class="string">"text/plain"</span>);</div><div class="line">            response.setHeader(<span class="string">"Content-Disposition"</span>, <span class="string">"attachment; filename="</span>+FileUtil.getAttachName(fileName.toString()));</div><div class="line">            <span class="comment">//</span></div><div class="line">            jasperReport = (JasperReport) JRLoader.loadObject(<span class="keyword">is</span>);</div><div class="line">            <span class="built_in">Map</span>&lt;<span class="built_in">String</span>,<span class="built_in">Object</span>&gt; params = <span class="keyword">new</span> HashMap&lt;<span class="built_in">String</span>,<span class="built_in">Object</span>&gt;();</div><div class="line">            params.put(<span class="string">"SUBREPORT_DIR"</span>, getClassPath(subreport_dir));</div><div class="line">            params.put(<span class="string">"IMAGE_DIR"</span>, <span class="string">"file:"</span>+filePath+<span class="string">"/"</span>);</div><div class="line">                 </div><div class="line">            <span class="comment">// </span></div><div class="line">            Class.forName(<span class="string">"com.mysql.jdbc.Driver"</span>);</div><div class="line">            <span class="built_in">String</span> url = <span class="string">"jdbc:mysql://localhost:3306/test?"</span></div><div class="line">                        + <span class="string">"user=s1&amp;password=s1&amp;useUnicode=true&amp;characterEncoding=UTF8"</span>;</div><div class="line">            Connection conn = (Connection) DriverManager.getConnection(url);</div><div class="line">            jasperPrint = JasperFillManager.fillReport(jasperReport, params, conn);</div><div class="line">            </div><div class="line">            <span class="keyword">if</span> (fileFormat.equals(<span class="string">"pdf"</span>)) &#123;</div><div class="line">                JasperExportManager.exportReportToPdfFile(jasperPrint, fullName.toString());</div><div class="line">            &#125;<span class="keyword">else</span>&#123;</div><div class="line">                JRRtfExporter docReport = <span class="keyword">new</span> JRRtfExporter();</div><div class="line">                docReport.setParameter(JRExporterParameter.OUTPUT_FILE_NAME,fullName.toString());</div><div class="line">                docReport.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);</div><div class="line">                docReport.exportReport();</div><div class="line">            &#125;</div><div class="line">            </div><div class="line">            FileUtil.download(fullName.toString(), response.getOutputStream());</div><div class="line">            </div><div class="line">        &#125; <span class="keyword">catch</span>(Exception e)&#123;</div><div class="line">            e.printStackTrace();</div><div class="line">            logger.error(<span class="string">"生成报告失败，失败原因:&#123;&#125;"</span>,e.getMessage());</div><div class="line">        &#125; <span class="keyword">finally</span>&#123;</div><div class="line">            <span class="keyword">try</span>&#123;</div><div class="line">                <span class="keyword">if</span> (<span class="keyword">is</span>!=<span class="keyword">null</span>) <span class="keyword">is</span>.close();</div><div class="line">            &#125;<span class="keyword">catch</span>(Exception e)&#123;</div><div class="line">                logger.error(<span class="string">"关闭文件输入流异常:&#123;&#125;"</span>,e.getMessage());</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">            </div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
-<p><a href="https://my.oschina.net/jiangli0502/blog/122885" target="_blank" rel="external">https://my.oschina.net/jiangli0502/blog/122885</a><br><a href="http://stackoverflow.com/questions/8935925/jasperreports-compilation-error" target="_blank" rel="external">http://stackoverflow.com/questions/8935925/jasperreports-compilation-error</a></p>
-</blockquote>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;ireport是java项目中比较好用的pdf报告生成工具，可以通过JRBeanCollectionDataSource传递java对象至ireport。在项目比较小的时候是比较快捷的。当项目需求复杂了，人员增多了，这种方式不适合任务细分，前后流程衔接太紧密，而且不好调试。&lt;br&gt;采用Mysql作为中间数据交换，能直接在ireport中预览数据展示结果。而且前后端解耦，可以将任务分派给不同的人来做。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="Java" scheme="http://www.kekefund.com/categories/Java/"/>
-    
-    
-      <category term="ireport" scheme="http://www.kekefund.com/tags/ireport/"/>
-    
-      <category term="报告" scheme="http://www.kekefund.com/tags/%E6%8A%A5%E5%91%8A/"/>
-    
-      <category term="mysql" scheme="http://www.kekefund.com/tags/mysql/"/>
     
   </entry>
   
@@ -1175,6 +1027,81 @@
       <category term="VNC" scheme="http://www.kekefund.com/tags/VNC/"/>
     
       <category term="gnome" scheme="http://www.kekefund.com/tags/gnome/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>github创建分支</title>
+    <link href="http://www.kekefund.com/2017/03/23/git-branch-create/"/>
+    <id>http://www.kekefund.com/2017/03/23/git-branch-create/</id>
+    <published>2017-03-23T08:02:32.000Z</published>
+    <updated>2017-04-19T03:43:59.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>理论部分参考：<a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001375840038939c291467cc7c747b1810aab2fb8863508000" target="_blank" rel="external">创建与合并分支</a></p>
+<h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><p>软件一个阶段开发完成，需要建立一个分支来保存当前的稳定版本。</p>
+<ul>
+<li><p>采用SourceTree 创建分支：</p>
+<a id="more"></a>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git1.png" alt=""></p>
+</li>
+<li><p>创建完成后再SourceTree左侧树型菜单会出现分支名称：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git2.png" alt=""></p>
+</li>
+<li><p>点击推送，将分支同步到服务器<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git3.png" alt=""></p>
+</li>
+</ul>
+<ul>
+<li>github上就能看到分支了：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git4.png" alt=""></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;原理&quot;&gt;&lt;a href=&quot;#原理&quot; class=&quot;headerlink&quot; title=&quot;原理&quot;&gt;&lt;/a&gt;原理&lt;/h1&gt;&lt;p&gt;理论部分参考：&lt;a href=&quot;http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001375840038939c291467cc7c747b1810aab2fb8863508000&quot;&gt;创建与合并分支&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&quot;实践&quot;&gt;&lt;a href=&quot;#实践&quot; class=&quot;headerlink&quot; title=&quot;实践&quot;&gt;&lt;/a&gt;实践&lt;/h1&gt;&lt;p&gt;软件一个阶段开发完成，需要建立一个分支来保存当前的稳定版本。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;采用SourceTree 创建分支：&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Git" scheme="http://www.kekefund.com/categories/Git/"/>
+    
+    
+      <category term="git" scheme="http://www.kekefund.com/tags/git/"/>
+    
+      <category term="branch" scheme="http://www.kekefund.com/tags/branch/"/>
+    
+      <category term="SourceTree" scheme="http://www.kekefund.com/tags/SourceTree/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>docker版FTP服务器</title>
+    <link href="http://www.kekefund.com/2017/03/20/docker-ftp/"/>
+    <id>http://www.kekefund.com/2017/03/20/docker-ftp/</id>
+    <published>2017-03-20T13:52:43.000Z</published>
+    <updated>2017-04-19T03:43:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>docker版ftp服务器，适用于部署离线局域网服务器</p>
+<h1 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h1><p>来源：<a href="https://hub.docker.com/r/bogem/ftp/" target="_blank" rel="external">https://hub.docker.com/r/bogem/ftp/</a><br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[root@VM_25_5_centos mydata]<span class="comment"># docker pull bogem/ftp</span></div><div class="line"></div><div class="line">[root@VM_25_5_centos mydata]<span class="comment"># docker images</span></div><div class="line">REPOSITORY            <span class="keyword">TAG</span>                 <span class="title">IMAGE</span> ID            CREATED             SIZE</div><div class="line">docker.io/bogem/ftp   latest              a40e9c43c530        <span class="number">4</span> weeks ago         <span class="number">174.7</span> MB</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">docker run -d -v /mydata:/home/vsftpd -p 20:20 -p 21:21 </div><div class="line">-<span class="ruby">p <span class="number">47400</span>-<span class="number">47470</span><span class="symbol">:</span><span class="number">47400</span>-<span class="number">47470</span> \</span></div><div class="line">-<span class="ruby">e FTP_USER=test </span></div><div class="line">-<span class="ruby">e FTP_PASS=test </span></div><div class="line">-<span class="ruby">e PASV_ADDRESS=<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span> </span></div><div class="line">-<span class="ruby">-name ftp1 \</span></div><div class="line">-<span class="ruby">-restart=always bogem/ftp</span></div></pre></td></tr></table></figure>
+<p>注：PASV_ADDRESS如果设置成127.0.0.1，则只能本地访问；设置成0.0.0.0 则可以外网访问。<br>详细参数参考:<a href="https://hub.docker.com/r/fauria/vsftpd/" target="_blank" rel="external">https://hub.docker.com/r/fauria/vsftpd/</a> 中的环境变量部分。</p>
+<h1 id="FileZilla客户端连接"><a href="#FileZilla客户端连接" class="headerlink" title="FileZilla客户端连接"></a>FileZilla客户端连接</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-20/dockerftp.png" alt=""></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;docker版ftp服务器，适用于部署离线局域网服务器&lt;/p&gt;
+&lt;h1 id=&quot;下载&quot;&gt;&lt;a href=&quot;#下载&quot; class=&quot;headerlink&quot; title=&quot;下载&quot;&gt;&lt;/a&gt;下载&lt;/h1&gt;&lt;p&gt;来源：&lt;a href=&quot;https://hub.docker.com/r/bogem/ftp/&quot;&gt;https://hub.docker.com/r/bogem/ftp/&lt;/a&gt;&lt;br&gt;&lt;figure class=&quot;highlight crmsh&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;[root@VM_25_5_centos mydata]&lt;span class=&quot;comment&quot;&gt;# docker pull bogem/ftp&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;[root@VM_25_5_centos mydata]&lt;span class=&quot;comment&quot;&gt;# docker images&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;REPOSITORY            &lt;span class=&quot;keyword&quot;&gt;TAG&lt;/span&gt;                 &lt;span class=&quot;title&quot;&gt;IMAGE&lt;/span&gt; ID            CREATED             SIZE&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;docker.io/bogem/ftp   latest              a40e9c43c530        &lt;span class=&quot;number&quot;&gt;4&lt;/span&gt; weeks ago         &lt;span class=&quot;number&quot;&gt;174.7&lt;/span&gt; MB&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Docker" scheme="http://www.kekefund.com/categories/Docker/"/>
+    
+    
+      <category term="docker" scheme="http://www.kekefund.com/tags/docker/"/>
+    
+      <category term="ftp" scheme="http://www.kekefund.com/tags/ftp/"/>
     
   </entry>
   

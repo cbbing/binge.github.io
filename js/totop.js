@@ -1,63 +1,43 @@
-// ** ToTop Start **
-(function($) {
-  // When to show the scroll link
-  // higher number = scroll link appears further down the page
-  var upperLimit = 1000;
-  // Our scroll link element
-  var scrollElem = $('#totop');
-  // Scroll to top speed
-  var scrollSpeed = 500;
-  // Show and hide the scroll to top link based on scroll position
-  $(window).scroll(function() {
-    var scrollTop = $(document).scrollTop();
-    if (scrollTop > upperLimit) {
-      $(scrollElem).stop().fadeTo(300, 1); // fade back in
-    } else {
-      $(scrollElem).stop().fadeTo(300, 0); // fade out
+function hasClass(obj, cls) {
+    return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+}
+function addClass(obj, cls) {
+    if (!hasClass(obj, cls)) obj.className += " " + cls;
+}
+function removeClass(obj, cls) {
+    if (hasClass(obj, cls)) {
+        var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+        obj.className = obj.className.replace(reg, ' ');
     }
-  });
-
-  // Scroll to top animation on click
-  $(scrollElem).click(function() {
-    $('html, body').animate({
-      scrollTop: 0
-    }, scrollSpeed);
-    return false;
-  });
-
-})(jQuery);
-// ** TotopEnd**
-
-
-// **SearchFrom**
-var $searchWrap = $('#search-form-wrap'),
-  isSearchAnim = false,
-  searchAnimDuration = 200;
-
-var startSearchAnim = function() {
-  isSearchAnim = true;
+}
+window.onscroll = function() {
+  var totop = document.getElementById('totop');
+  var scroll = document.documentElement.scrollTop || document.body.scrollTop || window.scrollY;
+  if (scroll >= 300) {
+    addClass(totop,"show");
+    //totop.classList.add("show");
+  } else {
+    removeClass(totop,"show");
+    removeClass(totop,"launch");
+    //totop.classList.remove("show", "launch");
+  }
 };
-
-var stopSearchAnim = function(callback) {
-  setTimeout(function() {
-    isSearchAnim = false;
-    callback && callback();
-  }, searchAnimDuration);
+function gotoTop(aSpeed, time) {
+  aSpeed = aSpeed || 0.1;
+  time = time || 10;
+  var totop = document.getElementById('totop');
+  var scroll = document.documentElement.scrollTop || document.body.scrollTop || window.scrollY || 0;
+  var speeding = 1 + aSpeed;
+  window.scrollTo(0, Math.floor(scroll / speeding));
+  if (scroll > 0) {
+    var run = "gotoTop(" + aSpeed + ", " + time + ")";
+    window.setTimeout(run, time);
+  }
+}
+totop.onclick = function() {
+  var totop = document.getElementById('totop');
+  gotoTop(0.1, 20);
+  addClass(totop,"launch");
+  //totop.classList.add('launch');
+  return false;
 };
-
-$('#nav-search-btn').on('click', function() {
-  if (isSearchAnim) return;
-
-  startSearchAnim();
-  $searchWrap.addClass('on');
-  stopSearchAnim(function() {
-    $('.search-form-input').focus();
-  });
-});
-
-$('.search-form-input').on('blur', function() {
-  startSearchAnim();
-  $searchWrap.removeClass('on');
-  stopSearchAnim();
-});
-// SearchFrom End
