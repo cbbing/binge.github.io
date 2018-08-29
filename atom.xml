@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2018-08-24T01:58:28.629Z</updated>
+  <updated>2018-08-29T07:10:51.184Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -16,11 +16,90 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>jenkins 批量添加任务job</title>
+    <link href="http://www.kekefund.com/2018/08/29/jenkins-jobs/"/>
+    <id>http://www.kekefund.com/2018/08/29/jenkins-jobs/</id>
+    <published>2018-08-29T07:06:15.000Z</published>
+    <updated>2018-08-29T07:10:51.184Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近重构一个Scrapy爬虫项目，需要将300个spider的调度任务在jenkins中添加。这已经超过了手动一个一个添加任务的极限，是时候要借助工具批量添加了。</p>
+<h1 id="Jenkins-API"><a href="#Jenkins-API" class="headerlink" title="Jenkins API"></a>Jenkins API</h1><p>Jenkins提供了一套远端访问的API，目前有3种方式：</p>
+<ul>
+<li><p>XML</p>
+</li>
+<li><p>JSON with JSONP support</p>
+</li>
+<li><p>Python</p>
+</li>
+</ul>
+<p>远程API可以执行以下这些功能：</p>
+<ul>
+<li><p>创建/复制 job</p>
+</li>
+<li><p>触发一个新的构建</p>
+</li>
+<li><p>查询Jenkins的运行状态</p>
+</li>
+</ul>
+<h1 id="Jenkins-Job模板"><a href="#Jenkins-Job模板" class="headerlink" title="Jenkins Job模板"></a>Jenkins Job模板</h1><h2 id="1，创建job"><a href="#1，创建job" class="headerlink" title="1，创建job"></a>1，创建job</h2><p>本文的思路是先在网页上手动创建一个Job，然后将Job的配置文件拷贝至本地，制作成模板。</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/jenkins_job01.png" alt=""></p>
+<h2 id="2，配置job"><a href="#2，配置job" class="headerlink" title="2，配置job"></a>2，配置job</h2><p>模板job主要有两块内容：</p>
+<p>1，【构建触发器】定时构建</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/jenkins_job02.png" alt=""></p>
+<ul>
+<li>【构建】执行shell</li>
+</ul>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/jenkins_job03.png" alt=""></p>
+<p>其中HOST_TEST，PROJECT_TEST是在jenkins系统配置中设置的环境变量，目的是为了更换scrapyd服务器时更加灵活。</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/jenkins_job05.png" alt=""></p>
+<h2 id="3，制作模板"><a href="#3，制作模板" class="headerlink" title="3，制作模板"></a>3，制作模板</h2><p>进入到jenkins的安装目录（默认为/var/lib/jenkins/)，在/var/lib/jenkins/jobs/【采集】template目录下找到config.xml文件，拷贝至本地</p>
+<figure class="highlight dust"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="xml"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.1"</span> encoding=<span class="string">"UTF-8"</span><span class="meta">?&gt;</span></span><span class="tag">&lt;<span class="name">project</span>&gt;</span></span></div><div class="line">  <span class="tag">&lt;<span class="name">actions</span>/&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">description</span>/&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">keepDependencies</span>&gt;</span>false<span class="tag">&lt;/<span class="name">keepDependencies</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">properties</span>/&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">scm</span> <span class="attr">class</span>=<span class="string">"hudson.scm.NullSCM"</span>/&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">canRoam</span>&gt;</span>true<span class="tag">&lt;/<span class="name">canRoam</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">disabled</span>&gt;</span>false<span class="tag">&lt;/<span class="name">disabled</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">blockBuildWhenDownstreamBuilding</span>&gt;</span>false<span class="tag">&lt;/<span class="name">blockBuildWhenDownstreamBuilding</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">blockBuildWhenUpstreamBuilding</span>&gt;</span>false<span class="tag">&lt;/<span class="name">blockBuildWhenUpstreamBuilding</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">triggers</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">hudson.triggers.TimerTrigger</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">spec</span>&gt;</span>0 12 * * *<span class="tag">&lt;/<span class="name">spec</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">hudson.triggers.TimerTrigger</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">triggers</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">concurrentBuild</span>&gt;</span>false<span class="tag">&lt;/<span class="name">concurrentBuild</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">builders</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">hudson.tasks.Shell</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">command</span>&gt;</span>curl $<span class="template-variable">&#123;HOST_TEST&#125;</span><span class="xml">/schedule.json -d project=$</span><span class="template-variable">&#123;PROJECT_TEST&#125;</span><span class="xml"> -d spider='tt_test_spider'<span class="tag">&lt;/<span class="name">command</span>&gt;</span></span></div><div class="line">    <span class="tag">&lt;/<span class="name">hudson.tasks.Shell</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">builders</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">publishers</span>/&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">buildWrappers</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>批量创建的job主要差异在spider名称和crontab定时任务的设置不同，将这两处模板化：</p>
+<p>config.xml</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/jenkins_job06.png" alt=""></p>
+<p>该文件中有4个变量要配置：</p>
+<ul>
+<li><p>crontab_value</p>
+</li>
+<li><p>spider_name</p>
+</li>
+<li><p>HOST_TEMPLATE</p>
+</li>
+<li><p>PROJECT_TEMPLATE</p>
+</li>
+</ul>
+<h1 id="Python-Jenkins脚本批量创建job"><a href="#Python-Jenkins脚本批量创建job" class="headerlink" title="Python-Jenkins脚本批量创建job"></a>Python-Jenkins脚本批量创建job</h1><h2 id="1，安装"><a href="#1，安装" class="headerlink" title="1，安装"></a>1，安装</h2><figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">pip <span class="keyword">install</span> python-jenkins</div></pre></td></tr></table></figure>
+<h1 id="2，脚本"><a href="#2，脚本" class="headerlink" title="2，脚本"></a>2，脚本</h1><figure class="highlight livescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> jenkins</div><div class="line">template_xml=<span class="string">"config.xml"</span></div><div class="line"><span class="comment">#与网页版Jenkins登录的账号、密码一致</span></div><div class="line">server = jenkins.Jenkins(<span class="string">'http://yourip:8080/'</span>, username=<span class="string">'admin'</span>, password=<span class="string">'admin'</span>)</div><div class="line"> </div><div class="line">job_list = &#123;   </div><div class="line">    <span class="string">"test1_spider"</span>: <span class="string">"30 2 * * *"</span>,</div><div class="line">    <span class="string">"test2_spider"</span>: <span class="string">"30 3 * * *"</span>,</div><div class="line">    <span class="string">"test3_spider"</span>: <span class="string">"55 11,23 * * *"</span>,</div><div class="line">&#125;</div><div class="line"> </div><div class="line">classify = <span class="string">'采集'</span></div><div class="line">host = <span class="string">'http://0.0.0.0:6800/'</span></div><div class="line">project = <span class="string">'test_spider'</span></div><div class="line"> </div><div class="line"><span class="keyword">for</span> spider_name, crontab <span class="keyword">in</span> job_list.items():</div><div class="line">    <span class="keyword">with</span> open(template_xml) as f:</div><div class="line">        profile = f.read()</div><div class="line"> </div><div class="line">    JOB_CONFIG=profile.replace(<span class="string">"crontab_value"</span>, crontab)<span class="string">\</span></div><div class="line">        .replace(<span class="string">"spider_name"</span>,spider_name)<span class="string">\</span></div><div class="line">        .replace(<span class="string">"HOST_TEMPLATE"</span>, host)<span class="string">\</span></div><div class="line">        .replace(<span class="string">"PROJECT_TEMPLATE"</span>, project)</div><div class="line"> </div><div class="line">    <span class="built_in">print</span>(JOB_CONFIG[-<span class="number">200</span>:])</div><div class="line"> </div><div class="line">    view_name = <span class="string">"【&#123;&#125;】&#123;&#125;_"</span>.format(classify, type)</div><div class="line">    server.create_job(view_name+name, JOB_CONFIG)</div><div class="line">    <span class="comment"># del_job=server.delete_job(view_name+name)</span></div><div class="line">    <span class="comment"># print(del_job)</span></div></pre></td></tr></table></figure>
+<h1 id="3，结果"><a href="#3，结果" class="headerlink" title="3，结果"></a>3，结果</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/jenkins_job07.png" alt=""></p>
+<p>搞定！分分钟创建了几百个job。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
+<p><a href="https://wiki.jenkins.io/display/JENKINS/Remote+access+API" target="_blank" rel="external">https://wiki.jenkins.io/display/JENKINS/Remote+access+API</a></p>
+<p><a href="http://www.xskh.club/2017/07/31/python/%E6%89%B9%E9%87%8F%E5%85%8B%E9%9A%86jenkins%E7%9A%84job/" target="_blank" rel="external">批量克隆jenkins的job</a></p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近重构一个Scrapy爬虫项目，需要将300个spider的调度任务在jenkins中添加。这已经超过了手动一个一个添加任务的极限，是时候要借助工具批量添加了。&lt;/p&gt;
+&lt;h1 id=&quot;Jenkins-API&quot;&gt;&lt;a href=&quot;#Jenkins-API&quot; class=&quot;
+    
+    </summary>
+    
+      <category term="运维" scheme="http://www.kekefund.com/categories/%E8%BF%90%E7%BB%B4/"/>
+    
+    
+      <category term="Jenkins" scheme="http://www.kekefund.com/tags/Jenkins/"/>
+    
+      <category term="api" scheme="http://www.kekefund.com/tags/api/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Django中配置Gunicorn</title>
     <link href="http://www.kekefund.com/2018/08/24/django-gunicorn/"/>
     <id>http://www.kekefund.com/2018/08/24/django-gunicorn/</id>
     <published>2018-08-24T01:51:17.000Z</published>
-    <updated>2018-08-24T01:58:28.629Z</updated>
+    <updated>2018-08-24T02:04:32.909Z</updated>
     
     <content type="html"><![CDATA[<p>Gunicorn是一个被广泛使用的高性能的Python WSGI UNIX HTTP服务器，移植至Ruby的独角兽（Unicorn）项目，使用pre-fork worker模式，具有使用非常简单，轻量级的资源消耗，以及高性能等特点。</p>
 <p>Django自带的简易服务器，它是一个纯Python写的轻量级的WEB服务器，但它是为了开发而设计的，不适合在生产环境中部署。<br><a id="more"></a></p>
@@ -79,6 +158,14 @@
     
     </summary>
     
+      <category term="Python" scheme="http://www.kekefund.com/categories/Python/"/>
+    
+    
+      <category term="Django" scheme="http://www.kekefund.com/tags/Django/"/>
+    
+      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
+    
+      <category term="Gunicorn" scheme="http://www.kekefund.com/tags/Gunicorn/"/>
     
   </entry>
   
@@ -1094,50 +1181,6 @@
       <category term="VNC" scheme="http://www.kekefund.com/tags/VNC/"/>
     
       <category term="gnome" scheme="http://www.kekefund.com/tags/gnome/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>github创建分支</title>
-    <link href="http://www.kekefund.com/2017/03/23/git-branch-create/"/>
-    <id>http://www.kekefund.com/2017/03/23/git-branch-create/</id>
-    <published>2017-03-23T08:02:32.000Z</published>
-    <updated>2017-04-19T03:43:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>理论部分参考：<a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001375840038939c291467cc7c747b1810aab2fb8863508000" target="_blank" rel="external">创建与合并分支</a></p>
-<h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><p>软件一个阶段开发完成，需要建立一个分支来保存当前的稳定版本。</p>
-<ul>
-<li><p>采用SourceTree 创建分支：</p>
-<a id="more"></a>
-<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git1.png" alt=""></p>
-</li>
-<li><p>创建完成后再SourceTree左侧树型菜单会出现分支名称：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git2.png" alt=""></p>
-</li>
-<li><p>点击推送，将分支同步到服务器<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git3.png" alt=""></p>
-</li>
-</ul>
-<ul>
-<li>github上就能看到分支了：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-23/git4.png" alt=""></li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;原理&quot;&gt;&lt;a href=&quot;#原理&quot; class=&quot;headerlink&quot; title=&quot;原理&quot;&gt;&lt;/a&gt;原理&lt;/h1&gt;&lt;p&gt;理论部分参考：&lt;a href=&quot;http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001375840038939c291467cc7c747b1810aab2fb8863508000&quot;&gt;创建与合并分支&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&quot;实践&quot;&gt;&lt;a href=&quot;#实践&quot; class=&quot;headerlink&quot; title=&quot;实践&quot;&gt;&lt;/a&gt;实践&lt;/h1&gt;&lt;p&gt;软件一个阶段开发完成，需要建立一个分支来保存当前的稳定版本。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;采用SourceTree 创建分支：&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Git" scheme="http://www.kekefund.com/categories/Git/"/>
-    
-    
-      <category term="git" scheme="http://www.kekefund.com/tags/git/"/>
-    
-      <category term="branch" scheme="http://www.kekefund.com/tags/branch/"/>
-    
-      <category term="SourceTree" scheme="http://www.kekefund.com/tags/SourceTree/"/>
     
   </entry>
   
