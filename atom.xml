@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2018-08-29T07:10:51.184Z</updated>
+  <updated>2018-09-12T03:31:58.080Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -16,11 +16,84 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>redash部署使用</title>
+    <link href="http://www.kekefund.com/2018/09/12/redash-use/"/>
+    <id>http://www.kekefund.com/2018/09/12/redash-use/</id>
+    <published>2018-09-12T03:13:42.000Z</published>
+    <updated>2018-09-12T03:31:58.080Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h1><p>从<a href="https://github.com/getredash/redash" target="_blank" rel="external">https://github.com/getredash/redash</a> 拉取代码，运行docker-compose.production.yml</p>
+<h2 id="1，docker-compose文件调整"><a href="#1，docker-compose文件调整" class="headerlink" title="1，docker-compose文件调整"></a>1，docker-compose文件调整</h2><p>主要修改了两处：</p>
+<p>1，增加了redis和postgres的db文件与宿主机的映射，不让docker容器停止后数据丢失。</p>
+<blockquote>
+<p>官方默认的docker-compose.production.yml在docker-compose down 命令后，所有的配置信息都丢失了</p>
+</blockquote>
+<p>2，增加了redis和postgres的端口映射，方便调试，线上环境也可以关掉。</p>
+<p>3，修改REDASH_COOKIE_SECRET。</p>
+<p>修改后的docker-compose.production.yml文件如下：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta"># This is an example configuration for Docker Compose. Make sure to atleast update</span></div><div class="line"><span class="meta"># the cookie secret &amp; postgres database password.</span></div><div class="line"><span class="meta">#</span></div><div class="line"><span class="meta"># Some other recommendations:</span></div><div class="line"><span class="meta"># 1. To persist Postgres data, assign it a volume host location.</span></div><div class="line"><span class="meta"># 2. Split the worker service to adhoc workers and scheduled queries workers.</span></div><div class="line"><span class="symbol">version:</span> <span class="string">'2'</span></div><div class="line"><span class="symbol">services:</span></div><div class="line"><span class="symbol">  server:</span></div><div class="line"><span class="symbol">    image:</span> redash/redash:latest</div><div class="line"><span class="symbol">    command:</span> server</div><div class="line"><span class="symbol">    depends_on:</span></div><div class="line">      - postgres</div><div class="line">      - redis</div><div class="line"><span class="symbol">    ports:</span></div><div class="line">      - <span class="string">"5000:5000"</span></div><div class="line"><span class="symbol">    environment:</span></div><div class="line"><span class="symbol">      PYTHONUNBUFFERED:</span> <span class="number">0</span></div><div class="line"><span class="symbol">      REDASH_LOG_LEVEL:</span> <span class="string">"INFO"</span></div><div class="line"><span class="symbol">      REDASH_REDIS_URL:</span> <span class="string">"redis://redis:6379/0"</span></div><div class="line"><span class="symbol">      REDASH_DATABASE_URL:</span> <span class="string">"postgresql://postgres@postgres/postgres"</span></div><div class="line"><span class="symbol">      REDASH_COOKIE_SECRET:</span> <span class="string">"Q422k6vaXUk8"</span></div><div class="line"><span class="symbol">      REDASH_WEB_WORKERS:</span> <span class="number">4</span>      </div><div class="line"><span class="symbol">    restart:</span> always</div><div class="line"><span class="symbol">  worker:</span></div><div class="line"><span class="symbol">    image:</span> redash/redash:latest</div><div class="line"><span class="symbol">    command:</span> scheduler</div><div class="line"><span class="symbol">    environment:</span></div><div class="line"><span class="symbol">      PYTHONUNBUFFERED:</span> <span class="number">0</span></div><div class="line"><span class="symbol">      REDASH_LOG_LEVEL:</span> <span class="string">"INFO"</span></div><div class="line"><span class="symbol">      REDASH_REDIS_URL:</span> <span class="string">"redis://redis:6379/0"</span></div><div class="line"><span class="symbol">      REDASH_DATABASE_URL:</span> <span class="string">"postgresql://postgres@postgres/postgres"</span></div><div class="line"><span class="symbol">      QUEUES:</span> <span class="string">"queries,scheduled_queries,celery"</span></div><div class="line"><span class="symbol">      WORKERS_COUNT:</span> <span class="number">2</span></div><div class="line"><span class="symbol">    restart:</span> always</div><div class="line"><span class="symbol">  redis:</span></div><div class="line"><span class="symbol">    image:</span> redis:<span class="number">3.0</span>-alpine</div><div class="line"><span class="symbol">    ports:</span></div><div class="line">    - <span class="string">"6379:6379"</span></div><div class="line"><span class="symbol">    volumes:</span> </div><div class="line">      - .<span class="meta-keyword">/data/</span>redis_data:/data</div><div class="line"><span class="symbol">    restart:</span> always</div><div class="line"><span class="symbol">  postgres:</span></div><div class="line"><span class="symbol">    image:</span> postgres:<span class="number">9.5</span><span class="number">.6</span>-alpine</div><div class="line"><span class="symbol">    ports:</span></div><div class="line">    - <span class="string">"5432:5432"</span></div><div class="line"><span class="symbol">    volumes:</span></div><div class="line">      - .<span class="meta-keyword">/data/</span>postgresql_data:<span class="meta-keyword">/var/</span>lib<span class="meta-keyword">/postgresql/</span>data</div><div class="line"><span class="symbol">    restart:</span> always</div><div class="line"><span class="symbol">  nginx:</span></div><div class="line"><span class="symbol">    image:</span> redash/nginx:latest</div><div class="line"><span class="symbol">    ports:</span></div><div class="line">      - <span class="string">"88:80"</span></div><div class="line"><span class="symbol">    depends_on:</span></div><div class="line">      - server</div><div class="line"><span class="symbol">    links:</span></div><div class="line">      - server:redash</div><div class="line"><span class="symbol">    restart:</span> always</div></pre></td></tr></table></figure>
+<h2 id="2，创建db"><a href="#2，创建db" class="headerlink" title="2，创建db"></a>2，创建db</h2><figure class="highlight markdown"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">[root@VM<span class="emphasis">_38_</span>115<span class="emphasis">_centos redash]# docker-compose -f docker-compose.production.yml run --rm server create_</span>db</div><div class="line"> </div><div class="line">Starting redash<span class="emphasis">_redis_</span>1</div><div class="line"> </div><div class="line">Starting redash<span class="emphasis">_postgres_</span>1</div><div class="line"> </div><div class="line">[<span class="string">2018-09-11 09:02:39,580</span>][<span class="symbol">PID:1</span>][<span class="string">INFO</span>][<span class="symbol">root</span>] Generating grammar tables from /usr/lib/python2.7/lib2to3/Grammar.txt</div><div class="line"> </div><div class="line">[<span class="string">2018-09-11 09:02:39,601</span>][<span class="symbol">PID:1</span>][<span class="string">INFO</span>][<span class="symbol">root</span>] Generating grammar tables from /usr/lib/python2.7/lib2to3/PatternGrammar.txt</div><div class="line"> </div><div class="line">[<span class="string">2018-09-11 09:02:41,707</span>][<span class="symbol">PID:1</span>][<span class="string">INFO</span>][<span class="symbol">alembic.runtime.migration</span>] Context impl PostgresqlImpl.</div><div class="line"> </div><div class="line">[<span class="string">2018-09-11 09:02:41,708</span>][<span class="symbol">PID:1</span>][<span class="string">INFO</span>][<span class="symbol">alembic.runtime.migration</span>] Will assume transactional DDL.</div><div class="line"> </div><div class="line">[<span class="string">2018-09-11 09:02:41,724</span>][<span class="symbol">PID:1</span>][<span class="string">INFO</span>][<span class="symbol">alembic.runtime.migration</span>] Running stamp_revision -&gt; 969126bd800f</div></pre></td></tr></table></figure>
+<h2 id="3，运行"><a href="#3，运行" class="headerlink" title="3，运行"></a>3，运行</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">docker-compose</span> <span class="selector-tag">-f</span> <span class="selector-tag">docker-compose</span><span class="selector-class">.production</span><span class="selector-class">.yml</span> <span class="selector-tag">up</span></div></pre></td></tr></table></figure>
+<p>运行起来的容器如下:<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash00.png" alt=""></p>
+<h2 id="4，邮件配置"><a href="#4，邮件配置" class="headerlink" title="4，邮件配置"></a>4，邮件配置</h2><p>For the system to be able to send emails (for example when alerts trigger), you need to set the mail server to use and the host name of your Redash server. If you’re using one of our images, you can do this by editing the .env file:</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"> </div><div class="line"># Note that not all values are required, <span class="keyword">as</span> they have default values.</div><div class="line"> </div><div class="line"><span class="keyword">export</span> REDASH_MAIL_SERVER=<span class="string">""</span> # default: localhost</div><div class="line"><span class="keyword">export</span> REDASH_MAIL_PORT=<span class="string">""</span> # default: <span class="number">25</span></div><div class="line"><span class="keyword">export</span> REDASH_MAIL_USE_TLS=<span class="string">""</span> # default: false</div><div class="line"><span class="keyword">export</span> REDASH_MAIL_USE_SSL=<span class="string">""</span> # default: false</div><div class="line"><span class="keyword">export</span> REDASH_MAIL_USERNAME=<span class="string">""</span> # default: None</div><div class="line"><span class="keyword">export</span> REDASH_MAIL_PASSWORD=<span class="string">""</span> # default: None</div><div class="line"><span class="keyword">export</span> REDASH_MAIL_DEFAULT_SENDER=<span class="string">""</span> # Email address to send <span class="keyword">from</span></div><div class="line"> </div><div class="line"><span class="keyword">export</span> REDASH_HOST=<span class="string">""</span> # base address <span class="keyword">of</span> your Redash <span class="keyword">instance</span>, for example: <span class="string">"https://demo.redash.io"</span></div></pre></td></tr></table></figure>
+<p>docker-compose文件中配置</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">server:</span></div><div class="line"><span class="symbol">    image:</span> redash/redash:latest</div><div class="line"><span class="symbol">    environment:</span></div><div class="line">  </div><div class="line">      ...</div><div class="line"> </div><div class="line">      <span class="meta">#邮箱 </span></div><div class="line"><span class="symbol">      REDASH_MAIL_SERVER:</span> <span class="string">"smtp.exmail.qq.com"</span></div><div class="line"><span class="symbol">      REDASH_MAIL_PORT:</span> <span class="number">465</span></div><div class="line"><span class="symbol">      REDASH_MAIL_USE_TLS:</span> <span class="string">"false"</span></div><div class="line"><span class="symbol">      REDASH_MAIL_USE_SSL:</span> <span class="string">"true"</span></div><div class="line"><span class="symbol">      REDASH_MAIL_USERNAME:</span> <span class="string">"no-reply@yoursite.com"</span></div><div class="line"><span class="symbol">      REDASH_MAIL_PASSWORD:</span> <span class="string">"111111"</span></div><div class="line"><span class="symbol">      REDASH_MAIL_DEFAULT_SENDER:</span> <span class="string">"no-reply@yoursite.com"</span></div><div class="line"><span class="symbol">      REDASH_HOST:</span> <span class="string">"http://redash.mysite.com"</span></div></pre></td></tr></table></figure>
+<p>测试是否配置成功：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"> </div><div class="line">[root@VM<span class="emphasis">_38_</span>115<span class="emphasis">_centos ~]# docker exec -it redash_</span>server<span class="emphasis">_1 python manage.py send_</span>test_mail</div><div class="line"> </div><div class="line">[<span class="string">2018-09-11 10:02:28,627</span>][<span class="symbol">PID:37</span>][<span class="string">INFO</span>][<span class="symbol">root</span>] Generating grammar tables from /usr/lib/python2.7/lib2to3/Grammar.txt</div><div class="line"> </div><div class="line">[<span class="string">2018-09-11 10:02:28,649</span>][<span class="symbol">PID:37</span>][<span class="string">INFO</span>][<span class="symbol">root</span>] Generating grammar tables from /usr/lib/python2.7/lib2to3/PatternGrammar.txt</div></pre></td></tr></table></figure>
+<p>自己邮件会收到Test message。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash01.png" alt=""></p>
+<blockquote>
+<p>PS：配置成功了，但在Alerts中触发了警告，设置的接受邮件没收到警告信息。还没找到原因…</p>
+</blockquote>
+<h1 id="二、使用"><a href="#二、使用" class="headerlink" title="二、使用"></a>二、使用</h1><h2 id="1，配置数据库"><a href="#1，配置数据库" class="headerlink" title="1，配置数据库"></a>1，配置数据库</h2><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash02.png" alt=""></p>
+<h2 id="2，查询语句"><a href="#2，查询语句" class="headerlink" title="2，查询语句"></a>2，查询语句</h2><ul>
+<li>获取表的更新时间<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash03.png" alt=""></li>
+</ul>
+<p>增加图表展示：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash04.png" alt=""></p>
+<h2 id="3，Dashboards"><a href="#3，Dashboards" class="headerlink" title="3，Dashboards"></a>3，Dashboards</h2><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash05.png" alt=""></p>
+<h1 id="三、用户管理"><a href="#三、用户管理" class="headerlink" title="三、用户管理"></a>三、用户管理</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash06.png" alt=""><br>添加用户<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash07.png" alt=""></p>
+<h1 id="四、特性"><a href="#四、特性" class="headerlink" title="四、特性"></a>四、特性</h1><h2 id="1，支持iframe嵌入到其它网页"><a href="#1，支持iframe嵌入到其它网页" class="headerlink" title="1，支持iframe嵌入到其它网页"></a>1，支持iframe嵌入到其它网页</h2><p>对于任何Query，表格和图形都支持embed<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash28.png" alt=""><br>点击Embed弹出：</p>
+<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash09.png" alt=""><br>这个功能可以实现自己系统中集成报表展示。</p>
+<h2 id="2，可视化图形支持的类型"><a href="#2，可视化图形支持的类型" class="headerlink" title="2，可视化图形支持的类型"></a>2，可视化图形支持的类型</h2><h3 id="箱型图"><a href="#箱型图" class="headerlink" title="箱型图"></a>箱型图</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash10.png" alt=""></p>
+<h3 id="线形图、柱状图、面积图、饼图、散点图"><a href="#线形图、柱状图、面积图、饼图、散点图" class="headerlink" title="线形图、柱状图、面积图、饼图、散点图"></a>线形图、柱状图、面积图、饼图、散点图</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash11.png" alt=""><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash12.png" alt=""><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash13.png" alt=""></p>
+<h3 id="队列图"><a href="#队列图" class="headerlink" title="队列图"></a>队列图</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash14.png" alt=""></p>
+<h3 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash15.png" alt=""></p>
+<h3 id="漏斗图"><a href="#漏斗图" class="headerlink" title="漏斗图"></a>漏斗图</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash16.png" alt=""></p>
+<h3 id="地图"><a href="#地图" class="headerlink" title="地图"></a>地图</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash17.png" alt=""></p>
+<h3 id="透视表"><a href="#透视表" class="headerlink" title="透视表"></a>透视表</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash18.png" alt=""></p>
+<h3 id="桑基图"><a href="#桑基图" class="headerlink" title="桑基图"></a>桑基图</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash19.png" alt=""></p>
+<blockquote>
+<p>桑基图用于表达流量分布于结构对比，最初的发明者使用它来呈现能量的流动与分布。</p>
+</blockquote>
+<h3 id="旭日图（Sunburst）"><a href="#旭日图（Sunburst）" class="headerlink" title="旭日图（Sunburst）"></a>旭日图（Sunburst）</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash20.png" alt=""></p>
+<h3 id="词云图"><a href="#词云图" class="headerlink" title="词云图"></a>词云图</h3><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash21.png" alt=""></p>
+<h1 id="五，实践"><a href="#五，实践" class="headerlink" title="五，实践"></a>五，实践</h1><p>根据scrapy log日志表，设计出一张bashboard监控面板：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/redash22.png" alt=""></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
+<p><a href="https://redash.io/help/open-source/setup" target="_blank" rel="external">redash邮箱设置</a></p>
+<p><a href="https://redash.io/help/open-source/admin-guide/env-vars-settings" target="_blank" rel="external">redash环境变量</a></p>
+<p><a href="https://redash.io/help/user-guide/visualizations/visualization-types" target="_blank" rel="external">Visualization Types</a></p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;一、安装&quot;&gt;&lt;a href=&quot;#一、安装&quot; class=&quot;headerlink&quot; title=&quot;一、安装&quot;&gt;&lt;/a&gt;一、安装&lt;/h1&gt;&lt;p&gt;从&lt;a href=&quot;https://github.com/getredash/redash&quot; target=&quot;_blank&quot;
+    
+    </summary>
+    
+      <category term="运维" scheme="http://www.kekefund.com/categories/%E8%BF%90%E7%BB%B4/"/>
+    
+    
+      <category term="redash" scheme="http://www.kekefund.com/tags/redash/"/>
+    
+  </entry>
+  
+  <entry>
     <title>jenkins 批量添加任务job</title>
     <link href="http://www.kekefund.com/2018/08/29/jenkins-jobs/"/>
     <id>http://www.kekefund.com/2018/08/29/jenkins-jobs/</id>
     <published>2018-08-29T07:06:15.000Z</published>
-    <updated>2018-08-29T07:10:51.184Z</updated>
+    <updated>2018-08-29T08:17:31.407Z</updated>
     
     <content type="html"><![CDATA[<p>最近重构一个Scrapy爬虫项目，需要将300个spider的调度任务在jenkins中添加。这已经超过了手动一个一个添加任务的极限，是时候要借助工具批量添加了。</p>
 <h1 id="Jenkins-API"><a href="#Jenkins-API" class="headerlink" title="Jenkins API"></a>Jenkins API</h1><p>Jenkins提供了一套远端访问的API，目前有3种方式：</p>
@@ -73,8 +146,7 @@
 <h1 id="3，结果"><a href="#3，结果" class="headerlink" title="3，结果"></a>3，结果</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/jenkins_job07.png" alt=""></p>
 <p>搞定！分分钟创建了几百个job。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
-<p><a href="https://wiki.jenkins.io/display/JENKINS/Remote+access+API" target="_blank" rel="external">https://wiki.jenkins.io/display/JENKINS/Remote+access+API</a></p>
-<p><a href="http://www.xskh.club/2017/07/31/python/%E6%89%B9%E9%87%8F%E5%85%8B%E9%9A%86jenkins%E7%9A%84job/" target="_blank" rel="external">批量克隆jenkins的job</a></p>
+<p><a href="https://wiki.jenkins.io/display/JENKINS/Remote+access+API" target="_blank" rel="external">https://wiki.jenkins.io/display/JENKINS/Remote+access+API</a><br><a href="http://www.xskh.club/2017/07/31/python/%E6%89%B9%E9%87%8F%E5%85%8B%E9%9A%86jenkins%E7%9A%84job/" target="_blank" rel="external">批量克隆jenkins的job</a><br><a href="https://www.cnblogs.com/znicy/p/5498609.html" target="_blank" rel="external">https://www.cnblogs.com/znicy/p/5498609.html</a></p>
 </blockquote>
 ]]></content>
     
@@ -1118,69 +1190,6 @@
       <category term="DjangoRestFramework" scheme="http://www.kekefund.com/tags/DjangoRestFramework/"/>
     
       <category term="API" scheme="http://www.kekefund.com/tags/API/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>centos7安装VNC服务器</title>
-    <link href="http://www.kekefund.com/2017/03/24/centos7-install-gnome/"/>
-    <id>http://www.kekefund.com/2017/03/24/centos7-install-gnome/</id>
-    <published>2017-03-24T02:51:59.000Z</published>
-    <updated>2017-04-19T03:44:35.000Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote>
-<p>centos7系统下的VNC服务器的中文安装教程多如牛毛，有些安装流程复杂但到最后却不成功，本人试验了不下10个教程，装的快要吐血😓。谷歌到这篇英文教程<a href="http://www.krizna.com/centos/install-vnc-server-centos-7/" target="_blank" rel="external">How to install VNC server on Centos 7</a>，发现是良心之作，操作简单可行。于是翻译之以饷读者。</p>
-</blockquote>
-<p>VNC服务器用于从远程客户端连接到服务器的桌面环境。远程计算机上使用VNC客户端连接服务器。<br>在本文我们可以了解如何在centos 7上安装VNC服务器，将采用centos yum库中提供的默认包来安装。<br><a id="more"></a></p>
-<h1 id="安装-VNC服务器"><a href="#安装-VNC服务器" class="headerlink" title="安装 VNC服务器"></a>安装 VNC服务器</h1><p>如果你不曾安装过桌面环境（X windows），就按照以下命令来安装软件，重启后，你就会具有centos7的桌面。</p>
-<figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># yum check-update</span></div><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># yum groupinstall <span class="string">"X Window System"</span></span></div><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># yum install gnome-classic-session gnome-terminal nautilus-open-terminal control-center liberation-mono-fonts</span></div><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># unlink /etc/systemd/system/default.target</span></div><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target</span></div><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># reboot</span></div></pre></td></tr></table></figure>
-<p>现在开始安装VCN包<br><strong>步骤1：</strong>执行下面的命令安装VNC包<br><figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># yum install tigervnc-server -y</span></div></pre></td></tr></table></figure></p>
-<p><strong>步骤2：</strong>将/lib/systemd/system/vncserver@.service拷贝至/etc/systemd/system/，并重命名为vncserver@:1.service。<br><figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@krizna ~]# cp /lib/systemd/<span class="keyword">system</span>/vncserver@.service /etc/systemd/<span class="keyword">system</span>/vncserver@:<span class="number">1.</span>service</div></pre></td></tr></table></figure></p>
-<p><strong>步骤3：</strong>打开/etc/systemd/system/下的vncserver@:1.service，将<user>替换为你的用户名。<br>找到这两行：<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ExecStart=<span class="meta-keyword">/sbin/</span>runuser -l <span class="params">&lt;USER&gt;</span> -c <span class="string">"/usr/bin/vncserver %i"</span></div><div class="line">PIDFile=<span class="meta-keyword">/home/</span><span class="params">&lt;USER&gt;</span>/.vnc/%H%i.pid</div></pre></td></tr></table></figure></user></p>
-<p>替换为（假定用户名为john）：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">ExecStart</span>=/sbin/runuser -l john -c <span class="string">"/usr/bin/vncserver %i"</span></div><div class="line"><span class="attr">PIDFile</span>=/home/john/.vnc/%H%i.pid</div></pre></td></tr></table></figure></p>
-<p>如果你是root用户，就这样替换：<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">ExecStart</span>=/sbin/runuser -l root -c <span class="string">"/usr/bin/vncserver %i"</span></div><div class="line"><span class="attr">PIDFile</span>=/root/.vnc/%H%i.pid</div></pre></td></tr></table></figure></p>
-<p><strong>步骤4：</strong>重新加载systemd进行更改<br><figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># systemctl daemon-reload</span></div></pre></td></tr></table></figure></p>
-<p><strong>步骤5：</strong>创建VNC密码<br><figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># vncpasswd</span></div></pre></td></tr></table></figure></p>
-<p><strong>步骤6：</strong>启动服务，并设置开机自动运行<br><figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># systemctl enable vncserver@:1.service</span></div><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># systemctl start vncserver@:1.service</span></div></pre></td></tr></table></figure></p>
-<p><strong>步骤7：</strong>防火墙允许VNC访问</p>
-<figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># firewall-cmd --permanent --add-service vnc-server</span></div><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># systemctl restart firewalld.service</span></div></pre></td></tr></table></figure>
-<p>到这里，你就可以用VNC客户端连接服务器桌面了（192.168.11.165:1）。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-24/gnome.png" alt=""></p>
-<blockquote>
-<p>PS: VNC客户端各个系统版本都有，自行百度~。我这里用的是mac版的VNC Viewer。</p>
-</blockquote>
-<p>对于其他用户，创建不同的端口文件vncserver@:2.service，参考步骤2，然后重复步骤3，4，5，6即可。</p>
-<h1 id="附加命令"><a href="#附加命令" class="headerlink" title="附加命令"></a>附加命令</h1><ul>
-<li><p>停止VNC服务</p>
-<figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># systemctl stop vncserver@:1.service</span></div></pre></td></tr></table></figure>
-</li>
-<li><p>取消开机自动运行</p>
-<figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@krizna ~]# systemctl <span class="keyword">disable</span> vncserver@:<span class="number">1.</span>service</div></pre></td></tr></table></figure>
-</li>
-<li><p>关闭防火墙（用于故障排除）</p>
-<figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># systemctl stop firewalld.service</span></div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>好运~</p>
-<p>翻译自: <a href="http://www.krizna.com/centos/install-vnc-server-centos-7/" target="_blank" rel="external">How to install VNC server on Centos 7</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;centos7系统下的VNC服务器的中文安装教程多如牛毛，有些安装流程复杂但到最后却不成功，本人试验了不下10个教程，装的快要吐血😓。谷歌到这篇英文教程&lt;a href=&quot;http://www.krizna.com/centos/install-vnc-server-centos-7/&quot;&gt;How to install VNC server on Centos 7&lt;/a&gt;，发现是良心之作，操作简单可行。于是翻译之以饷读者。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;VNC服务器用于从远程客户端连接到服务器的桌面环境。远程计算机上使用VNC客户端连接服务器。&lt;br&gt;在本文我们可以了解如何在centos 7上安装VNC服务器，将采用centos yum库中提供的默认包来安装。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="系统" scheme="http://www.kekefund.com/categories/%E7%B3%BB%E7%BB%9F/"/>
-    
-    
-      <category term="centos7" scheme="http://www.kekefund.com/tags/centos7/"/>
-    
-      <category term="VNC" scheme="http://www.kekefund.com/tags/VNC/"/>
-    
-      <category term="gnome" scheme="http://www.kekefund.com/tags/gnome/"/>
     
   </entry>
   
