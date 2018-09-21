@@ -15,17 +15,17 @@
 <h1 id="1，Postman编写测试用例"><a href="#1，Postman编写测试用例" class="headerlink" title="1，Postman编写测试用例"></a>1，Postman编写测试用例</h1><blockquote>
 <p>Postman is the only complete API development environment, for API developers, used by more than 5 million developers and 100,000 companies worldwide. Postman makes working with APIs faster and easier by supporting developers at every stage of their workflow, and is available for Mac OS X, Windows, and Linux users.</p>
 </blockquote>
-<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/test01.png" alt=""></p>
-<p>配置环境变量：<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test02.png" alt=""></p>
+<p><img src="http://pic.cbbing.com/test01.png" alt=""></p>
+<p>配置环境变量：<br><img src="http://pic.cbbing.com/test02.png" alt=""></p>
 <p>这里建立了测试环境和生产环境；</p>
-<p><img src="http://7xo67b.com1.z0.glb.clouddn.com/test04.png" alt=""><br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test03.png" alt=""><br>配置好环境变量后，就可以在api请求时用环境变量，方便切换测试环境和生产环境。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test05.png" alt=""></p>
-<p>可以直接在Postman中跑测试用例<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test06.png" alt=""></p>
+<p><img src="http://pic.cbbing.com/test04.png" alt=""><br><img src="http://pic.cbbing.com/test03.png" alt=""><br>配置好环境变量后，就可以在api请求时用环境变量，方便切换测试环境和生产环境。<br><img src="http://pic.cbbing.com/test05.png" alt=""></p>
+<p>可以直接在Postman中跑测试用例<br><img src="http://pic.cbbing.com/test06.png" alt=""></p>
 <p>如果是临时的API接口测试，到这步就可以了。当然，我们的目的是实现测试自动化，接着往下走。</p>
-<h1 id="2，导出到JSON"><a href="#2，导出到JSON" class="headerlink" title="2，导出到JSON"></a>2，导出到JSON</h1><p><img src="http://7xo67b.com1.z0.glb.clouddn.com/test07.png" alt=""></p>
-<h1 id="3，添加到github项目"><a href="#3，添加到github项目" class="headerlink" title="3，添加到github项目"></a>3，添加到github项目</h1><p>创建一个github项目，专门存储postman脚本。这是为了方便项目成员在本地提交，跟踪版本。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test08.png" alt=""></p>
-<h1 id="4，Jenkins集成"><a href="#4，Jenkins集成" class="headerlink" title="4，Jenkins集成"></a>4，Jenkins集成</h1><p>新建一个自由风格的项目<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test09.png" alt=""><br>配置git<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test10.png" alt=""></p>
-<p>构建触发器<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test11.png" alt=""><br>每天6点执行一次。</p>
-<p>执行SHELL<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/test12.png" alt=""></p>
+<h1 id="2，导出到JSON"><a href="#2，导出到JSON" class="headerlink" title="2，导出到JSON"></a>2，导出到JSON</h1><p><img src="http://pic.cbbing.com/test07.png" alt=""></p>
+<h1 id="3，添加到github项目"><a href="#3，添加到github项目" class="headerlink" title="3，添加到github项目"></a>3，添加到github项目</h1><p>创建一个github项目，专门存储postman脚本。这是为了方便项目成员在本地提交，跟踪版本。<br><img src="http://pic.cbbing.com/test08.png" alt=""></p>
+<h1 id="4，Jenkins集成"><a href="#4，Jenkins集成" class="headerlink" title="4，Jenkins集成"></a>4，Jenkins集成</h1><p>新建一个自由风格的项目<br><img src="http://pic.cbbing.com/test09.png" alt=""><br>配置git<br><img src="http://pic.cbbing.com/test10.png" alt=""></p>
+<p>构建触发器<br><img src="http://pic.cbbing.com/test11.png" alt=""><br>每天6点执行一次。</p>
+<p>执行SHELL<br><img src="http://pic.cbbing.com/test12.png" alt=""></p>
 <p>其中 newman是预先安装在系统上的：<br>先安装nodejs，再安装newman:</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm <span class="keyword">install</span> -g newman</div></pre></td></tr></table></figure>
 <p>脚本：</p>

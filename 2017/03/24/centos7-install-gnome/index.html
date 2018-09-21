@@ -14,7 +14,7 @@
 <p><strong>步骤6：</strong>启动服务，并设置开机自动运行<br><figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># systemctl enable vncserver@:1.service</span></div><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># systemctl start vncserver@:1.service</span></div></pre></td></tr></table></figure></p>
 <p><strong>步骤7：</strong>防火墙允许VNC访问</p>
 <figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># firewall-cmd --permanent --add-service vnc-server</span></div><div class="line">[root<span class="symbol">@krizna</span> ~]<span class="meta"># systemctl restart firewalld.service</span></div></pre></td></tr></table></figure>
-<p>到这里，你就可以用VNC客户端连接服务器桌面了（192.168.11.165:1）。<br><img src="http://7xo67b.com1.z0.glb.clouddn.com/2017-03-24/gnome.png" alt=""></p>
+<p>到这里，你就可以用VNC客户端连接服务器桌面了（192.168.11.165:1）。<br><img src="http://pic.cbbing.com/2017-03-24/gnome.png" alt=""></p>
 <blockquote>
 <p>PS: VNC客户端各个系统版本都有，自行百度~。我这里用的是mac版的VNC Viewer。</p>
 </blockquote>
