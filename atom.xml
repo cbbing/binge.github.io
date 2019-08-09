@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.kekefund.com/"/>
-  <updated>2019-06-10T05:42:51.627Z</updated>
+  <updated>2019-08-08T23:55:34.556Z</updated>
   <id>http://www.kekefund.com/</id>
   
   <author>
@@ -14,6 +14,329 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【DevOps】第二步：Docker镜像打包上传至仓库</title>
+    <link href="http://www.kekefund.com/2019/08/09/devops-step2-make-image/"/>
+    <id>http://www.kekefund.com/2019/08/09/devops-step2-make-image/</id>
+    <published>2019-08-08T23:38:46.000Z</published>
+    <updated>2019-08-08T23:55:34.556Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="镜像仓库"><a href="#镜像仓库" class="headerlink" title="镜像仓库"></a>镜像仓库</h1><p>镜像仓库有好些地方可以存，大部分的公有云均提供免费的镜像仓库，常见如下：</p>
+<ul>
+<li><p>腾讯云：<a href="https://console.cloud.tencent.com/tke2/registry/user/self?rid=1（需登录）" target="_blank" rel="external">https://console.cloud.tencent.com/tke2/registry/user/self?rid=1（需登录）</a></p>
+</li>
+<li><p>阿里云: <a href="https://cr.console.aliyun.com/cn-hangzhou/instances/repositories（需登录）" target="_blank" rel="external">https://cr.console.aliyun.com/cn-hangzhou/instances/repositories（需登录）</a></p>
+</li>
+<li><p>自建私有仓库，参考之前的一篇文章<a href="https://www.jianshu.com/p/9cf9d1c8b00c" target="_blank" rel="external">docker私有仓库搭建</a></p>
+</li>
+<li><p>Docker Hub：不涉及私密的或者你想公开的镜像可以上传到<a href="https://hub.docker.com/。" target="_blank" rel="external">https://hub.docker.com/。</a></p>
+</li>
+</ul>
+<h1 id="打包上传shell脚本"><a href="#打包上传shell脚本" class="headerlink" title="打包上传shell脚本"></a>打包上传shell脚本</h1><p>统一打包流程，每个项目中添加make.sh脚本文件，一个典型的make文件如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"开始制作镜像..."</span></div><div class="line">image_tag=`date +%Y%m%d` <span class="comment">#_%H%M</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"当前时间：<span class="variable">$image_tag</span>"</span></div><div class="line">docker build -t ccr.ccs.xxx.com/abc/api:v<span class="variable">$&#123;image_tag&#125;</span> .</div><div class="line"><span class="built_in">echo</span> <span class="string">"制作镜像成功!"</span></div><div class="line"> </div><div class="line"><span class="built_in">echo</span> <span class="string">"登录"</span></div><div class="line">docker login</div><div class="line"><span class="built_in">echo</span> <span class="string">"镜像版本提交"</span></div><div class="line">docker push ccr.ccs.xxx.com/abc/api:v<span class="variable">$&#123;image_tag&#125;</span></div><div class="line"> </div><div class="line"><span class="built_in">echo</span> <span class="string">"镜像最新版本提交"</span></div><div class="line">docker tag ccr.ccs.xxx.com/abc/api:v<span class="variable">$&#123;image_tag&#125;</span> ccr.ccs.xxx.com/abc/api:latest</div><div class="line">docker push ccr.ccs.xxx.com/abc/api:latest</div></pre></td></tr></table></figure>
+<blockquote>
+<p>注：Dockerfile和make.sh在同一目录下。</p>
+</blockquote>
+<h2 id="docker-build-命令用法"><a href="#docker-build-命令用法" class="headerlink" title="docker build 命令用法"></a>docker build 命令用法</h2><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker build [OPTIONS] PATH |<span class="string"> URL </span>|<span class="string"> -</span></div></pre></td></tr></table></figure>
+<ul>
+<li>命令参数</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>命令, 缩写</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>–add-host</td>
+<td>增加自定义主机和IP映射(host:ip)</td>
+</tr>
+<tr>
+<td>–build-arg</td>
+<td>设置构建时的变量</td>
+</tr>
+<tr>
+<td>–cache-from</td>
+<td>用于缓存资源的镜像</td>
+</tr>
+<tr>
+<td>–cgroup-parent</td>
+<td>可选的容器上层cgroup</td>
+</tr>
+<tr>
+<td>–compress</td>
+<td>使用gzip 压缩构建context</td>
+</tr>
+<tr>
+<td>–cpu-period</td>
+<td>限制CPU CFS(完全公平调度程序）周期</td>
+</tr>
+<tr>
+<td>–cpu-quota</td>
+<td>限制CPU CFS(完全公平调度程序）配额</td>
+</tr>
+<tr>
+<td>–cpu-shares , -c</td>
+<td>CPU共享（相对权重）</td>
+</tr>
+<tr>
+<td>–cpuset-cpus</td>
+<td>允许执行的CPU (0-3, 0,1)</td>
+</tr>
+<tr>
+<td>–cpuset-mems</td>
+<td>允许使用的内存 (0-3, 0,1)</td>
+</tr>
+<tr>
+<td>–disable-content-trust true</td>
+<td>忽略镜像验证</td>
+</tr>
+<tr>
+<td>–file , -f</td>
+<td>Dockerfile名称 (默认 ‘PATH/Dockerfile’)</td>
+</tr>
+<tr>
+<td>–force-rm</td>
+<td>始终移除中间容器</td>
+</tr>
+<tr>
+<td>–iidfile</td>
+<td>镜像ID写入文件</td>
+</tr>
+<tr>
+<td>–isolation</td>
+<td>容器隔离技术</td>
+</tr>
+<tr>
+<td>–label</td>
+<td>设置镜像metadata信息</td>
+</tr>
+<tr>
+<td>–memory , -m</td>
+<td>内存限制</td>
+</tr>
+<tr>
+<td>–memory-swap</td>
+<td>交换限制等于内存加交换，“-1”：启用无限制交换 </td>
+</tr>
+<tr>
+<td>–network</td>
+<td>在生成期为RUN指令设置网络模式 （API 1.25+）</td>
+</tr>
+<tr>
+<td>–no-cache</td>
+<td>不使用缓存</td>
+</tr>
+<tr>
+<td>–output , -o</td>
+<td>输出（格式：type=local,dest=path）  （API 1.40+） </td>
+</tr>
+<tr>
+<td>–platform</td>
+<td>如果支持多平台，则设置  （experimental (daemon)API 1.32+）</td>
+</tr>
+<tr>
+<td>–progress</td>
+<td>默认auto，设置进度输出类型 (auto, plain, tty). </td>
+</tr>
+<tr>
+<td>–pull</td>
+<td>总是尝试拉取最新的镜像版本</td>
+</tr>
+<tr>
+<td>–quiet , -q</td>
+<td>不输出构建过程，成功时直接打印镜像ID</td>
+</tr>
+<tr>
+<td>–rm</td>
+<td>默认true，构建成功后删除中间容器</td>
+</tr>
+<tr>
+<td>–secret</td>
+<td>API 1.39+   Secret file to expose to the build (only if BuildKit enabled): id=mysecret,src=/local/secret</td>
+</tr>
+<tr>
+<td>–security-opt</td>
+<td>Security options</td>
+</tr>
+<tr>
+<td>–shm-size</td>
+<td>Size of /dev/shm</td>
+</tr>
+<tr>
+<td>–squash</td>
+<td>experimental (daemon)API 1.25+  Squash newly built layers into a single new layer</td>
+</tr>
+<tr>
+<td>–ssh</td>
+<td>SSH agent socket or keys to expose to the build (only if BuildKit enabled) </td>
+</tr>
+<tr>
+<td>–stream</td>
+<td>（experimental (daemon)API 1.31+ ）  Stream attaches to server to negotiate build context</td>
+</tr>
+<tr>
+<td>–tag , -t</td>
+<td>镜像名和tag，格式为‘name:tag’</td>
+</tr>
+<tr>
+<td>–target</td>
+<td>Set the target build stage to build.</td>
+</tr>
+<tr>
+<td>–ulimit</td>
+<td>Ulimit 选项</td>
+</tr>
+</tbody>
+</table>
+<p>参考已有的范例，Dockerfile和shell脚本只需要简单熟悉一下即可编写。<br>这一步很关键，是自动打包的根本。make.sh脚本灵活，可执行配置文件的替换，多镜像版本的生成等自定义操作。相比自动化构建平台基于Dockerfile和git commit来构建更具灵活性。</p>
+<h1 id="jenkins-job配置"><a href="#jenkins-job配置" class="headerlink" title="jenkins job配置"></a>jenkins job配置</h1><h2 id="源码管理"><a href="#源码管理" class="headerlink" title="源码管理"></a>源码管理</h2><p>jenkins会将git项目拷贝至job目录下。<br><img src="http://pic.cbbing.com/devops-step2-01.png" alt=""></p>
+<h2 id="构建触发器"><a href="#构建触发器" class="headerlink" title="构建触发器"></a>构建触发器</h2><p>jenkins定时检测代码变动（这里是每分钟检测一次），如果发现有代码提交记录，则触发下一步的构建。<br><img src="http://pic.cbbing.com/devops-step2-02.png" alt=""></p>
+<h2 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h2><p>构建包括2部分:</p>
+<ul>
+<li>SSH site: SSH的主机地址</li>
+<li>Command: 在主机上执行的命令<br><img src="http://pic.cbbing.com/devops-step2-03.png" alt=""></li>
+</ul>
+<h2 id="构建日志"><a href="#构建日志" class="headerlink" title="构建日志"></a>构建日志</h2><p><img src="http://pic.cbbing.com/devops-step2-04.png" alt=""></p>
+<h1 id="打包流程"><a href="#打包流程" class="headerlink" title="打包流程"></a>打包流程</h1><ol>
+<li><p>提交代码</p>
+</li>
+<li><p>jenkins每分钟检测git仓库分支的代码变动</p>
+</li>
+<li><p>若有代码提交记录，触发下一步构建</p>
+</li>
+<li><p>构建过程调用项目的make.sh文件，执行镜像打包上传</p>
+</li>
+</ol>
+<p><img src="http://pic.cbbing.com/devops-step2-05.png" alt=""></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
+<p><a href="https://docs.docker.com/engine/reference/commandline/build/" target="_blank" rel="external">https://docs.docker.com/engine/reference/commandline/build/</a></p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;镜像仓库&quot;&gt;&lt;a href=&quot;#镜像仓库&quot; class=&quot;headerlink&quot; title=&quot;镜像仓库&quot;&gt;&lt;/a&gt;镜像仓库&lt;/h1&gt;&lt;p&gt;镜像仓库有好些地方可以存，大部分的公有云均提供免费的镜像仓库，常见如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;腾讯云：&lt;a hr
+    
+    </summary>
+    
+      <category term="系统架构" scheme="http://www.kekefund.com/categories/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/"/>
+    
+    
+      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
+    
+      <category term="Image" scheme="http://www.kekefund.com/tags/Image/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>【DevOps】第一步：编写Dockerfile与项目实践</title>
+    <link href="http://www.kekefund.com/2019/07/10/devops-step1-dockerfile/"/>
+    <id>http://www.kekefund.com/2019/07/10/devops-step1-dockerfile/</id>
+    <published>2019-07-09T22:22:53.000Z</published>
+    <updated>2019-08-08T23:15:48.711Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Dockerfile简介"><a href="#Dockerfile简介" class="headerlink" title="Dockerfile简介"></a>Dockerfile简介</h1><p>Dockerfile 是一个文本文件，其内包含了一条条的 指令(Instruction)，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建。</p>
+<p>Dockerfile分为四部分：</p>
+<ul>
+<li><p>FROM：基础镜像信息</p>
+</li>
+<li><p>MAINTAINER：维护者信息</p>
+</li>
+<li><p>RUN、COPY、ADD、EXPOSE等：镜像操作指令</p>
+</li>
+<li><p>CMD、ENTRYPOINT：容器启动时执行指令。</p>
+</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">FROM</span> python:<span class="number">3.6</span></div><div class="line"> </div><div class="line"><span class="keyword">MAINTAINER</span> cbbing &lt;cbbing@<span class="number">163</span>.com&gt;</div><div class="line"> </div><div class="line"><span class="keyword">COPY</span><span class="bash"> pip.conf requirements.txt /root/.pip/</span></div><div class="line"> </div><div class="line"><span class="comment">#设置时区</span></div><div class="line"><span class="keyword">ENV</span> TZ=Asia/Shanghai</div><div class="line"><span class="keyword">ENV</span> PYTHONPATH=/usr/src/app</div><div class="line"> </div><div class="line"><span class="keyword">RUN</span><span class="bash"> mkdir -p /usr/src/app \</span></div><div class="line">    &amp;&amp; pip install -r /root/.pip/requirements.txt \</div><div class="line">    &amp;&amp; apt-get update \</div><div class="line">    &amp;&amp; apt-get install -y supervisor \</div><div class="line">    &amp;&amp; ln -snf /usr/share/zoneinfo/<span class="variable">$TZ</span> /etc/localtime \</div><div class="line">    &amp;&amp; <span class="built_in">echo</span> <span class="variable">$TZ</span> &gt; /etc/timezone</div><div class="line"> </div><div class="line"><span class="keyword">WORKDIR</span><span class="bash"> /usr/src/app</span></div><div class="line"> </div><div class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">"python"</span>]</span></div></pre></td></tr></table></figure>
+<h2 id="Dockerfile指令"><a href="#Dockerfile指令" class="headerlink" title="Dockerfile指令"></a>Dockerfile指令</h2><p>指令的一般格式为 INSTRUCTION arguments，指令包括 FROM、MAINTAINER、RUN 等。</p>
+<h3 id="1-FROM"><a href="#1-FROM" class="headerlink" title="1. FROM"></a>1. FROM</h3><p>格式为 <code>FROM &lt;image&gt;</code> 或 <code>FROM &lt;image&gt;:&lt;tag&gt;</code>。<br>第一条指令必须为 FROM 指令。并且，如果在同一个Dockerfile中创建多个镜像时，可以使用多个 FROM 指令（每个镜像一次）。</p>
+<h3 id="2-MAINTAINER"><a href="#2-MAINTAINER" class="headerlink" title="2. MAINTAINER"></a>2. MAINTAINER</h3><p>格式为 <code>MAINTAINER &lt;name&gt;</code>，指定维护者信息。</p>
+<h3 id="3-RUN"><a href="#3-RUN" class="headerlink" title="3. RUN"></a>3. RUN</h3><p>格式为 <code>RUN &lt;command&gt;</code> 或 <code>RUN [&quot;executable&quot;, &quot;param1&quot;, &quot;param2&quot;]</code>。<br>前者将在 shell 终端中运行命令，即 /bin/sh -c；后者则使用 exec 执行。指定使用其它终端可以通过第二种方式实现，例如 <code>RUN [&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;echo hello&quot;]</code>。<br>每条 RUN 指令将在当前镜像基础上执行指定命令，并提交为新的镜像。当命令较长时可以使用 \ 来换行。</p>
+<h3 id="4-CMD"><a href="#4-CMD" class="headerlink" title="4. CMD"></a>4. CMD</h3><p>支持三种格式<br>CMD [“executable”,”param1”,”param2”] 使用 exec 执行，推荐方式；<br>CMD command param1 param2 在 /bin/sh 中执行，提供给需要交互的应用；<br>CMD [“param1”,”param2”] 提供给 ENTRYPOINT 的默认参数；<br>指定启动容器时执行的命令，每个 Dockerfile 只能有一条 CMD 命令。如果指定了多条命令，只有最后一条会被执行。<br>如果用户启动容器时候指定了运行的命令，则会覆盖掉 CMD 指定的命令。</p>
+<h3 id="5-EXPOSE"><a href="#5-EXPOSE" class="headerlink" title="5.EXPOSE"></a>5.EXPOSE</h3><p>格式为 <code>EXPOSE &lt;port&gt; [\&lt;port&gt;...]</code>。<br>告诉 Docker 服务端容器暴露的端口号，供互联系统使用。在启动容器时需要通过 -P，Docker 主机会自动分配一个端口转发到指定的端口。</p>
+<h3 id="6-ENV"><a href="#6-ENV" class="headerlink" title="6. ENV"></a>6. ENV</h3><p>格式为 <code>ENV &lt;key&gt; &lt;value&gt;</code>。 指定一个环境变量，会被后续 RUN 指令使用，并在容器运行时保持。<br>例如</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ENV</span> PG_MAJOR <span class="number">9.3</span></div><div class="line"><span class="keyword">ENV</span> PG_VERSION <span class="number">9.3</span>.<span class="number">4</span></div><div class="line"><span class="keyword">ENV</span> TZ=Asia/Shanghai</div><div class="line"><span class="keyword">ENV</span> PYTHONPATH=/usr/src/app</div></pre></td></tr></table></figure>
+<h3 id="7-ADD"><a href="#7-ADD" class="headerlink" title="7. ADD"></a>7. ADD</h3><p>格式为 <code>ADD &lt;src&gt; &lt;dest&gt;</code>。<br>该命令将复制指定的 <code>&lt;src&gt;</code> 到容器中的 <code>&lt;dest&gt;</code>。 其中 <code>&lt;src&gt;</code> 可以是Dockerfile所在目录的一个相对路径；也可以是一个 URL；还可以是一个 tar 文件（自动解压为目录）。</p>
+<h3 id="8-COPY"><a href="#8-COPY" class="headerlink" title="8. COPY"></a>8. COPY</h3><p>格式为 <code>COPY &lt;src&gt; &lt;dest&gt;</code>。<br>复制本地主机的 <code>&lt;src&gt;</code>（为 Dockerfile 所在目录的相对路径）到容器中的 <code>&lt;dest&gt;</code>。<br>当使用本地目录为源目录时，推荐使用 COPY。</p>
+<h3 id="9-ENTRYPOINT"><a href="#9-ENTRYPOINT" class="headerlink" title="9. ENTRYPOINT"></a>9. ENTRYPOINT</h3><p>两种格式：<br>ENTRYPOINT [“executable”, “param1”, “param2”]<br>ENTRYPOINT command param1 param2（shell中执行）。<br>配置容器启动后执行的命令，并且不可被 docker run 提供的参数覆盖。<br>每个 Dockerfile 中只能有一个 ENTRYPOINT，当指定多个时，只有最后一个起效。</p>
+<h3 id="10-VOLUME"><a href="#10-VOLUME" class="headerlink" title="10. VOLUME"></a>10. VOLUME</h3><p>格式为 VOLUME [“/data”]。<br>创建一个可以从本地主机或其他容器挂载的挂载点，一般用来存放数据库和需要保持的数据等。</p>
+<h3 id="11-USER"><a href="#11-USER" class="headerlink" title="11. USER"></a>11. USER</h3><p>格式为 USER daemon。<br>指定运行容器时的用户名或 UID，后续的 RUN 也会使用指定用户。<br>当服务不需要管理员权限时，可以通过该命令指定运行用户。并且可以在之前创建所需要的用户，例如：<code>RUN groupadd -r postgres &amp;&amp; useradd -r -g postgres postgres</code>。要临时获取管理员权限可以使用 gosu，而不推荐 sudo。</p>
+<h3 id="12-WORKDIR"><a href="#12-WORKDIR" class="headerlink" title="12. WORKDIR"></a>12. WORKDIR</h3><p>格式为 WORKDIR /path/to/workdir。<br>为后续的 RUN、CMD、ENTRYPOINT 指令配置工作目录。<br>可以使用多个 WORKDIR 指令，后续命令如果参数是相对路径，则会基于之前命令指定的路径。例如<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">WORKDIR</span><span class="bash"> /a</span></div><div class="line"><span class="keyword">WORKDIR</span><span class="bash"> b</span></div><div class="line"><span class="keyword">WORKDIR</span><span class="bash"> c</span></div><div class="line"><span class="keyword">RUN</span><span class="bash"> <span class="built_in">pwd</span></span></div></pre></td></tr></table></figure></p>
+<p>则最终路径为 /a/b/c。</p>
+<h3 id="13-ONBUILD"><a href="#13-ONBUILD" class="headerlink" title="13. ONBUILD"></a>13. ONBUILD</h3><p>格式为 ONBUILD [INSTRUCTION]。<br>配置当所创建的镜像作为其它新创建镜像的基础镜像时，所执行的操作指令。<br>ONBUILD指令,实际上就是相当于创建一个模板镜像，后续可以根据该模板镜像创建特定的子镜像<br>例如，Dockerfile 使用如下的内容创建了镜像 image-A。<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[...]</div><div class="line"><span class="keyword">ONBUILD</span> <span class="keyword">ADD</span><span class="bash"> . /app/src</span></div><div class="line"><span class="keyword">ONBUILD</span> <span class="keyword">RUN</span><span class="bash"> /usr/<span class="built_in">local</span>/bin/python-build --dir /app/src</span></div><div class="line">[...]</div></pre></td></tr></table></figure></p>
+<p>image-A的构建过程中不执行这两条命令，但在FROM image-A的子镜像中会执行这两条命令。</p>
+<h2 id="构建镜像"><a href="#构建镜像" class="headerlink" title="构建镜像"></a>构建镜像</h2><figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">docker</span> <span class="keyword">build </span>-t mynginx:v2019 .</div></pre></td></tr></table></figure>
+<p><em>注意不要少了最后面的“.”</em></p>
+<h1 id="Dockerfile编写建议"><a href="#Dockerfile编写建议" class="headerlink" title="Dockerfile编写建议"></a>Dockerfile编写建议</h1><ul>
+<li>通过 Docker 多阶段构建将多个层压缩为一个<br>在构建 Docker 容器时，应该尽量想办法获得体积更小的镜像，因为传输和部署体积较小的镜像速度更快。<br>从 Docker 1.10 开始，COPY、ADD 和 RUN 语句会向镜像中添加新层。层会占用空间，你拥有的层越多，最终的镜像就越大。Git 存储库在这方面也是类似的，存储库的大小随着层数的增加而增加，因为 Git 必须保存提交之间的所有变更。</li>
+<li>将不经常改动的命令，比如python的reqirements.txt 依赖包，单独拎出来放在项目代码的前面。因为依赖包不经常变动，每次生成镜像时，只需将后面的项目代码copy到镜像即可。<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 方案一：</span></div><div class="line"><span class="keyword">FROM</span> python:<span class="number">3.6</span></div><div class="line"> </div><div class="line"><span class="keyword">RUN</span><span class="bash"> mkdir -p /usr/src/app</span></div><div class="line"> </div><div class="line"><span class="keyword">WORKDIR</span><span class="bash"> /usr/src/app</span></div><div class="line"> </div><div class="line"> </div><div class="line"><span class="keyword">COPY</span><span class="bash"> . /usr/src/app</span></div><div class="line"><span class="keyword">RUN</span><span class="bash"> pip install -r /usr/src/app/requirements.txt -i https://mirrors.aliyun.com/pypi/simple/</span></div><div class="line"> </div><div class="line"> </div><div class="line"><span class="keyword">CMD</span><span class="bash"> python /usr/src/app/manage.py runserver 0.0.0.0:8000</span></div><div class="line"> </div><div class="line"> </div><div class="line"><span class="comment"># 方案二：</span></div><div class="line"><span class="keyword">FROM</span> python:<span class="number">3.6</span></div><div class="line"> </div><div class="line"><span class="keyword">RUN</span><span class="bash"> mkdir -p /usr/src/app</span></div><div class="line"> </div><div class="line"><span class="keyword">WORKDIR</span><span class="bash"> /usr/src/app</span></div><div class="line"> </div><div class="line"></div><div class="line"> </div><div class="line"><span class="keyword">COPY</span><span class="bash"> requirements.txt /usr/src/app/</span></div><div class="line"> </div><div class="line"><span class="keyword">RUN</span><span class="bash"> pip install -r /usr/src/app/requirements.txt -i https://mirrors.aliyun.com/pypi/simple/</span></div><div class="line"> </div><div class="line"> </div><div class="line"><span class="keyword">COPY</span><span class="bash"> . /usr/src/app</span></div><div class="line"><span class="keyword">CMD</span><span class="bash"> python /usr/src/app/manage.py runserver 0.0.0.0:8000</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>方案二比方案一好，为什么？因为方案一中的requirements.txt实际项目中是很少变动，但是因为/usr/src/app的项目代码是经常变动，导致每次打包都得根据equirements.txt安装依赖包。而方案二先把requirements.txt 拷贝进来，如果requirements.txt 没改动，docker会用到之前缓存的，加快打包速度。<br>实际运行几次打包过程，会发现速度的差异是比较明显的。</p>
+<h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><p>公司现在的所有项目均以容器封装，几十个容器运行在十来台主机中，现在正在将服务器整合到kubernetes集群中，可以说一切皆容器，一切皆Docker。</p>
+<h2 id="1-Django项目的Dockerfile"><a href="#1-Django项目的Dockerfile" class="headerlink" title="1. Django项目的Dockerfile"></a>1. Django项目的Dockerfile</h2><p>Django项目打包成Docker镜像是比较简单，主要是安装python依赖包，然后就是manage.py启动服务。</p>
+<p>Dockerfile 位于Django项目的根目录，目录结构如下：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">├── requirements<span class="selector-class">.txt</span></div><div class="line">├── Dockerfile</div><div class="line">├── api</div><div class="line">│ ├── __init__<span class="selector-class">.py</span></div><div class="line">│ ├── urls<span class="selector-class">.py</span></div><div class="line">│ ├── wsgi<span class="selector-class">.py</span></div><div class="line">│ └── settings.py</div></pre></td></tr></table></figure>
+<p>Dockerfile文件：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">FROM</span> python:<span class="number">3.6</span></div><div class="line"> </div><div class="line"><span class="keyword">RUN</span><span class="bash"> mkdir -p /usr/src/app</span></div><div class="line"><span class="keyword">WORKDIR</span><span class="bash"> /usr/src/app</span></div><div class="line"> </div><div class="line"><span class="keyword">COPY</span><span class="bash"> requirements.txt /usr/src/app/</span></div><div class="line"> </div><div class="line"><span class="keyword">RUN</span><span class="bash"> pip install -r /usr/src/app/requirements.txt -i https://mirrors.aliyun.com/pypi/simple/</span></div><div class="line"> </div><div class="line"><span class="keyword">COPY</span><span class="bash"> . /usr/src/app</span></div><div class="line"> </div><div class="line"><span class="keyword">CMD</span><span class="bash"> python /usr/src/app/manage.py runserver 0.0.0.0:8000</span></div></pre></td></tr></table></figure>
+<h2 id="2-SpringMVC项目的Dockerfile"><a href="#2-SpringMVC项目的Dockerfile" class="headerlink" title="2. SpringMVC项目的Dockerfile"></a>2. SpringMVC项目的Dockerfile</h2><p>项目运行在tomcat中。</p>
+<p>先生成war文件，转成tar.gz文件， 通过ADD命令解压到镜像中。接下来就是配置文件的替换，最后运行tomact服务。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Version 0.1</span></div><div class="line"><span class="comment"># 基础镜像</span></div><div class="line"><span class="keyword">FROM</span> cbbing/tomcat</div><div class="line"> </div><div class="line"><span class="keyword">RUN</span><span class="bash"> rm -rf <span class="variable">$CATALINA_HOME</span>/webapps/ROOT</span></div><div class="line"><span class="keyword">ADD</span><span class="bash"> ROOT.tar.gz <span class="variable">$CATALINA_HOME</span>/webapps/</span></div><div class="line"> </div><div class="line"><span class="comment"># 配置文件替换</span></div><div class="line"><span class="keyword">COPY</span><span class="bash"> conf/server.xml <span class="variable">$CATALINA_HOME</span>/conf/</span></div><div class="line"><span class="keyword">COPY</span><span class="bash"> conf/tomcat-users.xml <span class="variable">$CATALINA_HOME</span>/conf/</span></div><div class="line"><span class="keyword">COPY</span><span class="bash"> conf/jdbc.properties <span class="variable">$CATALINA_HOME</span>/webapps/ROOT/WEB-INF/classes/properties/</span></div><div class="line"> </div><div class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">"catalina.sh"</span>, <span class="string">"run"</span>]</span></div></pre></td></tr></table></figure>
+<p>mvn.sh: 生成ROOT.tar.gz的脚本如下：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">cd ../myweb</div><div class="line">mvn clean</div><div class="line">mvn install -DskipTests</div><div class="line"> </div><div class="line">cd ..</div><div class="line">mkdir ./ROOT</div><div class="line"> </div><div class="line">cp ./myweb/target/myweb<span class="selector-class">.war</span> ./ROOT</div><div class="line"> </div><div class="line">cd ROOT</div><div class="line">jar xvf myweb<span class="selector-class">.war</span></div><div class="line"> </div><div class="line">rm myweb<span class="selector-class">.war</span></div><div class="line"></div><div class="line">cd .. </div><div class="line">tar czf ROOT<span class="selector-class">.tar</span><span class="selector-class">.gz</span> ./ROOT</div><div class="line">rm -rf ROOT/</div></pre></td></tr></table></figure></p>
+<h2 id="3-Vue-js项目的Dockerfile"><a href="#3-Vue-js项目的Dockerfile" class="headerlink" title="3. Vue.js项目的Dockerfile"></a>3. Vue.js项目的Dockerfile</h2><p>步骤如下：</p>
+<ol>
+<li><p>下载package.json中定义的依赖</p>
+</li>
+<li><p>npm build生成编译后的文件到dist</p>
+</li>
+<li><p>基础镜像为nginx，从nginx代理静态文件</p>
+</li>
+</ol>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">FROM</span> nginx:<span class="number">1.15</span></div><div class="line"> </div><div class="line"><span class="keyword">MAINTAINER</span> cbbing &lt;cbbing@<span class="number">163</span>.com&gt;</div><div class="line"> </div><div class="line"><span class="keyword">ENV</span> LANG C.UTF-<span class="number">8</span></div><div class="line"><span class="keyword">ENV</span> TZ=Asia/Shanghai</div><div class="line"> </div><div class="line"><span class="keyword">RUN</span><span class="bash"> ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime &amp;&amp; <span class="built_in">echo</span> Asia/Shanghai &gt; /etc/timezone</span></div><div class="line"> </div><div class="line"><span class="keyword">COPY</span><span class="bash"> nginx.conf /etc/nginx/conf.d/default.conf</span></div><div class="line"><span class="keyword">COPY</span><span class="bash"> dist /usr/share/nginx/html</span></div></pre></td></tr></table></figure>
+<p>make.sh：制作脚本如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/usr/bin/env bash</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"npm install"</span></div><div class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</div><div class="line">cnpm install</div><div class="line"> </div><div class="line"><span class="built_in">echo</span> <span class="string">"npm build"</span></div><div class="line">npm run build</div><div class="line"> </div><div class="line">image_tag=`date +%Y%m%d` <span class="comment">#_%H%M</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"当前时间：<span class="variable">$image_tag</span>"</span></div><div class="line">docker build -t cbbing/web_p:v<span class="variable">$&#123;image_tag&#125;</span> .</div></pre></td></tr></table></figure></p>
+<h2 id="4-Scrapy项目的Dockerfile"><a href="#4-Scrapy项目的Dockerfile" class="headerlink" title="4. Scrapy项目的Dockerfile"></a>4. Scrapy项目的Dockerfile</h2><p>scrapy项目和Django项目的差别在于启动的方式不同，这里涉及到一些配置文件。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">FROM</span> python:<span class="number">3.6</span></div><div class="line"> </div><div class="line"><span class="comment">#设置时区</span></div><div class="line"><span class="keyword">ENV</span> TZ=Asia/Shanghai</div><div class="line"><span class="keyword">ENV</span> PYTHONPATH=/usr/src/app</div><div class="line"> </div><div class="line"><span class="keyword">RUN</span><span class="bash"> mkdir -p /usr/src/app \</span></div><div class="line">    &amp;&amp; pip install -r /root/.pip/requirements.txt  -i https://mirrors.aliyun.com/pypi/simple/ \</div><div class="line">    &amp;&amp; apt-get update \</div><div class="line">    &amp;&amp; apt-get install -y supervisor \</div><div class="line">    &amp;&amp; ln -snf /usr/share/zoneinfo/<span class="variable">$TZ</span> /etc/localtime \</div><div class="line">    &amp;&amp; <span class="built_in">echo</span> <span class="variable">$TZ</span> &gt; /etc/timezone</div><div class="line"> </div><div class="line"><span class="keyword">WORKDIR</span><span class="bash"> /usr/src/app</span></div><div class="line"> </div><div class="line"><span class="keyword">COPY</span><span class="bash"> . /usr/src/app</span></div><div class="line"><span class="keyword">COPY</span><span class="bash"> supervisord.conf /etc/supervisor/conf.d/supervisord.conf</span></div><div class="line"><span class="keyword">RUN</span><span class="bash"> mkdir -p /var/<span class="built_in">log</span>/supervisor</span></div><div class="line"> </div><div class="line"><span class="keyword">COPY</span><span class="bash"> scrapyd.conf /usr/<span class="built_in">local</span>/lib/python3.6/site-packages/scrapyd/default_scrapyd.conf</span></div><div class="line"> </div><div class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">"/usr/bin/supervisord"</span>]</span></div></pre></td></tr></table></figure>
+<p>其中用到的配置文件：</p>
+<ul>
+<li>supervisord.conf</li>
+</ul>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">[inet_http_server]</div><div class="line"><span class="attr">port=9020</span></div><div class="line"><span class="attr">username=admin</span></div><div class="line"><span class="attr">password=1234</span></div><div class="line"> </div><div class="line">[supervisord]</div><div class="line"><span class="attr">nodaemon=true</span></div><div class="line"><span class="attr">logfile=/var/log/supervisor/supervisord.log;</span></div><div class="line"><span class="attr">pidfile=/var/log/supervisord.pid;</span></div><div class="line"><span class="attr">childlogdir=/var/log/supervisor</span></div><div class="line"> </div><div class="line">[program:scrapyd]</div><div class="line"><span class="attr">command=scrapyd</span></div><div class="line"><span class="attr">loglevel=info</span></div><div class="line"><span class="attr">redirect_stderr=true</span></div><div class="line"><span class="attr">stdout_events_enabled=true</span></div><div class="line"> </div><div class="line">[program:scrapyd-deploy]</div><div class="line"><span class="attr">command=bash</span> supervisor-scrapyd-deploy.sh</div><div class="line"><span class="attr">startsecs</span> = <span class="number">35</span></div><div class="line"><span class="attr">loglevel=info</span></div><div class="line"> </div><div class="line">[program:simple_http]</div><div class="line"><span class="attr">command=/bin/bash</span> supervisor-http-egg.sh</div><div class="line"><span class="attr">autorestart=true</span></div><div class="line"><span class="attr">startsecs=10</span></div><div class="line"><span class="attr">loglevel=info</span></div><div class="line"> </div><div class="line">[rpcinterface:supervisor]</div><div class="line">supervisor.<span class="attr">rpcinterface_factory</span> = supervisor.rpcinterface:make_main_rpcinterface</div></pre></td></tr></table></figure>
+<ul>
+<li>scrapyd.conf</li>
+</ul>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">[scrapyd]</div><div class="line">eggs_dir = eggs</div><div class="line">logs_dir = logs</div><div class="line">items_dir =</div><div class="line">jobs_to_keep = <span class="number">20</span></div><div class="line">dbs_dir = dbs</div><div class="line">max_proc = <span class="number">0</span></div><div class="line">max_proc_per_cpu = <span class="number">4</span></div><div class="line">finished_to_keep = <span class="number">100</span></div><div class="line">poll_interval = <span class="number">5.0</span></div><div class="line">bind_address = <span class="number">0.0</span>.<span class="number">0.0</span></div><div class="line">http_port = <span class="number">6800</span></div><div class="line">debug = off</div><div class="line">runner = scrapyd<span class="selector-class">.runner</span></div><div class="line">application = scrapyd<span class="selector-class">.app</span><span class="selector-class">.application</span></div><div class="line">launcher = scrapyd<span class="selector-class">.launcher</span><span class="selector-class">.Launcher</span></div><div class="line">webroot = scrapyd<span class="selector-class">.website</span><span class="selector-class">.Root</span></div><div class="line"> </div><div class="line">[services]</div><div class="line">schedule<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.Schedule</span></div><div class="line">cancel<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.Cancel</span></div><div class="line">addversion<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.AddVersion</span></div><div class="line">listprojects<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.ListProjects</span></div><div class="line">listversions<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.ListVersions</span></div><div class="line">listspiders<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.ListSpiders</span></div><div class="line">delproject<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.DeleteProject</span></div><div class="line">delversion<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.DeleteVersion</span></div><div class="line">listjobs<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.ListJobs</span></div><div class="line">daemonstatus<span class="selector-class">.json</span> = scrapyd<span class="selector-class">.webservice</span><span class="selector-class">.DaemonStatus</span></div></pre></td></tr></table></figure>
+<h1 id="dockerignore文件"><a href="#dockerignore文件" class="headerlink" title=".dockerignore文件"></a>.dockerignore文件</h1><p>配置docker镜像的忽略列表，类似.gitignore文件。<br>参考：<a href="https://docs.docker.com/engine/reference/builder/" target="_blank" rel="external">https://docs.docker.com/engine/reference/builder/</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
+<ol>
+<li><p><a href="http://www.dockerinfo.net/dockerfile%E4%BB%8B%E7%BB%8D" target="_blank" rel="external">Dockerfile介绍</a></p>
+</li>
+<li><p><a href="https://www.infoq.cn/article/3-simple-tricks-for-smaller-docker-images" target="_blank" rel="external">三个技巧，将 Docker 镜像体积减小 90%</a></p>
+</li>
+</ol>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;Dockerfile简介&quot;&gt;&lt;a href=&quot;#Dockerfile简介&quot; class=&quot;headerlink&quot; title=&quot;Dockerfile简介&quot;&gt;&lt;/a&gt;Dockerfile简介&lt;/h1&gt;&lt;p&gt;Dockerfile 是一个文本文件，其内包含了一条条的 指
+    
+    </summary>
+    
+      <category term="系统架构" scheme="http://www.kekefund.com/categories/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/"/>
+    
+    
+      <category term="Dockerfile" scheme="http://www.kekefund.com/tags/Dockerfile/"/>
+    
+      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
+    
+  </entry>
   
   <entry>
     <title>centos7 安装Docker及docker-compose</title>
@@ -1178,98 +1501,6 @@
       <category term="云计算" scheme="http://www.kekefund.com/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/"/>
     
       <category term="金融" scheme="http://www.kekefund.com/tags/%E9%87%91%E8%9E%8D/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>docker私有仓库搭建</title>
-    <link href="http://www.kekefund.com/2017/06/07/doker-registry/"/>
-    <id>http://www.kekefund.com/2017/06/07/doker-registry/</id>
-    <published>2017-06-07T08:08:33.000Z</published>
-    <updated>2018-09-21T07:50:46.067Z</updated>
-    
-    <content type="html"><![CDATA[<p>Docker提供了开放的中央仓库dockerhub，同时也允许我们使用registry搭建本地私有仓库。搭建私有仓库有如下的优点：</p>
-<ol>
-<li>节省网络带宽，提升Docker部署速度，不用每个镜像从DockerHub上去下载，只需从私有仓库下载就可；</li>
-<li>私有镜像，包含公司敏感信息，不方便公开对外，只在公司内部使用。<a id="more"></a>
-</li>
-</ol>
-<h1 id="1，搭建私有仓库"><a href="#1，搭建私有仓库" class="headerlink" title="1，搭建私有仓库"></a>1，搭建私有仓库</h1><h2 id="1-1-下载镜像registry"><a href="#1-1-下载镜像registry" class="headerlink" title="1.1 下载镜像registry"></a>1.1 下载镜像registry</h2><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>docker pull registry</div></pre></td></tr></table></figure>
-<h2 id="1-2-启动容器"><a href="#1-2-启动容器" class="headerlink" title="1.2 启动容器"></a>1.2 启动容器</h2><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ docker run -d -p <span class="number">5000</span>:<span class="number">5000</span> --restart=always --name=registry-srv -v /mydata/<span class="symbol">dockerRegistry:</span>/var/<span class="class"><span class="keyword">lib</span>/<span class="title">registry</span> <span class="title">registry</span></span></div></pre></td></tr></table></figure>
-<p>解释一下:<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">-d：后台运行</div><div class="line">-p：将容器的<span class="number">5000</span>端口映射到宿主机的<span class="number">5000</span>端口</div><div class="line">--restart：docker服务重启后总是重启此容器</div><div class="line">--name：容器的名称</div><div class="line">-v：将容器内的/var/<span class="class"><span class="keyword">lib</span>/<span class="title">registry</span>映射到宿主机的/<span class="title">mydata</span>/<span class="title">dockerRegistry</span>目录</span></div></pre></td></tr></table></figure></p>
-<h1 id="2，搭建WEB服务"><a href="#2，搭建WEB服务" class="headerlink" title="2，搭建WEB服务"></a>2，搭建WEB服务</h1><p>私有仓库搭建好了，怎么查看仓库里的镜像，搭建一个web服务，查看修改image比较方便。</p>
-<h2 id="2-1-下载镜像"><a href="#2-1-下载镜像" class="headerlink" title="2.1 下载镜像"></a>2.1 下载镜像</h2><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>docker pull hyper/docker-registry-web</div></pre></td></tr></table></figure>
-<h2 id="2-2-启动容器"><a href="#2-2-启动容器" class="headerlink" title="2.2 启动容器"></a>2.2 启动容器</h2><figure class="highlight tcl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -it -p <span class="number">8080</span>:<span class="number">8080</span> --restart=always --name <span class="keyword">registry</span>-web --link <span class="keyword">registry</span>-srv -e REGISTRY_URL=<span class="keyword">http</span>://<span class="keyword">registry</span>-srv:<span class="number">5000</span>/v2 -e REGISTRY_NAME=localhost:<span class="number">5000</span> hyper/docker-<span class="keyword">registry</span>-web</div></pre></td></tr></table></figure>
-<p>解释一下：<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby"><span class="symbol">it:</span> 以交互模式运行</span></div><div class="line">-<span class="ruby">-link：链接其它容器(registry-srv)，在此容器中，使用registry-srv等同于registry-srv容器的局域网地址</span></div><div class="line">-<span class="ruby">e：设置环境变量</span></div></pre></td></tr></table></figure></p>
-<h1 id="3，上传本地镜像到私有仓库"><a href="#3，上传本地镜像到私有仓库" class="headerlink" title="3，上传本地镜像到私有仓库"></a>3，上传本地镜像到私有仓库</h1><p>例如，将本地的hcharts上传到仓库<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ docker images | grep hcharts</div><div class="line">cbbing/hcharts                       latest              <span class="number">64164</span>ca3dafe        <span class="number">3</span> weeks ago         <span class="number">550</span> MB</div></pre></td></tr></table></figure></p>
-<h2 id="3-1-修改镜像tag"><a href="#3-1-修改镜像tag" class="headerlink" title="3.1 修改镜像tag"></a>3.1 修改镜像tag</h2><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ docker <span class="keyword">tag</span> <span class="title">cbbing</span>/hcharts <span class="number">192.168</span>.<span class="number">1.87</span>:<span class="number">5000</span>/cbbing/hcharts</div></pre></td></tr></table></figure>
-<h2 id="3-2-上传tag镜像到仓库"><a href="#3-2-上传tag镜像到仓库" class="headerlink" title="3.2 上传tag镜像到仓库"></a>3.2 上传tag镜像到仓库</h2><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">docker <span class="built_in">push</span> <span class="number">192.168</span>.1.87:<span class="number">5000</span>/cbbing/hcharts</div><div class="line"></div><div class="line">The <span class="built_in">push</span> refers to a repository [<span class="number">192.168</span>.1.87:<span class="number">5000</span>/hcharts]</div><div class="line"><span class="number">96b641920005</span>: Pushing [===&gt;                                               ] <span class="number">8.852</span> MB/<span class="number">125.1</span> MB</div><div class="line">ee2881ef910e: Pushing [==&gt;                                                ] <span class="number">11.69</span> MB/<span class="number">232.7</span> MB</div><div class="line">36018b5e9787: Pushing [===&gt;                                               ] <span class="number">11.99</span> MB/<span class="number">192.5</span> MB</div></pre></td></tr></table></figure>
-<h2 id="3-3-会出现的push失败"><a href="#3-3-会出现的push失败" class="headerlink" title="3.3 会出现的push失败"></a>3.3 会出现的push失败</h2><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ docker <span class="keyword">push</span> <span class="number">192.168</span><span class="meta">.1</span><span class="meta">.87</span>:<span class="number">5000</span>/hcharts</div><div class="line">The <span class="keyword">push</span> refers to a repository [<span class="number">192.168</span><span class="meta">.1</span><span class="meta">.87</span>:<span class="number">5000</span>/hcharts]</div><div class="line">Get https://<span class="number">192.168</span><span class="meta">.1</span><span class="meta">.87</span>:<span class="number">5000</span>/v1/_ping: http: server gave HTTP response to HTTPS client</div></pre></td></tr></table></figure>
-<p>这是因为Docker在1.3.x之后默认docker registry使用的是https，为了解决这个问题，修改本地主机的docker启动配置文件，添加<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">--insecure-registry</span> 192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.87</span><span class="selector-pseudo">:5000</span></div></pre></td></tr></table></figure></p>
-<p>我的macbook在图形化终端上修改如下，填写后“Apply&amp;Restart”。<br><img src="http://pic.cbbing.com/2017-06-07/dr1.png" alt=""></p>
-<h2 id="3-4-下载镜像"><a href="#3-4-下载镜像" class="headerlink" title="3.4 下载镜像"></a>3.4 下载镜像</h2><p>在另外的客户机上pull镜像，跟拉取DockerHub上的镜像是一样的流程。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ docker pull <span class="number">192.168</span><span class="meta">.1</span><span class="meta">.87</span>:<span class="number">5000</span>/hcharts</div></pre></td></tr></table></figure></p>
-<h1 id="4，wen端查看私有仓库镜像"><a href="#4，wen端查看私有仓库镜像" class="headerlink" title="4，wen端查看私有仓库镜像"></a>4，wen端查看私有仓库镜像</h1><p>访问:<a href="http://192.168.1.87:8080/，网页上呈现：" target="_blank" rel="external">http://192.168.1.87:8080/，网页上呈现：</a><br><img src="http://pic.cbbing.com/2017-06-07/dr2.png" alt=""></p>
-<h1 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h1><blockquote>
-<p>1, <a href="https://store.docker.com/images/registry" target="_blank" rel="external">https://store.docker.com/images/registry</a><br>2, <a href="https://store.docker.com/community/images/hyper/docker-registry-web" target="_blank" rel="external">https://store.docker.com/community/images/hyper/docker-registry-web</a></p>
-</blockquote>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Docker提供了开放的中央仓库dockerhub，同时也允许我们使用registry搭建本地私有仓库。搭建私有仓库有如下的优点：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;节省网络带宽，提升Docker部署速度，不用每个镜像从DockerHub上去下载，只需从私有仓库下载就可；&lt;/li&gt;
-&lt;li&gt;私有镜像，包含公司敏感信息，不方便公开对外，只在公司内部使用。
-    
-    </summary>
-    
-      <category term="Docker" scheme="http://www.kekefund.com/categories/Docker/"/>
-    
-    
-      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
-    
-      <category term="Registry" scheme="http://www.kekefund.com/tags/Registry/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>scrapy+splash 爬取动态网站(JS)</title>
-    <link href="http://www.kekefund.com/2017/05/25/scrapy-splash/"/>
-    <id>http://www.kekefund.com/2017/05/25/scrapy-splash/</id>
-    <published>2017-05-25T09:05:06.000Z</published>
-    <updated>2017-12-18T08:48:43.451Z</updated>
-    
-    <content type="html"><![CDATA[<p>scrapy只支持静态网页的抓取，通过scrapy-splash，能实现对JavaScript的解析。<br><a id="more"></a></p>
-<h1 id="一、搭建Docker服务器"><a href="#一、搭建Docker服务器" class="headerlink" title="一、搭建Docker服务器"></a>一、搭建Docker服务器</h1><blockquote>
-<p>Docker的相关知识参考本站的<a href="http://kekefund.com/categories/Docker/" target="_blank" rel="external">Docker相关文章</a>。</p>
-</blockquote>
-<p>Scrapy-Splash采用Splash HTTP API，需要搭建一个Splash实例，用Docker搭建最方便：</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ docker <span class="keyword">run</span><span class="bash"> <span class="_">-d</span> -p 8050:8050 --restart=always --name=splash -m 200m scrapinghub/splash</span></div><div class="line"> </div><div class="line"><span class="comment"># -m 200m 内存限制使用200兆</span></div></pre></td></tr></table></figure>
-<p>在服务器运行好Docker后，就可以通过IP+端口(例如：<a href="http://123.206.211.100:8050" target="_blank" rel="external">http://123.206.211.100:8050</a>  )访问了。</p>
-<h1 id="二、Scrapy项目"><a href="#二、Scrapy项目" class="headerlink" title="二、Scrapy项目"></a>二、Scrapy项目</h1><h2 id="1，安装scrapy-splash"><a href="#1，安装scrapy-splash" class="headerlink" title="1，安装scrapy-splash"></a>1，安装scrapy-splash</h2><figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ pip <span class="keyword">install</span> scrapy-splash</div></pre></td></tr></table></figure>
-<h2 id="2，配置-setting-py"><a href="#2，配置-setting-py" class="headerlink" title="2，配置(setting.py)"></a>2，配置(setting.py)</h2><h3 id="增加Splash服务器地址"><a href="#增加Splash服务器地址" class="headerlink" title="增加Splash服务器地址"></a>增加Splash服务器地址</h3><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">SPLASH_URL</span> = <span class="string">'http://123.206.211.100:8050'</span></div></pre></td></tr></table></figure>
-<h3 id="开启Splash中间件"><a href="#开启Splash中间件" class="headerlink" title="开启Splash中间件"></a>开启Splash中间件</h3><figure class="highlight roboconf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">DOWNLOADER_MIDDLEWARES = &#123;</div><div class="line">    '<span class="attribute">scrapy_splash.SplashCookiesMiddleware'</span>: 723,</div><div class="line">    'scrapy_splash<span class="variable">.SplashMiddleware</span>': 725,</div><div class="line">    'scrapy<span class="variable">.downloadermiddlewares</span><span class="variable">.httpcompression</span><span class="variable">.HttpCompressionMiddleware</span>': 810,</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="其它设置"><a href="#其它设置" class="headerlink" title="其它设置"></a>其它设置</h3><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attr">DUPEFILTER_CLASS</span> = <span class="string">'scrapy_splash.SplashAwareDupeFilter'</span></div><div class="line"><span class="attr">HTTPCACHE_STORAGE</span> = <span class="string">'scrapy_splash.SplashAwareFSCacheStorage'</span></div><div class="line"><span class="attr">SPLASH_COOKIES_DEBUG</span> = <span class="literal">True</span></div></pre></td></tr></table></figure>
-<h2 id="3，spider-py使用SplashRequest"><a href="#3，spider-py使用SplashRequest" class="headerlink" title="3，spider.py使用SplashRequest"></a>3，spider.py使用SplashRequest</h2><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">import scrapy</div><div class="line">from scrapy_splash import SplashRequest</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpiderS1</span>(<span class="title">scrapy</span>.<span class="title">Spider</span>):</span></div><div class="line"></div><div class="line">    name = <span class="string">"s1_spider"</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start_requests</span><span class="params">(<span class="keyword">self</span>)</span></span>:</div><div class="line">    	</div><div class="line">    	urls = [<span class="string">'http://sports.sina.com.cn/g/seriea/2017-05-23/doc-ifyfkqiv6736172.shtml'</span>,</div><div class="line">                <span class="string">'http://sports.sina.com.cn/basketball/nba/2017-05-23/doc-ifyfkqiv6683532.shtml'</span>]</div><div class="line">    	</div><div class="line">        requests = []</div><div class="line">        <span class="keyword">for</span> url <span class="keyword">in</span> <span class="symbol">urls:</span></div><div class="line">       	    url = url.strip()</div><div class="line">       	    request = SplashRequest(url, callback=<span class="keyword">self</span>.parse, args=&#123;<span class="string">'wait'</span><span class="symbol">:</span><span class="number">3</span>&#125;)</div><div class="line">        	requests.append(request)</div><div class="line">        <span class="keyword">return</span> requests</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(<span class="keyword">self</span>, response)</span></span>:</div><div class="line">        <span class="keyword">self</span>.log(response.url)</div><div class="line">        ...</div></pre></td></tr></table></figure>
-<p>使用非常简单，具体请求参数参考 <a href="https://github.com/scrapy-plugins/scrapy-splash" target="_blank" rel="external">Scrapy&amp;JavaScript integration through Splash</a>。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;scrapy只支持静态网页的抓取，通过scrapy-splash，能实现对JavaScript的解析。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="Python" scheme="http://www.kekefund.com/categories/Python/"/>
-    
-    
-      <category term="Scrapy" scheme="http://www.kekefund.com/tags/Scrapy/"/>
-    
-      <category term="Docker" scheme="http://www.kekefund.com/tags/Docker/"/>
-    
-      <category term="Splash" scheme="http://www.kekefund.com/tags/Splash/"/>
-    
-      <category term="JavaScript" scheme="http://www.kekefund.com/tags/JavaScript/"/>
     
   </entry>
   
